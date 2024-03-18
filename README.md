@@ -1,5 +1,5 @@
-# SEYONI - Home Services Management System
-## Serve Made Simple
+<h1 align="center"> SEYONI - Home Services Management System </h1>
+<h2 align="center"> Serve Made Simple </h2>
 <div align="center">
 <img src="https://github.com/Ahzem/seyoni/assets/123859613/c7fa08c7-3a3a-4eb9-9667-ad38c638f3ca">
 </div>
