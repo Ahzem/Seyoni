@@ -1,16 +1,7 @@
-# seyoni
+<h1 align="center"> SEYONI - Home Services Management System </h1>
+<h2 align="center"> Serve Made Simple </h2>
+<div align="center">
+<img src="https://github.com/Ahzem/seyoni/assets/123859613/c7fa08c7-3a3a-4eb9-9667-ad38c638f3ca">
+</div>
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Revolutionizing home services with a user-friendly platform connecting users &amp; verified providers. Real-time tracking, ratings, part-time jobs &amp; more. Let's collaborate!
