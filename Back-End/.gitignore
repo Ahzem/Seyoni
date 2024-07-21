@@ -1,3 +1,5 @@
+# Gitignore file for the Back-End folder
+
 node_modules/
 dist/
 .env
