@@ -1,0 +1,11 @@
+# Gitignore file for Main Directory
+
+#  VS code
+.vscode
+
+#  Build
+build
+dist
+
+#  idea
+.idea
