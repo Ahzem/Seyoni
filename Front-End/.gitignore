@@ -1,0 +1,75 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+.pub/
+build/
+*.lock
+*.iml
+*.metadata
+*.flutter-plugins
+*.flutter-plugins-dependencies
+*.log
+*.pid
+*.pid.lock
+*.seed
+*.zip
+*.tar.gz
+*.tar.xz
+*.tar.bz2
+*.tar.lz4
+*.tar.sz
+*.tar.zst
+*.tar
+*.patch
+*.patch.rej
+*.diff
+*.diff.rej
+*.orig
+*.orig.*
+*.rej
+*.swp
+*.bak
+*.backup
+*.xml
+
+# Generated plugin registrants
+linux/flutter/generated_plugin_registrant.*
+macos/Flutter/GeneratedPluginRegistrant.*
+windows/flutter/generated_plugin_registrant.*
+windows/flutter/generated_plugins.cmake
+linux/flutter/generated_plugins.cmake
+macos/Flutter/FlutterPluginRegistrant.h
+macos/Flutter/FlutterPluginRegistrant.m
+macos/Flutter/FlutterPluginRegistrant.swift
+macos/Flutter/FlutterPluginRegistrant.xcconfig
+
+# Xcode
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+ios/Flutter/engine/
+ios/Flutter/App.framework
+ios/Flutter/FlutterPluginRegistrant/
+ios/ServiceDefinitions.json
+ios/Pods/
+ios/Runner.xcworkspace
+ios/Flutter/Debug.xcconfig
+ios/Flutter/Release.xcconfig
+ios/Flutter/AppFrameworkInfo.plist
+ios/Flutter/FlutterMacOS.framework/
+
+
+# Android
+android/.gradle/
+android/.idea/
+android/local.properties
+android/app/build/
+android/app/intermediates/
+android/app/src/main/assets/flutter_assets/
+android/app/src/main/res/flutter_assets/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# IntelliJ/Android Studio
+.idea/
