@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'src/widgets/background_widget.dart';
 import 'src/pages/launch_screen.dart';
 
 void main() {
