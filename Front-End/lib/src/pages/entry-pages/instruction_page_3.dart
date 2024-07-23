@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/constants/constants-font.dart';
-import 'package:seyoni/src/widgets/custom-button.dart';
 import '../../widgets/background_widget.dart';
 import '../../constants/constants-color.dart';
 import 'components/instructions-data.dart';
+import '../../widgets/custom-button.dart';
 
 void main() {
   runApp(const InstructionPage3());
@@ -60,14 +59,14 @@ class InstructionPage3 extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CustomButtonOutlined(
+                  PrimaryOutlinedButton(
                     text: 'Sign In',
                     onPressed: () {
                       Navigator.pop(context);
                     },
                   ),
                   Container(width: 15),
-                  CustomButtonFilled(
+                  PrimaryFilledButton(
                     text: 'Sign Up',
                     onPressed: () {
                       Navigator.pop(context);
