@@ -3,6 +3,7 @@ import '../../widgets/background_widget.dart';
 import 'instruction_page_3.dart';
 import '../../constants/constants-color.dart';
 import '../../constants/constants-font.dart';
+import 'components/instructions-data.dart';
 
 void main() {
   runApp(const InstructionPage2());
@@ -49,16 +50,9 @@ class InstructionPage2 extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      'Seamless Connections',
-                      style: kSubtitleTextStyle,
-                    ),
+                    InstructionTitle2,
                     SizedBox(height: 5),
-                    Text(
-                      'Seyoni bridges service seekers and providers. Request, track, and communicate with providers easily, with secure payments and trusted ratings.',
-                      textAlign: TextAlign.center,
-                      style: kBodyTextStyle,
-                    ),
+                    InstructionBody2,
                     SizedBox(height: 10),
                   ],
                 ),

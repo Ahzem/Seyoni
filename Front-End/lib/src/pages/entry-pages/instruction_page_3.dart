@@ -3,6 +3,7 @@ import 'package:seyoni/src/constants/constants-font.dart';
 import 'package:seyoni/src/widgets/custom-button.dart';
 import '../../widgets/background_widget.dart';
 import '../../constants/constants-color.dart';
+import 'components/instructions-data.dart';
 
 void main() {
   runApp(const InstructionPage3());
@@ -49,16 +50,9 @@ class InstructionPage3 extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      'Effortless Convenience',
-                      style: kSubtitleTextStyle,
-                    ),
+                    InstructionTitle3,
                     SizedBox(height: 5),
-                    Text(
-                      'Find help effortlessly with Seyoni. Book, pay, and track providers in real-time, with emergency assistance for peace of mind.',
-                      textAlign: TextAlign.center,
-                      style: kBodyTextStyle,
-                    ),
+                    InstructionBody3,
                     SizedBox(height: 10),
                   ],
                 ),

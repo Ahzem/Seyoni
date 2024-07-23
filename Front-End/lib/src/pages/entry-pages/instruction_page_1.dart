@@ -3,6 +3,7 @@ import '../../widgets/background_widget.dart';
 import 'instruction_page_2.dart';
 import '../../constants/constants-color.dart';
 import '../../constants/constants-font.dart';
+import 'components/instructions-data.dart';
 
 void main() {
   runApp(const InstructionPage1());
@@ -49,16 +50,9 @@ class InstructionPage1 extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      'Welcome to Seyoni!',
-                      style: kSubtitleTextStyle,
-                    ),
+                    InstructionTitle1,
                     SizedBox(height: 5),
-                    Text(
-                      'Easily connect with reliable service providers for home repairs, cleaning, and more. Just a few taps and help is on the way!',
-                      textAlign: TextAlign.center,
-                      style: kBodyTextStyle,
-                    ),
+                    InstructionBody1,
                     SizedBox(height: 10),
                   ],
                 ),
