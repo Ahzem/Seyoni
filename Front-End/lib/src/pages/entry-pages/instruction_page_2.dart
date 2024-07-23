@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/widgets/button.dart';
-import '../widgets/background_widget.dart';
-import '../constants/constants.dart';
-import '../widgets/button.dart';
+import '../../widgets/background_widget.dart';
+import 'instruction_page_3.dart';
+import '../../constants/constants-color.dart';
+import '../../constants/constants-font.dart';
 
 void main() {
-  runApp(const InstructionPage3());
+  runApp(const InstructionPage2());
 }
 
-class InstructionPage3 extends StatelessWidget {
-  const InstructionPage3({super.key});
+class InstructionPage2 extends StatelessWidget {
+  const InstructionPage2({super.key});
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: const Color.fromARGB(0, 0, 0, 0),
         body: BackgroundWidget(
@@ -23,13 +26,13 @@ class InstructionPage3 extends StatelessWidget {
             children: <Widget>[
               Image.asset(
                 'assets/images/logo.png',
-                height: 50,
+                height: height * 0.08,
                 fit: BoxFit.cover,
               ),
               Container(margin: const EdgeInsets.only(bottom: 15)),
               Image.asset(
-                'assets/images/technicians-3.png',
-                height: 350,
+                'assets/images/technicians-2.png',
+                height: height * 0.5,
                 fit: BoxFit.cover,
               ),
               Container(
@@ -47,42 +50,35 @@ class InstructionPage3 extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      'Effortless Convenience',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      'Seamless Connections',
+                      style: kSubtitleTextStyle,
                     ),
                     SizedBox(height: 5),
                     Text(
-                      'Find help effortlessly with Seyoni. Book, pay, and track providers in real-time, with emergency assistance for peace of mind.',
+                      'Seyoni bridges service seekers and providers. Request, track, and communicate with providers easily, with secure payments and trusted ratings.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: kParagraphTextColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: kBodyTextStyle,
                     ),
                     SizedBox(height: 10),
                   ],
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  CustomButtonOutlined(
-                    text: 'Sign In',
+                  FloatingActionButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const InstructionPage3()),
+                      );
                     },
-                  ),
-                  Container(width: 15),
-                  CustomButtonFilled(
-                    text: 'Sign Up',
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    backgroundColor: kPrimaryColor,
+                    child: const Icon(Icons.arrow_forward),
                   ),
                 ],
               ),

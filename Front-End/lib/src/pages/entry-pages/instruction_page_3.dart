@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
-import '../widgets/background_widget.dart';
-import '../pages/instruction_page_3.dart';
-import '../constants/constants.dart';
+import 'package:seyoni/src/constants/constants-font.dart';
+import 'package:seyoni/src/widgets/custom-button.dart';
+import '../../widgets/background_widget.dart';
+import '../../constants/constants-color.dart';
 
 void main() {
-  runApp(const InstructionPage2());
+  runApp(const InstructionPage3());
 }
 
-class InstructionPage2 extends StatelessWidget {
-  const InstructionPage2({super.key});
+class InstructionPage3 extends StatelessWidget {
+  const InstructionPage3({super.key});
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: const Color.fromARGB(0, 0, 0, 0),
         body: BackgroundWidget(
@@ -22,13 +26,13 @@ class InstructionPage2 extends StatelessWidget {
             children: <Widget>[
               Image.asset(
                 'assets/images/logo.png',
-                height: 50,
+                height: height * 0.08,
                 fit: BoxFit.cover,
               ),
               Container(margin: const EdgeInsets.only(bottom: 15)),
               Image.asset(
-                'assets/images/technicians-2.png',
-                height: 350,
+                'assets/images/technicians-3.png',
+                height: height * 0.5,
                 fit: BoxFit.cover,
               ),
               Container(
@@ -46,43 +50,34 @@ class InstructionPage2 extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      'Seamless Connections',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      'Effortless Convenience',
+                      style: kSubtitleTextStyle,
                     ),
                     SizedBox(height: 5),
                     Text(
-                      'Seyoni bridges service seekers and providers. Request, track, and communicate with providers easily, with secure payments and trusted ratings.',
+                      'Find help effortlessly with Seyoni. Book, pay, and track providers in real-time, with emergency assistance for peace of mind.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: kParagraphTextColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: kBodyTextStyle,
                     ),
                     SizedBox(height: 10),
                   ],
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  FloatingActionButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
+                  CustomButtonOutlined(
+                    text: 'Sign In',
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const InstructionPage3()),
-                      );
+                      Navigator.pop(context);
                     },
-                    backgroundColor: kPrimaryColor,
-                    child: const Icon(Icons.arrow_forward),
+                  ),
+                  Container(width: 15),
+                  CustomButtonFilled(
+                    text: 'Sign Up',
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
                 ],
               ),

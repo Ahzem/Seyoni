@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants/constants.dart';
+import '../constants/constants-color.dart';
 
 /* Custom button widget 
   * 
@@ -86,6 +86,35 @@ class CustomButtonOutlined extends StatelessWidget {
         side: const BorderSide(
           color: kPrimaryColor,
           width: 2,
+        ),
+      ),
+      child: Text(text),
+    );
+  }
+}
+
+// Custom button with white background and primary color text
+class CustomButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String text;
+
+  const CustomButton({
+    super.key,
+    required this.onPressed,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        foregroundColor: kPrimaryColor,
+        backgroundColor: kBackgroundColor,
+        padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 12),
+        textStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
         ),
       ),
       child: Text(text),
