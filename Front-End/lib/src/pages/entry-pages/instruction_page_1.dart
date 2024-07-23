@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import '../widgets/background_widget.dart';
-import '../pages/instruction_page_2.dart';
-import '../constants/constants.dart';
+import '../../widgets/background_widget.dart';
+import 'instruction_page_2.dart';
+import '../../constants/constants-color.dart';
+import '../../constants/constants-font.dart';
+import 'components/instructions-data.dart';
 
 void main() {
   runApp(const InstructionPage1());
@@ -12,7 +14,10 @@ class InstructionPage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: const Color.fromARGB(0, 0, 0, 0),
         body: BackgroundWidget(
@@ -22,13 +27,13 @@ class InstructionPage1 extends StatelessWidget {
             children: <Widget>[
               Image.asset(
                 'assets/images/logo.png',
-                height: 50,
+                height: height * 0.08,
                 fit: BoxFit.cover,
               ),
               Container(margin: const EdgeInsets.only(bottom: 15)),
               Image.asset(
                 'assets/images/technicians-1.png',
-                height: 350,
+                height: height * 0.5,
                 fit: BoxFit.cover,
               ),
               Container(
@@ -45,24 +50,9 @@ class InstructionPage1 extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      'Welcome to Seyoni!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    InstructionTitle1,
                     SizedBox(height: 5),
-                    Text(
-                      'Easily connect with reliable service providers for home repairs, cleaning, and more. Just a few taps and help is on the way!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: kParagraphTextColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    InstructionBody1,
                     SizedBox(height: 10),
                   ],
                 ),

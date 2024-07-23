@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import '../widgets/background_widget.dart';
+import '../../widgets/background_widget.dart';
 import 'instruction_page_1.dart'; // Make sure to import your instruction page
 
 class LaunchScreen extends StatefulWidget {
@@ -15,7 +15,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
   void initState() {
     super.initState();
     // Delay for 3 seconds before navigating to the instruction page
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 4), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const InstructionPage1()),
@@ -25,7 +25,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: BackgroundWidget(
         child: Center(
           child: Column(
@@ -33,12 +36,12 @@ class _LaunchScreenState extends State<LaunchScreen> {
             children: <Widget>[
               Image.asset(
                 'assets/images/logo-icon.png',
-                height: 150,
+                height: height * 0.25,
                 fit: BoxFit.cover,
               ),
               Image.asset(
                 'assets/images/logo-name.png',
-                height: 120,
+                height: height * 0.15,
                 fit: BoxFit.cover,
               ),
             ],

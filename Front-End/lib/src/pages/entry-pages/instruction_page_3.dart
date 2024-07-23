@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/widgets/button.dart';
-import '../widgets/background_widget.dart';
-import '../constants/constants.dart';
-import '../widgets/button.dart';
+import 'package:seyoni/src/constants/constants-font.dart';
+import 'package:seyoni/src/widgets/custom-button.dart';
+import '../../widgets/background_widget.dart';
+import '../../constants/constants-color.dart';
+import 'components/instructions-data.dart';
 
 void main() {
   runApp(const InstructionPage3());
@@ -13,7 +14,10 @@ class InstructionPage3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: const Color.fromARGB(0, 0, 0, 0),
         body: BackgroundWidget(
@@ -23,13 +27,13 @@ class InstructionPage3 extends StatelessWidget {
             children: <Widget>[
               Image.asset(
                 'assets/images/logo.png',
-                height: 50,
+                height: height * 0.08,
                 fit: BoxFit.cover,
               ),
               Container(margin: const EdgeInsets.only(bottom: 15)),
               Image.asset(
                 'assets/images/technicians-3.png',
-                height: 350,
+                height: height * 0.5,
                 fit: BoxFit.cover,
               ),
               Container(
@@ -46,24 +50,9 @@ class InstructionPage3 extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      'Effortless Convenience',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    InstructionTitle3,
                     SizedBox(height: 5),
-                    Text(
-                      'Find help effortlessly with Seyoni. Book, pay, and track providers in real-time, with emergency assistance for peace of mind.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: kParagraphTextColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    InstructionBody3,
                     SizedBox(height: 10),
                   ],
                 ),
