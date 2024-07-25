@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'constants-color.dart';
+import 'constants_color.dart';
 
 const kTitleTextStyle = TextStyle(
   fontSize: 24,

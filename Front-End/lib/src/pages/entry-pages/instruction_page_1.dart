@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../widgets/background_widget.dart';
 import 'instruction_page_2.dart';
-import '../../constants/constants-color.dart';
-import '../../constants/constants-font.dart';
-import 'components/instructions-data.dart';
+import '../../constants/constants_color.dart';
+import 'components/instructions_.dart';
+import '../../config/route.dart';
 
 void main() {
-  runApp(const InstructionPage1());
+  runApp(const instructionPage1());
 }
 
-class InstructionPage1 extends StatelessWidget {
-  const InstructionPage1({super.key});
+class instructionPage1 extends StatelessWidget {
+  const instructionPage1({super.key});
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -50,9 +49,9 @@ class InstructionPage1 extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    InstructionTitle1,
+                    instructionTitle1,
                     SizedBox(height: 5),
-                    InstructionBody1,
+                    instructionBody1,
                     SizedBox(height: 10),
                   ],
                 ),
@@ -65,11 +64,7 @@ class InstructionPage1 extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const InstructionPage2()),
-                      );
+                      Navigator.pushNamed(context, AppRoutes.instruction2);
                     },
                     backgroundColor: kPrimaryColor,
                     child: const Icon(Icons.arrow_forward),

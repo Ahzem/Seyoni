@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../widgets/background_widget.dart';
-import '../../constants/constants-color.dart';
-import 'components/instructions-data.dart';
-import '../../widgets/custom-button.dart';
+import '../../constants/constants_color.dart';
+import 'components/instructions_.dart';
+import '../../widgets/custom_button.dart';
+import '../../config/route.dart';
 
 void main() {
-  runApp(const InstructionPage3());
+  runApp(const instructionPage3());
 }
 
-class InstructionPage3 extends StatelessWidget {
-  const InstructionPage3({super.key});
+class instructionPage3 extends StatelessWidget {
+  const instructionPage3({super.key});
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -49,9 +49,9 @@ class InstructionPage3 extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    InstructionTitle3,
+                    instructionTitle3,
                     SizedBox(height: 5),
-                    InstructionBody3,
+                    instructionBody3,
                     SizedBox(height: 10),
                   ],
                 ),
@@ -62,14 +62,14 @@ class InstructionPage3 extends StatelessWidget {
                   PrimaryOutlinedButton(
                     text: 'Sign In',
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pushNamed(context, AppRoutes.signIn);
                     },
                   ),
                   Container(width: 15),
                   PrimaryFilledButton(
                     text: 'Sign Up',
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/signup');
                     },
                   ),
                 ],
