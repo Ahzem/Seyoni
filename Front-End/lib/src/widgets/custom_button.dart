@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants/constants-color.dart';
+import '../constants/constants_color.dart';
 
 class PrimaryOutlinedButton extends StatelessWidget {
   final String text;
