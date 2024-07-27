@@ -13,15 +13,15 @@ const kTextFieldDecoration = InputDecoration(
     horizontal: 20.0,
   ),
   border: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kBoarderColor),
   ),
   enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kBoarderColor),
   ),
   focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kPrimaryColor),
   ),
 );
@@ -36,15 +36,15 @@ const kPasswordFieldDecoration = InputDecoration(
     horizontal: 20.0,
   ),
   border: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kBoarderColor),
   ),
   enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kBoarderColor),
   ),
   focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kPrimaryColor),
   ),
 );
@@ -62,7 +62,7 @@ const kTextFieldLabelStyle = TextStyle(
 );
 
 const kTextFieldErrorStyle = TextStyle(
-  color: Colors.red,
+  color: kPrimaryColor,
   fontSize: 14,
   fontWeight: FontWeight.w400,
 );
@@ -77,16 +77,16 @@ const kTextFieldErrorDecoration = InputDecoration(
     horizontal: 20.0,
   ),
   border: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-    borderSide: BorderSide(color: Colors.red),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+    borderSide: BorderSide(color: kPrimaryColor),
   ),
   enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-    borderSide: BorderSide(color: Colors.red),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+    borderSide: BorderSide(color: kPrimaryColor),
   ),
   focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-    borderSide: BorderSide(color: Colors.red),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+    borderSide: BorderSide(color: kPrimaryColor),
   ),
 );
 
@@ -100,15 +100,15 @@ const kPasswordFieldErrorDecoration = InputDecoration(
     horizontal: 20.0,
   ),
   border: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-    borderSide: BorderSide(color: Colors.red),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+    borderSide: BorderSide(color: kPrimaryColor),
   ),
   enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-    borderSide: BorderSide(color: Colors.red),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+    borderSide: BorderSide(color: kPrimaryColor),
   ),
   focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-    borderSide: BorderSide(color: Colors.red),
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+    borderSide: BorderSide(color: kPrimaryColor),
   ),
 );

@@ -6,11 +6,11 @@ import '../../widgets/custom_button.dart';
 import '../../config/route.dart';
 
 void main() {
-  runApp(const instructionPage3());
+  runApp(const InstructionPage3());
 }
 
-class instructionPage3 extends StatelessWidget {
-  const instructionPage3({super.key});
+class InstructionPage3 extends StatelessWidget {
+  const InstructionPage3({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class instructionPage3 extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+        backgroundColor: kTransparentColor,
         body: BackgroundWidget(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

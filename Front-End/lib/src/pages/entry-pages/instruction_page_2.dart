@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../widgets/background_widget.dart';
-import 'instruction_page_3.dart';
 import '../../constants/constants_color.dart';
 import 'components/instructions_.dart';
 import '../../config/route.dart';
 
 void main() {
-  runApp(const instructionPage2());
+  runApp(const InstructionPage2());
 }
 
-class instructionPage2 extends StatelessWidget {
-  const instructionPage2({super.key});
+class InstructionPage2 extends StatelessWidget {
+  const InstructionPage2({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +17,7 @@ class instructionPage2 extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+        backgroundColor: kTransparentColor,
         body: BackgroundWidget(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

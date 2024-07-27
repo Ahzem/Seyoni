@@ -7,7 +7,7 @@ import '../../../constants/constants_color.dart';
 // Name field
 class NameField extends StatelessWidget {
   final TextEditingController controller;
-  final String errorText;
+  final String? errorText;
 
   const NameField({
     required Key key,
@@ -33,7 +33,7 @@ class NameField extends StatelessWidget {
 // Phone number field
 class PhoneNumberField extends StatelessWidget {
   final TextEditingController controller;
-  final String errorText;
+  final String? errorText;
 
   const PhoneNumberField({
     required Key key,
@@ -59,7 +59,7 @@ class PhoneNumberField extends StatelessWidget {
 // Email field
 class EmailFieldSignUp extends StatelessWidget {
   final TextEditingController controller;
-  final String errorText;
+  final String? errorText;
 
   const EmailFieldSignUp({
     required Key key,
@@ -85,7 +85,7 @@ class EmailFieldSignUp extends StatelessWidget {
 // Password field
 class PasswordFieldSignUp extends StatelessWidget {
   final TextEditingController controller;
-  final String errorText;
+  final String? errorText;
 
   const PasswordFieldSignUp({
     required Key key,
@@ -111,7 +111,7 @@ class PasswordFieldSignUp extends StatelessWidget {
 // Confirm password field
 class ConfirmPasswordField extends StatelessWidget {
   final TextEditingController controller;
-  final String errorText;
+  final String? errorText;
 
   const ConfirmPasswordField({
     required Key key,

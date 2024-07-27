@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../../widgets/background_widget.dart';
-import 'instruction_page_1.dart'; // Make sure to import your instruction page
 import '../../config/route.dart';
 
 class LaunchScreen extends StatefulWidget {

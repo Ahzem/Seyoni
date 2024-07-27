@@ -1,26 +1,29 @@
-// sign in page:
 import 'package:flutter/material.dart';
 import '../../constants/constants_color.dart';
-import '../../constants/constants_font.dart';
 import '../../widgets/background_widget.dart';
 import 'components/signin_fields.dart';
 
 class SignInPage extends StatelessWidget {
-  const SignInPage({superKey, Key? key});
+  const SignInPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+      backgroundColor: kTransparentColor,
       body: BackgroundWidget(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Image.asset(
-              'assets/images/logo.png',
-              height: height * 0.08,
+              'assets/images/logo-icon.png',
+              height: height * 0.15,
+              fit: BoxFit.cover,
+            ),
+            Image.asset(
+              'assets/images/logo-name.png',
+              height: height * 0.12,
               fit: BoxFit.cover,
             ),
             Container(
@@ -37,16 +40,6 @@ class SignInPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  const Text(
-                    'Sign In',
-                    style: kTitleTextStyle,
-                  ),
-                  const SizedBox(height: 5),
-                  const Text(
-                    'Sign in to your account to continue',
-                    style: kBodyTextStyle,
-                  ),
-                  const SizedBox(height: 10),
                   EmailField(
                     key: const Key('email-field'),
                     controller: TextEditingController(),
@@ -71,10 +64,13 @@ class SignInPage extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 10),
-                  ForgotPasswordButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/forgot-password');
-                    },
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ForgotPasswordButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/forgot-password');
+                      },
+                    ),
                   ),
                   const SizedBox(height: 10),
                   SignInWithGoogleButton(

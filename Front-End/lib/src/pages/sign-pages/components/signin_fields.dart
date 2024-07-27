@@ -7,7 +7,7 @@ import 'constants.dart';
 // Email field
 class EmailField extends StatelessWidget {
   final TextEditingController controller;
-  final String errorText;
+  final String? errorText;
 
   const EmailField({
     required Key key,
@@ -33,7 +33,7 @@ class EmailField extends StatelessWidget {
 // Password field
 class PasswordField extends StatelessWidget {
   final TextEditingController controller;
-  final String errorText;
+  final String? errorText;
 
   const PasswordField({
     required Key key,
@@ -132,7 +132,7 @@ class ForgotPasswordButton extends StatelessWidget {
         'Forgot Password?',
         style: TextStyle(
           color: kPrimaryColor,
-          fontSize: 16,
+          fontSize: 12,
           fontWeight: FontWeight.w500,
         ),
       ),

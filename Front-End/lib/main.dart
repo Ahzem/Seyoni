@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seyoni/src/pages/sign-pages/signup_page.dart';
 import './src/pages/entry-pages/instruction_page_1.dart';
 import './src/pages/entry-pages/instruction_page_2.dart';
 import './src/pages/entry-pages/instruction_page_3.dart';
@@ -17,14 +18,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.launch,
-      onGenerateRoute: generateRoute,
+      initialRoute: '/',
       routes: {
-        AppRoutes.launch: (context) => LaunchScreen(),
-        AppRoutes.instruction1: (context) => instructionPage1(),
-        AppRoutes.instruction2: (context) => instructionPage2(),
-        AppRoutes.instruction3: (context) => instructionPage3(),
-        AppRoutes.signIn: (context) => SignInPage(),
+        '/': (context) => const LaunchScreen(),
+        AppRoutes.instruction1: (context) => const InstructionPage1(),
+        AppRoutes.instruction2: (context) => const InstructionPage2(),
+        AppRoutes.instruction3: (context) => const InstructionPage3(),
+        AppRoutes.signIn: (context) => const SignInPage(),
+        AppRoutes.signUp: (context) => const SignUpPage(),
       },
     );
   }
