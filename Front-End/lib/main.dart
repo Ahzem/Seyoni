@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import './src/pages/home-page/homepage.dart';
 import 'package:seyoni/src/pages/sign-pages/signup_page.dart';
-import './src/pages/entry-pages/instruction_page_1.dart';
-import './src/pages/entry-pages/instruction_page_2.dart';
-import './src/pages/entry-pages/instruction_page_3.dart';
+import 'src/pages/entry-pages/instruction_page.dart';
 import './src/pages/entry-pages/launch_screen.dart';
 import './src/pages/sign-pages/signin_page.dart';
 import './src/config/route.dart';
@@ -21,11 +20,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const LaunchScreen(),
-        AppRoutes.instruction1: (context) => const InstructionPage1(),
-        AppRoutes.instruction2: (context) => const InstructionPage2(),
-        AppRoutes.instruction3: (context) => const InstructionPage3(),
+        AppRoutes.instruction1: (context) => const InstructionPage(),
         AppRoutes.signIn: (context) => const SignInPage(),
         AppRoutes.signUp: (context) => const SignUpPage(),
+        AppRoutes.home: (context) => const HomePage(),
       },
     );
   }

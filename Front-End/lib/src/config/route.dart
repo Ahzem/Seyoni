@@ -3,9 +3,7 @@ import 'package:seyoni/src/pages/sign-pages/signup_page.dart';
 import '../pages/sign-pages/signin_page.dart';
 import '../pages/home-page/homepage.dart';
 import '../pages/entry-pages/launch_screen.dart';
-import '../pages/entry-pages/instruction_page_1.dart';
-import '../pages/entry-pages/instruction_page_2.dart';
-import '../pages/entry-pages/instruction_page_3.dart';
+import '../pages/entry-pages/instruction_page.dart';
 
 class AppRoutes {
   static const String launch = '/';
@@ -28,11 +26,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case AppRoutes.home:
       return MaterialPageRoute(builder: (_) => const HomePage());
     case AppRoutes.instruction1:
-      return MaterialPageRoute(builder: (_) => const InstructionPage1());
-    case AppRoutes.instruction2:
-      return MaterialPageRoute(builder: (_) => const InstructionPage2());
-    case AppRoutes.instruction3:
-      return MaterialPageRoute(builder: (_) => const InstructionPage3());
+      return MaterialPageRoute(builder: (_) => const InstructionApp());
     default:
       return MaterialPageRoute(
         builder: (_) => Scaffold(

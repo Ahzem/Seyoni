@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 import '../../widgets/background_widget.dart';
 import '../../config/route.dart';
 
@@ -11,12 +11,18 @@ class LaunchScreen extends StatefulWidget {
 }
 
 class _LaunchScreenState extends State<LaunchScreen> {
+  double _opacity = 1.0;
+
   @override
   void initState() {
     super.initState();
-    // Delay for 3 seconds before navigating to the instruction page
-    Timer(const Duration(seconds: 4), () {
-      Navigator.pushReplacementNamed(context, AppRoutes.instruction1);
+    Timer(const Duration(seconds: 3), () {
+      setState(() {
+        _opacity = 0.0;
+      });
+      Timer(const Duration(seconds: 1), () {
+        Navigator.pushReplacementNamed(context, AppRoutes.instruction1);
+      });
     });
   }
 
@@ -27,20 +33,24 @@ class _LaunchScreenState extends State<LaunchScreen> {
       debugShowCheckedModeBanner: false,
       home: BackgroundWidget(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'assets/images/logo-icon.png',
-                height: height * 0.25,
-                fit: BoxFit.cover,
-              ),
-              Image.asset(
-                'assets/images/logo-name.png',
-                height: height * 0.15,
-                fit: BoxFit.cover,
-              ),
-            ],
+          child: AnimatedOpacity(
+            opacity: _opacity,
+            duration: const Duration(seconds: 1),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  'assets/images/logo-icon.png',
+                  height: height * 0.25,
+                  fit: BoxFit.cover,
+                ),
+                Image.asset(
+                  'assets/images/logo-name.png',
+                  height: height * 0.15,
+                  fit: BoxFit.cover,
+                ),
+              ],
+            ),
           ),
         ),
       ),
