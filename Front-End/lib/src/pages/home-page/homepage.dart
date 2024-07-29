@@ -16,11 +16,11 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const Center(
-        child:
-            Text('Home Page Content')), // Replace with your actual page widgets
-    const Center(child: Text('Search Page Content')),
-    const Center(child: Text('Notifications Page Content')),
-    const Center(child: Text('Messages Page Content')),
+        child: Text(
+            'Tasks Page Content')), // Replace with your actual page widgets
+    const Center(child: Text('Chat Page Content')),
+    const Center(child: Text('Home Page Content')),
+    const Center(child: Text('Wallet Page Content')),
     const Center(child: Text('Profile Page Content')),
   ];
 
