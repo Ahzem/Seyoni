@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:seyoni/src/config/route.dart';
+import 'components/buttons/signUp.dart';
 import '../../constants/constants_color.dart';
 import '../../widgets/background_widget.dart';
-import 'components/signin_fields.dart';
+import 'components/fields/email.dart';
+import 'components/fields/password.dart';
+import 'components/buttons/google.dart';
+import 'components/buttons/facebook.dart';
+import 'components/buttons/signIn.dart';
+import 'components/buttons/rememberMe.dart';
+import 'components/buttons/forgotPw.dart';
 
 class SignInPage extends StatelessWidget {
-  const SignInPage({Key? key}) : super(key: key);
+  const SignInPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +35,7 @@ class SignInPage extends StatelessWidget {
               fit: BoxFit.cover,
             ),
             Container(
-              margin: const EdgeInsets.all(20),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: kContainerColor,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: kBoarderColor,
-                  width: 1.5,
-                ),
-              ),
+              margin: const EdgeInsets.all(30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -51,44 +50,65 @@ class SignInPage extends StatelessWidget {
                     controller: TextEditingController(),
                     errorText: 'Password is incorrect',
                   ),
-                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const RememberMeCheckbox(),
+                      ForgotPasswordButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/forgot-password');
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                  // Dont have an account? Sign up Text and FllattenButton
                   SignInButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/home');
+                      Navigator.pushNamed(context, AppRoutes.home);
                     },
                   ),
-                  const SizedBox(height: 10),
-                  SignUpButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/signup');
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Text(
+                        'Don\'t have an account? ',
+                        style: TextStyle(
+                          color: kParagraphTextColor,
+                          fontSize: 14,
+                        ),
+                      ),
+                      FlatenSignUpButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.signUp);
+                        },
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ForgotPasswordButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/forgot-password');
-                      },
+                  const Text(
+                    'Or sign in with',
+                    style: TextStyle(
+                      color: kParagraphTextColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  SignInWithGoogleButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/home');
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  SignInWithFacebookButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/home');
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  SignInWithAppleButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/home');
-                    },
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SignInWithGoogleButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.home);
+                        },
+                      ),
+                      SignInWithFacebookButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.home);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
