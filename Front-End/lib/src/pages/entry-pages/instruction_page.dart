@@ -69,7 +69,7 @@ class _InstructionPageState extends State<InstructionPage> {
         child: Stack(
           children: <Widget>[
             Positioned(
-              top: 10,
+              top: 15,
               left: 0,
               right: 0,
               child: Image.asset(
@@ -78,7 +78,7 @@ class _InstructionPageState extends State<InstructionPage> {
               ),
             ),
             Positioned(
-              top: 70,
+              top: 75,
               left: 0,
               right: 0,
               child: Center(
@@ -146,7 +146,7 @@ class _InstructionPageState extends State<InstructionPage> {
                           PrimaryOutlinedButton(
                             text: 'Sign In',
                             onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.signIn);
+                              Navigator.pushNamed(context, AppRoutes.home);
                             },
                           ),
                           Container(width: 15),
