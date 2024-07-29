@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/pages/sign-pages/components/signin_fields.dart';
+import 'package:seyoni/src/config/route.dart';
+import 'package:seyoni/src/pages/sign-pages/components/buttons/signIn.dart';
 import '../../constants/constants_color.dart';
 import '../../widgets/background_widget.dart';
-import 'components/signup_fields.dart';
+import 'components/fields/phoneNum.dart';
+import 'components/fields/email.dart';
+import 'components/fields/password.dart';
+import 'components/fields/confirmPw.dart';
+import 'components/fields/name.dart';
+import 'components/buttons/google.dart';
+import 'components/buttons/facebook.dart';
+import 'components/buttons/signUp.dart';
 
 class SignUpPage extends StatelessWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+  const SignUpPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,67 +36,106 @@ class SignUpPage extends StatelessWidget {
               fit: BoxFit.cover,
             ),
             Container(
-              margin: const EdgeInsets.all(20),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: kContainerColor,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: kBoarderColor,
-                  width: 1.5,
-                ),
-              ),
+              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  EmailFieldSignUp(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      FNameField(
+                        key: const Key('first-name-field'),
+                        controller: TextEditingController(),
+                        errorText: 'First name is incorrect',
+                      ),
+                      const SizedBox(width: 10),
+                      LNameField(
+                        key: const Key('last-name-field'),
+                        controller: TextEditingController(),
+                        errorText: 'Last name is incorrect',
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+                  EmailField(
                     key: const Key('email-field'),
                     controller: TextEditingController(),
                     errorText: 'Email is incorrect',
                   ),
+
+                  const SizedBox(height: 10),
+                  PhoneNumberField(
+                    key: const Key('phone-number-field'),
+                    controller: TextEditingController(),
+                    errorText: 'Phone number is incorrect',
+                  ),
+
                   const SizedBox(height: 10),
                   PasswordField(
                     key: const Key('password-field'),
                     controller: TextEditingController(),
                     errorText: 'Password is incorrect',
                   ),
+
                   const SizedBox(height: 10),
-                  SignInButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/signin');
-                    },
+                  ConfirmPasswordField(
+                    key: const Key('confirm-password-field'),
+                    controller: TextEditingController(),
+                    errorText: 'Password is incorrect',
                   ),
-                  const Text(
-                    'Already have an account?',
-                    style: TextStyle(
-                      color: kContainerColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+
                   const SizedBox(height: 10),
+                  // Dont have an account? Sign up Text and FllattenButton
                   SignUpButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/signup');
+                      Navigator.pushNamed(context, AppRoutes.home);
                     },
                   ),
-                  const SizedBox(height: 10),
-                  SignInWithGoogleButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/home');
-                    },
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Text(
+                        'Already have an account? ',
+                        style: TextStyle(
+                          color: kParagraphTextColor,
+                          fontSize: 14,
+                        ),
+                      ),
+                      FlatenSignInButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.signIn);
+                        },
+                      ),
+                    ],
                   ),
+
                   const SizedBox(height: 10),
-                  SignInWithFacebookButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/home');
-                    },
+                  const Text(
+                    'Or sign Up with',
+                    style: TextStyle(
+                      color: kParagraphTextColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
+
                   const SizedBox(height: 10),
-                  SignInWithAppleButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/home');
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SignInWithGoogleButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.home);
+                        },
+                      ),
+                      SignInWithFacebookButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.home);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),

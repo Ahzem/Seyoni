@@ -6,7 +6,7 @@ const kPrimaryColor = Color.fromRGBO(255, 165, 0, 1);
 const kSecondaryColor = Color.fromRGBO(255, 165, 0, 0.5);
 const kAccentColor = Color.fromRGBO(255, 165, 0, 0.2);
 const kBackgroundColor = Color.fromRGBO(255, 255, 255, 1);
-const kParagraphTextColor = Color.fromRGBO(255, 255, 255, 0.8);
+const kParagraphTextColor = Color.fromRGBO(255, 255, 255, 0.7);
 const kContainerColor = Color.fromRGBO(0, 0, 0, 0.5);
 const kTransparentColor = Color.fromRGBO(0, 0, 0, 0);
 
