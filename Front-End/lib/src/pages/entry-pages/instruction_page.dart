@@ -146,14 +146,14 @@ class _InstructionPageState extends State<InstructionPage> {
                           PrimaryOutlinedButton(
                             text: 'Sign In',
                             onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.home);
+                              Navigator.pushNamed(context, AppRoutes.signIn);
                             },
                           ),
                           Container(width: 15),
                           PrimaryFilledButton(
                             text: 'Sign Up',
                             onPressed: () {
-                              Navigator.pushNamed(context, '/signup');
+                              Navigator.pushNamed(context, AppRoutes.signUp);
                             },
                           ),
                         ],
