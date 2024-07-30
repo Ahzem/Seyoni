@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/pages/sign-pages/signup_page.dart';
 import '../pages/sign-pages/signin_page.dart';
-import '../pages/home-page/homepage.dart';
+import '../pages/main/mainpage.dart';
 import '../pages/entry-pages/launch_screen.dart';
 import '../pages/entry-pages/instruction_page.dart';
 
