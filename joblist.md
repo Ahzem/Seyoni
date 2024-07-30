@@ -82,7 +82,7 @@
   - Ventilation System Repair
   - System upgrade and Replacement
 
-- **Elder Care Services (Elder Care givers)**
+- **Elder Care Services (Elder Care Givers)**
   - Personal Care Assistance
   - Medication Management
   - Companionship and Social Interaction
