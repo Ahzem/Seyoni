@@ -24,7 +24,9 @@ Seyoni is a mobile application that connects service seekers with providers in a
 
 ## Getting Started
 
-To get started with Seyoni, you'll need to clone the repository, set up the development environment, and understand the basic workflow. Follow the instructions in the [Installation and Setup](#installation-and-setup) section.
+To get started with Seyoni, you'll need to fork the repository, set up the development environment, and understand the basic workflow. Follow the [Contribute](CONTRIBUTING.md) section.
+
+[![start-course](https://md-buttons.francoisvoron.com/button.svg?text=Fork%20Now)](https://github.com/Ahzem/Seyoni/fork)
 
 ## Architecture
 
