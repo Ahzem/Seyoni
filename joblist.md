@@ -29,7 +29,7 @@
   - Lightning Installation
   - Generator Installation
 
-- **Mechanic Services (mechanicians)**
+- **Mechanic Services (Mechanicians)**
   - Engine Diagnostic and Repair
   - Breake Services
   - Transmission Repair
@@ -82,7 +82,7 @@
   - Ventilation System Repair
   - System upgrade and Replacement
 
-- **Elder Care Services (Elder care givers)**
+- **Elder Care Services (Elder Care givers)**
   - Personal Care Assistance
   - Medication Management
   - Companionship and Social Interaction
