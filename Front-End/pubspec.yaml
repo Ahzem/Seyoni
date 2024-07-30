@@ -98,3 +98,5 @@ flutter:
     - assets/images/
     # You can also include entire directories
     - assets/icons/
+    - assets/icons/NavBar/
+    - assets/icons/AppBar/

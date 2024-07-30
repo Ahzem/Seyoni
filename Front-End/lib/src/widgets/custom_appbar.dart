@@ -25,8 +25,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.notifications_none_outlined,
-                        size: 24, color: kPrimaryColor),
+                    icon: Image.asset(
+                      'assets/icons/AppBar/notification-outlined.png',
+                      height: 24,
+                      width: 24,
+                    ),
                     onPressed: () {},
                   ),
                   const Image(
@@ -35,8 +38,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     fit: BoxFit.cover,
                   ),
                   IconButton(
-                    icon: const Icon(Icons.menu_outlined,
-                        size: 24, color: kPrimaryColor),
+                    icon: Image.asset(
+                      'assets/icons/AppBar/menu.png',
+                      height: 24,
+                      width: 24,
+                    ),
                     onPressed: () {},
                   ),
                 ],

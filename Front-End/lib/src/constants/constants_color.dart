@@ -12,3 +12,11 @@ const kTransparentColor = Color.fromRGBO(0, 0, 0, 0);
 
 // box border
 const kBoarderColor = Color.fromRGBO(255, 165, 0, 50);
+
+// Gradiant Border Color
+const kGradiantColor1 = LinearGradient(
+  colors: [
+    Color.fromRGBO(255, 255, 255, 0.4),
+    Color.fromRGBO(255, 255, 255, 0.1)
+  ],
+);

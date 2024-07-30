@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './src/pages/home-page/homepage.dart';
+import 'src/pages/main/mainpage.dart';
 import 'package:seyoni/src/pages/sign-pages/signup_page.dart';
 import 'src/pages/entry-pages/instruction_page.dart';
 import './src/pages/entry-pages/launch_screen.dart';
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const LaunchScreen(),
-        AppRoutes.instruction1: (context) => const InstructionPage(),
+        AppRoutes.instruction: (context) => const InstructionPage(),
         AppRoutes.signIn: (context) => const SignInPage(),
         AppRoutes.signUp: (context) => const SignUpPage(),
         AppRoutes.home: (context) => const HomePage(),

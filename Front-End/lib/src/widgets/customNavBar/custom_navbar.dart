@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'components/image_path.dart';
 import '../../constants/constants_color.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const CustomBottomNavBar(
-      {Key? key, required this.currentIndex, required this.onTap})
-      : super(key: key);
+  const CustomBottomNavBar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
   @override
   _CustomBottomNavBarState createState() => _CustomBottomNavBarState();
@@ -16,42 +19,88 @@ class CustomBottomNavBar extends StatefulWidget {
 class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: kTransparentColor,
-      currentIndex: widget.currentIndex,
-      selectedItemColor: kPrimaryColor,
-      unselectedItemColor: kPrimaryColor.withOpacity(0.7),
-      onTap: widget.onTap,
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today_outlined, size: 30),
-          activeIcon: Icon(Icons.calendar_today, size: 30),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.message_outlined, size: 30),
-          activeIcon: Icon(Icons.message, size: 30),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined, size: 30),
-          activeIcon: Icon(Icons.home_rounded, size: 30),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.wallet_outlined, size: 30),
-          activeIcon: Icon(Icons.wallet, size: 30),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline, size: 30),
-          activeIcon: Icon(Icons.person, size: 30),
-          label: '',
-        ),
-      ],
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(30),
+        topRight: Radius.circular(30),
+      ),
+      child: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.transparent,
+        currentIndex: widget.currentIndex,
+        selectedItemColor: kPrimaryColor,
+        unselectedItemColor: kPrimaryColor.withOpacity(0.7),
+        onTap: widget.onTap,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: [
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              taskOutlined,
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: Image.asset(
+              taskFilled,
+              height: 30,
+              width: 30,
+            ),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              chatOutlined,
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: Image.asset(
+              chatFilled,
+              height: 30,
+              width: 30,
+            ),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              homeOutlined,
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: Image.asset(
+              homeFilled,
+              height: 30,
+              width: 30,
+            ),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              walletOutlined,
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: Image.asset(
+              walletFilled,
+              height: 30,
+              width: 30,
+            ),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              profileOutlined,
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: Image.asset(
+              profileFilled,
+              height: 30,
+              width: 30,
+            ),
+            label: '',
+          ),
+        ],
+      ),
     );
   }
 }

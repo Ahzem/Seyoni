@@ -15,11 +15,7 @@ class BackgroundWidget extends StatelessWidget {
         Positioned.fill(
           child: Image.asset(
             'assets/images/background.png', // Replace with your background image path
-            fit: BoxFit.cover,
-            color: Colors.black
-                .withOpacity(0.2), // Optional: Adds a dark overlay to the image
-            colorBlendMode:
-                BlendMode.darken, // Optional: Blends the overlay with the image
+            fit: BoxFit.cover, // Optional: Blends the overlay with the image
           ),
         ),
         // Apply blur filter
