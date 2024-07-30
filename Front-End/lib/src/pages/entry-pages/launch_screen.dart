@@ -21,7 +21,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
         _opacity = 0.0;
       });
       Timer(const Duration(seconds: 1), () {
-        Navigator.pushReplacementNamed(context, AppRoutes.instruction1);
+        Navigator.pushReplacementNamed(context, AppRoutes.instruction);
       });
     });
   }

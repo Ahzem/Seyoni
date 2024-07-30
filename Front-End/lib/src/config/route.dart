@@ -10,9 +10,7 @@ class AppRoutes {
   static const String signIn = '/signin';
   static const String signUp = '/signup';
   static const String home = '/home';
-  static const String instruction1 = '/instruction1';
-  static const String instruction2 = '/instruction2';
-  static const String instruction3 = '/instruction3';
+  static const String instruction = '/instruction';
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -25,7 +23,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const SignUpPage());
     case AppRoutes.home:
       return MaterialPageRoute(builder: (_) => const HomePage());
-    case AppRoutes.instruction1:
+    case AppRoutes.instruction:
       return MaterialPageRoute(builder: (_) => const InstructionApp());
     default:
       return MaterialPageRoute(
