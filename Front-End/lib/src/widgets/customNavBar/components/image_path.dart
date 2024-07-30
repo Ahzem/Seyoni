@@ -1,14 +1,14 @@
-const homeOutlined = 'assets/icons/home_outlined.svg';
-const homeFilled = 'assets/icons/home_filled.svg';
+const String homeOutlined = 'assets/icons/NavBar/home-outlined.png';
+const String homeFilled = 'assets/icons/NavBar/home-filled.png';
 
-const callenderOutlined = 'assets/icons/calendar_outlined.svg';
-const callenderFilled = 'assets/icons/calendar_filled.svg';
+const String taskOutlined = 'assets/icons/NavBar/task-outlined.png';
+const String taskFilled = 'assets/icons/NavBar/task-filled.png';
 
-const chatOutlined = 'assets/icons/chat_outlined.svg';
-const chatFilled = 'assets/icons/chat_filled.svg';
+const String chatOutlined = 'assets/icons/NavBar/chat-outlined.png';
+const String chatFilled = 'assets/icons/NavBar/chat-filled.png';
 
-const profileOutlined = 'assets/icons/profile_outlined.svg';
-const profileFilled = 'assets/icons/profile_filled.svg';
+const String profileOutlined = 'assets/icons/NavBar/user-outlined.png';
+const String profileFilled = 'assets/icons/NavBar/user-filled.png';
 
-const walletOutlined = 'assets/icons/wallet_outlined.svg';
-const walletFilled = 'assets/icons/wallet_filled.svg';
+const String walletOutlined = 'assets/icons/NavBar/wallet-outlined.png';
+const String walletFilled = 'assets/icons/NavBar/wallet-filled.png';
