@@ -36,7 +36,9 @@ class _HomePageState extends State<HomePage> {
       appBar: const CustomAppBar(),
       backgroundColor: kTransparentColor,
       body: BackgroundWidget(
-        child: _pages[_currentIndex],
+        child: SingleChildScrollView(
+          child: _pages[_currentIndex],
+        ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,

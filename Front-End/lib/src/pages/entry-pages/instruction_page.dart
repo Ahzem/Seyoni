@@ -62,105 +62,108 @@ class _InstructionPageState extends State<InstructionPage> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    double topPadding = MediaQuery.of(context).padding.top;
+    double bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
       backgroundColor: kTransparentColor,
       body: BackgroundWidget(
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: 15,
-              left: 0,
-              right: 0,
-              child: Image.asset(
-                'assets/images/logo.png',
-                height: height * 0.08,
-              ),
-            ),
-            Positioned(
-              top: 75,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  child: Image.asset(
-                    _images[_currentPage],
-                    key: ValueKey<int>(_currentPage),
-                    height: height * 0.5,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 420,
-              left: 0,
-              right: 0,
-              child: Container(
-                margin: const EdgeInsets.all(20),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: kContainerColor,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: kBoarderColor,
-                    width: 1.5,
-                  ),
-                ),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  child: Column(
-                    key: ValueKey<int>(_currentPage),
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      _titles[_currentPage],
-                      const SizedBox(height: 5),
-                      _bodies[_currentPage],
-                      const SizedBox(height: 5),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 20,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: _currentPage < _images.length - 1
-                    ? SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: FloatingActionButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          onPressed: _nextPage,
-                          backgroundColor: kPrimaryColor,
-                          child: const Icon(Icons.arrow_forward),
+        child: SingleChildScrollView(
+          child: Container(
+            height: height,
+            width: width,
+            padding: EdgeInsets.only(top: topPadding, bottom: bottomPadding),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Image.asset(
+                      'assets/images/logo.png',
+                      height: height * 0.08,
+                    ),
+                    SizedBox(height: height * 0.02), // Adjusted spacing
+                    Center(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 500),
+                        child: Image.asset(
+                          _images[_currentPage],
+                          key: ValueKey<int>(_currentPage),
+                          height: height * 0.5,
                         ),
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          PrimaryOutlinedButton(
-                            text: 'Sign In',
-                            onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.signIn);
-                            },
-                          ),
-                          Container(width: 15),
-                          PrimaryFilledButton(
-                            text: 'Sign Up',
-                            onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.signUp);
-                            },
-                          ),
-                        ],
                       ),
-              ),
+                    ),
+                  ],
+                ),
+                Container(
+                  margin: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: kContainerColor,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: kBoarderColor,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    child: Column(
+                      key: ValueKey<int>(_currentPage),
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        _titles[_currentPage],
+                        const SizedBox(height: 5),
+                        _bodies[_currentPage],
+                        const SizedBox(height: 5),
+                      ],
+                    ),
+                  ),
+                ),
+                Center(
+                  child: _currentPage < _images.length - 1
+                      ? SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: FloatingActionButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            onPressed: _nextPage,
+                            backgroundColor: kPrimaryColor,
+                            child: const Icon(Icons.arrow_forward),
+                          ),
+                        )
+                      : Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                PrimaryOutlinedButton(
+                                  text: 'Sign In',
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.signIn);
+                                  },
+                                ),
+                                Container(width: 15),
+                                PrimaryFilledButton(
+                                  text: 'Sign Up',
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.signUp);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                ),
+                Container(height: 10),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

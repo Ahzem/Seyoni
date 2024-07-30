@@ -30,7 +30,11 @@ class BackgroundWidget extends StatelessWidget {
           ),
         ),
         // Your main content goes here
-        child,
+        Positioned.fill(
+          child: Center(
+            child: child,
+          ),
+        ),
       ],
     );
   }

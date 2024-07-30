@@ -15,7 +15,7 @@ class SignInWithFacebookButton extends StatelessWidget {
         side: const BorderSide(color: kPrimaryColor),
         padding: const EdgeInsets.symmetric(
           horizontal: 10,
-          vertical: 15,
+          vertical: 8,
         ),
         textStyle: const TextStyle(
           fontSize: 18,
@@ -28,7 +28,7 @@ class SignInWithFacebookButton extends StatelessWidget {
             'assets/icons/facebook.png',
             height: 30,
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 5),
           const Text(
             'Facebook',
             style: TextStyle(color: kParagraphTextColor),

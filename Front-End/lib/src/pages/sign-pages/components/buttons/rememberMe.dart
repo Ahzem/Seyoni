@@ -34,11 +34,10 @@ class _RememberMeCheckboxState extends State<RememberMeCheckbox> {
             activeColor: kPrimaryColor, // Color when the checkbox is checked
           ),
         ),
-        const SizedBox(width: 2.0),
         const Text('Remember Me',
             style: TextStyle(
                 color: kPrimaryColor,
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w400)),
       ],
     );

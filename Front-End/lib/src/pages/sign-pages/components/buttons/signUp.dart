@@ -16,8 +16,8 @@ class SignUpButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: kPrimaryColor,
         padding: EdgeInsets.symmetric(
-          horizontal: width * 0.3,
-          vertical: height * 0.02,
+          horizontal: width * 0.28,
+          vertical: height * 0.015,
         ),
         textStyle: const TextStyle(
           fontSize: 22,
