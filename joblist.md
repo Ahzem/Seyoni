@@ -95,6 +95,3 @@
   - Overnight Babysitting
   - Meal Preparation for Children
   - Educational and Play Activities
-
-
-

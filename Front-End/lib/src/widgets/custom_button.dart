@@ -21,7 +21,7 @@ class PrimaryOutlinedButton extends StatelessWidget {
         side: const BorderSide(color: kPrimaryColor),
         padding: EdgeInsets.symmetric(
           horizontal: width * 0.1,
-          vertical: height * 0.02,
+          vertical: height * 0.01,
         ),
         textStyle: const TextStyle(
           fontSize: 18,
@@ -56,7 +56,7 @@ class PrimaryFilledButton extends StatelessWidget {
         backgroundColor: kPrimaryColor,
         padding: EdgeInsets.symmetric(
           horizontal: width * 0.1,
-          vertical: height * 0.02,
+          vertical: height * 0.01,
         ),
         textStyle: const TextStyle(
           fontSize: 18,
