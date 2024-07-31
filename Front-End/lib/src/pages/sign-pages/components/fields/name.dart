@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
-import '../decor/text.dart';
 import '../decor/name.dart';
 import '../../../../constants/constants_color.dart';
-import '../decor/phoneNum.dart';
 
 // Sign up form:
 

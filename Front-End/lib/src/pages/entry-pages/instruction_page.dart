@@ -4,6 +4,7 @@ import '../../widgets/background_widget.dart';
 import '../../constants/constants_color.dart';
 import 'components/instructions_data.dart';
 import '../../config/route.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(const InstructionApp());
@@ -32,9 +33,9 @@ class _InstructionPageState extends State<InstructionPage> {
   int _currentPage = 0;
 
   final List<String> _images = [
-    'assets/images/technicians-1.png',
-    'assets/images/technicians-2.png',
-    'assets/images/technicians-3.png',
+    'assets/svg/technicians-1.svg',
+    'assets/svg/technicians-2.svg',
+    'assets/svg/technicians-3.svg',
   ];
 
   final List<Widget> _titles = [
@@ -87,7 +88,7 @@ class _InstructionPageState extends State<InstructionPage> {
                     Center(
                       child: AnimatedSwitcher(
                         duration: const Duration(milliseconds: 500),
-                        child: Image.asset(
+                        child: SvgPicture.asset(
                           _images[_currentPage],
                           key: ValueKey<int>(_currentPage),
                           height: height * 0.5,

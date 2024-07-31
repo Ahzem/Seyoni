@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/config/route.dart';
-import 'components/buttons/signUp.dart';
+import 'components/buttons/sign_up.dart';
 import '../../constants/constants_color.dart';
 import '../../widgets/background_widget.dart';
 import 'components/fields/email.dart';
 import 'components/fields/password.dart';
 import 'components/buttons/google.dart';
 import 'components/buttons/facebook.dart';
-import 'components/buttons/signIn.dart';
-import 'components/buttons/rememberMe.dart';
-import 'components/buttons/forgotPw.dart';
+import 'components/buttons/sign_in.dart';
+import 'components/buttons/remember_me.dart';
+import 'components/buttons/forgot_pw.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
