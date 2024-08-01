@@ -13,7 +13,8 @@ import 'components/buttons/facebook.dart';
 import 'components/buttons/sign_up.dart';
 
 class SignUpPage extends StatelessWidget {
-  const SignUpPage({super.key});
+  final TextEditingController phoneNumberController = TextEditingController();
+  SignUpPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -66,32 +67,36 @@ class SignUpPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     EmailField(
-                      key: const Key('email-field'),
+                      key: const Key('email'),
                       controller: TextEditingController(),
                       errorText: 'Email is incorrect',
                     ),
                     const SizedBox(height: 10),
                     PhoneNumberField(
-                      key: const Key('phone-number-field'),
+                      key: const Key('phone_number'),
                       controller: TextEditingController(),
                       errorText: 'Phone number is incorrect',
                     ),
                     const SizedBox(height: 10),
                     PasswordField(
-                      key: const Key('password-field'),
+                      key: const Key('password'),
                       controller: TextEditingController(),
                       errorText: 'Password is incorrect',
                     ),
                     const SizedBox(height: 10),
                     ConfirmPasswordField(
-                      key: const Key('confirm-password-field'),
+                      key: const Key('confirm_password'),
                       controller: TextEditingController(),
                       errorText: 'Password is incorrect',
                     ),
                     const SizedBox(height: 20),
                     SignUpButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.home);
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.otppage,
+                          arguments: phoneNumberController.text,
+                        );
                       },
                     ),
                     Row(

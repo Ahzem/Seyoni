@@ -3,7 +3,7 @@ import 'constants_color.dart';
 
 const kTitleTextStyle = TextStyle(
   fontSize: 24,
-  fontWeight: FontWeight.bold,
+  fontWeight: FontWeight.w600,
   color: Colors.white,
 );
 
@@ -14,7 +14,13 @@ const kSubtitleTextStyle = TextStyle(
 );
 
 const kBodyTextStyle = TextStyle(
-  fontSize: 15,
+  fontSize: 14,
   color: kParagraphTextColor,
   fontWeight: FontWeight.w400,
+);
+
+const kOtpInputTextStyle = TextStyle(
+  fontSize: 24,
+  color: kParagraphTextColor,
+  fontWeight: FontWeight.w500,
 );
