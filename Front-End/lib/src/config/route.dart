@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/pages/sign-pages/signup_page.dart';
+import '../pages/sign-pages/signup_page.dart';
+import '../pages/verification/otp_screen.dart';
 import '../pages/sign-pages/signin_page.dart';
 import '../pages/main/mainpage.dart';
 import '../pages/entry-pages/launch_screen.dart';
@@ -11,6 +12,7 @@ class AppRoutes {
   static const String signUp = '/signup';
   static const String home = '/home';
   static const String instruction = '/instruction';
+  static const String otppage = '/otp';
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -20,11 +22,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case AppRoutes.signIn:
       return MaterialPageRoute(builder: (_) => const SignInPage());
     case AppRoutes.signUp:
-      return MaterialPageRoute(builder: (_) => const SignUpPage());
+      return MaterialPageRoute(builder: (_) => SignUpPage());
     case AppRoutes.home:
       return MaterialPageRoute(builder: (_) => const HomePage());
     case AppRoutes.instruction:
       return MaterialPageRoute(builder: (_) => const InstructionApp());
+    case AppRoutes.otppage:
+      return MaterialPageRoute(builder: (_) => const OtpScreen());
     default:
       return MaterialPageRoute(
         builder: (_) => Scaffold(
