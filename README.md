@@ -22,9 +22,16 @@ Welcome to the Seyoni project! Seyoni is a mobile application designed to connec
 
 Seyoni is a mobile application that connects service seekers with providers in a seamless and efficient manner. Whether you need home repairs, cleaning, or any other service, Seyoni makes it easy to find and book the right professional.
 
+### Figma Prototype Direct Link
+
+[![start-course](https://md-buttons.francoisvoron.com/button.svg?text=View%20the%20Figma%20Design)](https://www.figma.com/proto/f8GmCOzIvcgMbZLRCF4cdO/Seyoni?page-id=70%3A171&node-id=331-604&viewport=128%2C-2399%2C0.97&t=bPiTQua36M0JO1VP-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=331%3A604&share=1&show-proto-sidebar=1)
+
+
 ## Getting Started
 
-To get started with Seyoni, you'll need to clone the repository, set up the development environment, and understand the basic workflow. Follow the instructions in the [Installation and Setup](#installation-and-setup) section.
+To get started with Seyoni, you'll need to fork the repository, set up the development environment, and understand the basic workflow. Follow the [Contribute](CONTRIBUTING.md) section.
+
+[![start-course](https://md-buttons.francoisvoron.com/button.svg?text=Fork%20Now)](https://github.com/Ahzem/Seyoni/fork)
 
 ## Architecture
 

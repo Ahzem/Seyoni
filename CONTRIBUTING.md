@@ -1,86 +1,109 @@
-# Contributing to Seyoni
+# Contributing to SEYONI - Home Services Management System
 
-We appreciate your interest in contributing to Seyoni! Here are some guidelines to help you get started.
+Thank you for considering contributing to our project! Please follow the guidelines below to ensure a smooth and effective collaboration.
 
-## Getting Started
+## How to Contribute
 
-1. **Fork the repository:**
-   - Click the "Fork" button at the top right of the repository page.
+### 1. Fork the Repository
+First, fork the repository to your own GitHub account:
+1. Go to the repository [SEYONI - Home Services Management System](https://github.com/Ahzem/Seyoni.git).
+2. Click the **Fork** button at the top right of the page or start contributing now by clicking the button below:
 
-2. **Clone your forked repository:**
-   ```bash
-   git clone https://github.com/<your-username>/Seyoni.git
-   ```
+[![start-course](https://md-buttons.francoisvoron.com/button.svg?text=Fork%20Now)](https://github.com/Ahzem/Seyoni/fork)
 
-3. **Create a new branch:**
-   - Make sure to create a new branch for each feature or bugfix you work on.
-   ```bash
-   git checkout -b feature-name
-   ```
 
-## Folder Organization
+### 2. Clone the Forked Repository
+Clone the forked repository to your local machine:
+```bash
+git clone https://github.com/<your-username>/Seyoni.git
+cd Seyoni
+```
 
-To maintain a consistent structure, please follow the folder organization shown below:
+### 3. Set Up the Front-End
+Navigate to the Front-End directory and set up the Flutter project:
+```bash
+cd Front-End
+flutter pub get
+flutter run
+```
 
+### 4. Directory Structure
+Follow the directory organization management:
 ```
 lib
 │───main.dart    
 └───src
+    │───config
+    |    │──route.dart
+    │───constants
+    |    │──constants_color.dart
+    |    │──constants_font.dart
     │───pages
-    |    │──SignInPage.dart
-    |    │──SignUpPage.dart
+    |    │──sign-pages
+    |    |     │──components
+    |    |     │──signin_page.dart
+    |    |     │──signup_page.dart
+    |    │──main
+    |    |     │──components
+    |    |     │──mainpage.dart
+    |    │──entry-pages
+    |    |     │──components
+    |    |     │──instruction_page.dart
+    |    |     │──launch_screen.dart
     │───widgets
+    |    │──customNavBar
+    |    │──background_widget.dart
+    |    │──custom_app.dart
+    |    │──route.dart
 ```
 
-All images and icons should be saved in the `assets` folder at the root of the project:
+### 5. Make Changes
+1. **Add New Pages**: Use the `pages` directory.
+2. **Common Use Templates**: Use the `widgets` directory.
+3. **Routing**: Set up routes in `src/config/route.dart`.
+4. **Background Image**: Ensure every page uses `background_widget.dart`.
+5. **Custom Buttons**: Use `custom_button` for adding any buttons.
+6. **Styles**: Add any colors or text styles in the `constants` directory.
+7. **Assets**: Use the `assets` directory for adding images or icons.
 
+### 6. Sync with the Main Repository
+1. **Watch the Repository**: Click the **Watch** button on the main repository to get updates.
+2. **Sync Your Fork**: Fetch and pull updates from the main repository:
+```bash
+git fetch upstream
+git pull upstream main
 ```
-assets
-│───images
-│───icons
+
+### 7. Commit and Push Changes
+1. **Track Changes**:
+```bash
+git add .
+```
+2. **Commit Changes**:
+```bash
+git commit -m "Your detailed description of the changes."
+```
+3. **Push Changes**:
+```bash
+git push origin main
 ```
 
-## Making Changes
+### 8. Create a Pull Request
+1. Go to your forked repository on GitHub.
+2. Click the **New pull request** button.
+3. Provide a detailed description of the changes you made.
+4. Submit the pull request for review.
 
-1. **Check Issues:**
-   - Look at the issues in the main repository to find tasks that need to be addressed.
+### 9. Back-End Setup
+1. **Navigate to Back-End Directory**:
+```bash
+cd Back-End
+```
+2. **Install Dependencies**:
+```bash
+npm install
+```
 
-2. **Commit your changes:**
-   - Write clear and concise commit messages.
-   ```bash
-   git commit -m "Description of changes"
-   ```
+---
 
-3. **Push to your fork:**
-   ```bash
-   git push origin feature-name
-   ```
-
-4. **Create a Pull Request:**
-   - Navigate to the main repository and create a pull request from your forked repository.
-   - Ensure your pull request references the issue it addresses. Once your pull request is reviewed and merged, it will be assigned to that issue, and the issue will be closed.
-
-## Development Workflow
-
-1. **Run the application:**
-   - Go to the `Rront-End` folder and run the Flutter command:
-   ```bash
-   flutter run
-   ```
-
-2. **Sync with the main repository:**
-   - Use the "Sync fork" button in the GitHub UI to keep your fork in sync.
-   - Alternatively, fetch and pull the changes using the command line:
-   ```bash
-   git fetch upstream
-   git pull upstream main
-   ```
-
-3. **Use GitHub Discussions:**
-   - Ensure all team members stay updated by using GitHub Discussions for any changes or updates.
-
-## Code of Conduct
-
-Please read and adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a welcoming and inclusive community.
-
-Thank you for contributing to Seyoni!
+Thank you for your contributions!
