@@ -4,6 +4,7 @@ import '../../widgets/background_widget.dart';
 import '../../constants/constants_color.dart';
 import 'components/instructions_data.dart';
 import '../../config/route.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(const InstructionApp());
@@ -30,19 +31,17 @@ class InstructionPage extends StatefulWidget {
 
 class _InstructionPageState extends State<InstructionPage> {
   int _currentPage = 0;
-
+  final PageController _pageController = PageController();
   final List<String> _images = [
-    'assets/images/technicians-1.png',
-    'assets/images/technicians-2.png',
-    'assets/images/technicians-3.png',
+    'assets/svg/technicians-1.svg',
+    'assets/svg/technicians-2.svg',
+    'assets/svg/technicians-3.svg',
   ];
-
   final List<Widget> _titles = [
     instructionTitle1,
     instructionTitle2,
     instructionTitle3,
   ];
-
   final List<Widget> _bodies = [
     instructionBody1,
     instructionBody2,
@@ -50,13 +49,14 @@ class _InstructionPageState extends State<InstructionPage> {
   ];
 
   void _nextPage() {
-    setState(() {
-      if (_currentPage < _images.length - 1) {
-        _currentPage++;
-      } else {
-        Navigator.pushNamed(context, AppRoutes.signIn);
-      }
-    });
+    if (_currentPage < _images.length - 1) {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      Navigator.pushNamed(context, AppRoutes.signIn);
+    }
   }
 
   @override
@@ -85,12 +85,22 @@ class _InstructionPageState extends State<InstructionPage> {
                     ),
                     SizedBox(height: height * 0.02), // Adjusted spacing
                     Center(
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 500),
-                        child: Image.asset(
-                          _images[_currentPage],
-                          key: ValueKey<int>(_currentPage),
-                          height: height * 0.5,
+                      child: SizedBox(
+                        height: height * 0.5,
+                        child: PageView.builder(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _currentPage = index;
+                            });
+                          },
+                          itemCount: _images.length,
+                          itemBuilder: (context, index) {
+                            return SvgPicture.asset(
+                              _images[index],
+                              height: height * 0.5,
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -107,18 +117,14 @@ class _InstructionPageState extends State<InstructionPage> {
                       width: 1.5,
                     ),
                   ),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 500),
-                    child: Column(
-                      key: ValueKey<int>(_currentPage),
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        _titles[_currentPage],
-                        const SizedBox(height: 5),
-                        _bodies[_currentPage],
-                        const SizedBox(height: 5),
-                      ],
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      _titles[_currentPage],
+                      const SizedBox(height: 5),
+                      _bodies[_currentPage],
+                      const SizedBox(height: 5),
+                    ],
                   ),
                 ),
                 Center(

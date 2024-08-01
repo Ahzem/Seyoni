@@ -32,7 +32,7 @@ const instructionTitle3 = Text(
 );
 
 const instructionBody3 = Text(
-  'Find help effortlessly with Seyoni. Book, pay, and track providers in real-time, with emergency assistance for peace of mind.',
+  'Find help effortlessly with Seyoni. Book, Pay, and Track providers in real-time, with emergency assistance for peace of mind.',
   style: kBodyTextStyle,
   textAlign: TextAlign.center,
 );
