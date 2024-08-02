@@ -8,7 +8,6 @@ import 'components/fields/password.dart';
 import 'components/buttons/google.dart';
 import 'components/buttons/facebook.dart';
 import 'components/buttons/sign_in.dart';
-import 'components/buttons/remember_me.dart';
 import 'components/buttons/forgot_pw.dart';
 
 class SignInPage extends StatelessWidget {
@@ -57,7 +56,6 @@ class SignInPage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        const RememberMeCheckbox(),
                         ForgotPasswordButton(
                           onPressed: () {
                             Navigator.pushNamed(context, '/forgot-password');
