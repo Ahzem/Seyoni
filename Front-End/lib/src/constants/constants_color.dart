@@ -20,3 +20,5 @@ const kGradiantColor1 = LinearGradient(
     Color.fromRGBO(255, 255, 255, 0.1)
   ],
 );
+
+const kErrorColor = Color.fromRGBO(255, 0, 0, 1);

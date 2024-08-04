@@ -36,3 +36,9 @@ const kAlertDescriptionTextStyle = TextStyle(
   color: kParagraphTextColor,
   fontWeight: FontWeight.w400,
 );
+
+const kErrorTextStyle = TextStyle(
+  fontSize: 14,
+  color: kErrorColor,
+  fontWeight: FontWeight.w400,
+);

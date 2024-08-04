@@ -19,7 +19,6 @@ class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: kTransparentColor,
       body: BackgroundWidget(
@@ -40,8 +39,7 @@ class SignUpPage extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
               Container(
-                width: width * 0.8, // Adjust width to fit the screen
-                margin: const EdgeInsets.symmetric(vertical: 10),
+                margin: const EdgeInsets.all(30),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
