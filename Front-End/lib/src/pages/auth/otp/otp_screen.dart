@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import '../../constants/constants_font.dart';
-import '../../config/route.dart';
-import '../../widgets/background_widget.dart';
-import '../../constants/constants_color.dart';
+import '../../../constants/constants_font.dart';
+import '../../../config/route.dart';
+import '../../../widgets/background_widget.dart';
+import '../../../constants/constants_color.dart';
 import 'components/input_field.dart';
 import 'components/verify_button.dart';
-import '../../alertbox/alert_success.dart';
+import '../../../alertbox/alert_success.dart';
 import 'components/resend_button.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -164,7 +164,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Text(
                   _remainingTime > 0
                       ? 'Resend code in 00:${_remainingTime.toString().padLeft(2, '0')}'
@@ -193,7 +193,11 @@ class _OtpScreenState extends State<OtpScreen> {
                             builder: (BuildContext context) {
                               return AlertSuccess(
                                 onPressed: () {
-                                  Navigator.of(context).pop();
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    AppRoutes.home,
+                                    (route) => false,
+                                  );
                                 },
                               );
                             },

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../pages/sign-pages/signup_page.dart';
-import '../pages/auth/otp_screen.dart';
+import '../pages/auth/otp/otp_screen.dart';
 import '../pages/sign-pages/signin_page.dart';
 import '../pages/main/mainpage.dart';
 import '../pages/entry-pages/launch_screen.dart';

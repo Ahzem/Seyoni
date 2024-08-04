@@ -68,7 +68,7 @@ class SignInPage extends StatelessWidget {
                     const SizedBox(height: 20),
                     SignInButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.home);
+                        Navigator.pushNamed(context, AppRoutes.otppage);
                       },
                     ),
                     Row(
