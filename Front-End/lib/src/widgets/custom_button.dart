@@ -13,15 +13,13 @@ class PrimaryOutlinedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: kPrimaryColor),
-        padding: EdgeInsets.symmetric(
-          horizontal: width * 0.1,
-          vertical: height * 0.01,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 10,
         ),
         textStyle: const TextStyle(
           fontSize: 18,
@@ -48,15 +46,13 @@ class PrimaryFilledButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: kPrimaryColor,
-        padding: EdgeInsets.symmetric(
-          horizontal: width * 0.1,
-          vertical: height * 0.01,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 10,
         ),
         textStyle: const TextStyle(
           fontSize: 18,

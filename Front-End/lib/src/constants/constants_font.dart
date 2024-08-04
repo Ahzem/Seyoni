@@ -24,3 +24,15 @@ const kOtpInputTextStyle = TextStyle(
   color: kParagraphTextColor,
   fontWeight: FontWeight.w500,
 );
+
+const kAlertTitleTextStyle = TextStyle(
+  fontSize: 20,
+  color: Colors.white,
+  fontWeight: FontWeight.w500,
+);
+
+const kAlertDescriptionTextStyle = TextStyle(
+  fontSize: 16,
+  color: kParagraphTextColor,
+  fontWeight: FontWeight.w400,
+);

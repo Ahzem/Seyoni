@@ -5,6 +5,7 @@ import '../../widgets/background_widget.dart';
 import '../../constants/constants_color.dart';
 import 'components/input_field.dart';
 import 'components/verify_button.dart';
+import '../../alertbox/alert_success.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
@@ -152,7 +153,17 @@ class _OtpScreenState extends State<OtpScreen> {
                     _isButtonActive
                         ? VerifyButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.home);
+                              showDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context) {
+                                  return AlertSuccess(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                },
+                              );
                             },
                           )
                         : VerifyButtonInactive(
