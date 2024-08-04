@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../pages/sign-pages/signup_page.dart';
-import '../pages/verification/otp_screen.dart';
+import '../pages/auth/otp_screen.dart';
 import '../pages/sign-pages/signin_page.dart';
 import '../pages/main/mainpage.dart';
 import '../pages/entry-pages/launch_screen.dart';
 import '../pages/entry-pages/instruction_page.dart';
+import '../alertbox/alert_success.dart';
 
 class AppRoutes {
   static const String launch = '/';
@@ -13,6 +14,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String instruction = '/instruction';
   static const String otppage = '/otp';
+  static const String alertSuccess = '/alertSuccess';
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {

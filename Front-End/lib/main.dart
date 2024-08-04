@@ -5,7 +5,7 @@ import 'src/pages/entry-pages/instruction_page.dart';
 import './src/pages/entry-pages/launch_screen.dart';
 import './src/pages/sign-pages/signin_page.dart';
 import './src/config/route.dart';
-import './src/pages/verification/otp_screen.dart';
+import 'src/pages/auth/otp_screen.dart';
 
 void main() {
   runApp(const MyApp());
