@@ -49,7 +49,7 @@ const kPasswordFieldErrorDecoration = InputDecoration(
   prefixIcon: Icon(
     size: 25,
     Icons.lock_outline_rounded,
-    color: kPrimaryColor,
+    color: kErrorColor,
   ),
   prefixIconConstraints: BoxConstraints(minWidth: 50),
   suffixIcon: Icon(
@@ -65,14 +65,14 @@ const kPasswordFieldErrorDecoration = InputDecoration(
   ),
   border: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kPrimaryColor),
+    borderSide: BorderSide(color: kErrorColor),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kPrimaryColor),
+    borderSide: BorderSide(color: kErrorColor),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kPrimaryColor),
+    borderSide: BorderSide(color: kErrorColor),
   ),
 );

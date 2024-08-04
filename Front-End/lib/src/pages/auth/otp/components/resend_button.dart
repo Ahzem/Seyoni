@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../constants/constants_color.dart';
+import '../../../../constants/constants_color.dart';
 
 // Resend button Active
 class ResendButton extends StatelessWidget {
@@ -26,6 +26,29 @@ class ResendButton extends StatelessWidget {
       child: const Text(
         'Resend',
         style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
+}
+
+// Resend Flatten button
+class ResendFlatButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const ResendFlatButton({super.key, required this.onPressed});
+
+  @override
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed,
+      child: const Text(
+        'Resend',
+        style: TextStyle(
+          color: kPrimaryColor,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

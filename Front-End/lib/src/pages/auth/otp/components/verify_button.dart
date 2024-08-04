@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../constants/constants_color.dart';
+import '../../../../constants/constants_color.dart';
 
 // Verify button Active
 class VerifyButton extends StatelessWidget {

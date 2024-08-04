@@ -121,7 +121,7 @@ class _InstructionPageState extends State<InstructionPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       _titles[_currentPage],
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 0),
                       _bodies[_currentPage],
                       const SizedBox(height: 5),
                     ],

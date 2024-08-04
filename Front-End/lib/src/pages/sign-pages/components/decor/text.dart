@@ -42,7 +42,7 @@ const kTextFieldErrorDecoration = InputDecoration(
   prefixIcon: Icon(
     size: 25,
     Icons.email_sharp,
-    color: kPrimaryColor,
+    color: kErrorColor,
   ),
   prefixIconConstraints: BoxConstraints(minWidth: 50),
   contentPadding: EdgeInsets.symmetric(
@@ -51,14 +51,14 @@ const kTextFieldErrorDecoration = InputDecoration(
   ),
   border: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kPrimaryColor),
+    borderSide: BorderSide(color: kErrorColor),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kPrimaryColor),
+    borderSide: BorderSide(color: kErrorColor),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kPrimaryColor),
+    borderSide: BorderSide(color: kErrorColor),
   ),
 );

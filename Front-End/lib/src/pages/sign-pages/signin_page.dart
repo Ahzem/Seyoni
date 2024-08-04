@@ -16,7 +16,6 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: kTransparentColor,
       body: BackgroundWidget(
@@ -37,7 +36,7 @@ class SignInPage extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
               Container(
-                width: width * 0.8, // Adjust width to fit the screen
+                // Adjust width to fit the screen
                 margin: const EdgeInsets.all(30),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -58,7 +57,8 @@ class SignInPage extends StatelessWidget {
                       children: <Widget>[
                         ForgotPasswordButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/forgot-password');
+                            Navigator.pushNamed(
+                                context, AppRoutes.forgotpassword);
                           },
                         ),
                       ],
@@ -66,7 +66,7 @@ class SignInPage extends StatelessWidget {
                     const SizedBox(height: 20),
                     SignInButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.home);
+                        Navigator.pushNamed(context, AppRoutes.otppage);
                       },
                     ),
                     Row(

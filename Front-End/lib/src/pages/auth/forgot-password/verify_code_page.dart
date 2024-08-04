@@ -1,23 +1,24 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import '../../constants/constants_font.dart';
-import '../../config/route.dart';
-import '../../widgets/background_widget.dart';
-import '../../constants/constants_color.dart';
-import 'components/input_field.dart';
-import 'components/verify_button.dart';
-import '../../alertbox/alert_success.dart';
-import 'components/resend_button.dart';
+import '../../../constants/constants_font.dart';
+import '../../../config/route.dart';
+import '../../../widgets/background_widget.dart';
+import '../../../constants/constants_color.dart';
+import '../otp/components/input_field.dart';
+import '../otp/components/verify_button.dart';
+import '../../../alertbox/alert_success.dart';
+import '../otp/components/resend_button.dart';
 
-class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key});
+class OtpScreenForNewPassword extends StatefulWidget {
+  const OtpScreenForNewPassword({super.key});
 
   @override
-  _OtpScreenState createState() => _OtpScreenState();
+  _OtpScreenForNewPasswordState createState() =>
+      _OtpScreenForNewPasswordState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
+class _OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
   int _remainingTime = 30;
   Timer? _timer;
   bool _isResendButtonActive = false;
@@ -93,8 +94,8 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String phoneNumber =
-        ModalRoute.of(context)?.settings.arguments as String? ?? 'your number';
+    final String email =
+        ModalRoute.of(context)?.settings.arguments as String? ?? 'your email';
     return Scaffold(
       backgroundColor: kBackgroundColor,
       resizeToAvoidBottomInset: false,
@@ -117,7 +118,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
                 ),
                 Image.asset(
-                  'assets/icons/Authentication.png',
+                  'assets/icons/One-Time-Password.png',
                   height: 100,
                 ),
                 const SizedBox(height: 20),
@@ -127,7 +128,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'A 4-digit code has been sent to $phoneNumber. Please enter the code below.',
+                  'A 4-digit code has been sent to $email. Please enter the code below.',
                   style: kBodyTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -165,6 +166,21 @@ class _OtpScreenState extends State<OtpScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
+                _isVerifyButtonActive
+                    ? VerifyButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.resetPassword,
+                          );
+                        },
+                      )
+                    : VerifyButtonInactive(
+                        onPressed: () {
+                          // Do nothing or show a message
+                        },
+                      ),
+                const SizedBox(height: 10),
                 Text(
                   _remainingTime > 0
                       ? 'Resend code in 00:${_remainingTime.toString().padLeft(2, '0')}'
@@ -175,36 +191,20 @@ class _OtpScreenState extends State<OtpScreen> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                const SizedBox(height: 20),
                 _isResendButtonActive
-                    ? ResendButton(
-                        onPressed: () {
-                          // Handle resend code logic
-                        },
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Didn\'t receive the code?',
+                            style: kBodyTextStyle,
+                          ),
+                          ResendFlatButton(
+                            onPressed: () {},
+                          ),
+                        ],
                       )
-                    : Container(),
-                const SizedBox(height: 20),
-                _isVerifyButtonActive
-                    ? VerifyButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (BuildContext context) {
-                              return AlertSuccess(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              );
-                            },
-                          );
-                        },
-                      )
-                    : VerifyButtonInactive(
-                        onPressed: () {
-                          // Do nothing or show a message
-                        },
-                      ),
+                    : Container(width: 0, height: 0),
                 const SizedBox(height: 100),
               ],
             ),
