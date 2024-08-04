@@ -9,15 +9,13 @@ class VerifyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: kPrimaryColor,
-        padding: EdgeInsets.symmetric(
-          horizontal: width * 0.28,
-          vertical: height * 0.015,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 100,
+          vertical: 10,
         ),
         textStyle: const TextStyle(
           fontSize: 22,
