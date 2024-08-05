@@ -26,28 +26,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     super.dispose();
   }
 
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter a password';
-    }
-    if (value.length < 8) {
-      return 'Password must be at least 8 characters long';
-    }
-    if (value.contains(RegExp(r'[A-Z]')) == false) {
-      return 'Password must contain at least one uppercase letter';
-    }
-    if (value.contains(RegExp(r'[a-z]')) == false) {
-      return 'Password must contain at least one lowercase letter';
-    }
-    if (value.contains(RegExp(r'[0-9]')) == false) {
-      return 'Password must contain at least one number';
-    }
-    if (value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]')) == false) {
-      return 'Password must contain at least one special character';
-    }
-    return null;
-  }
-
   String? _validateConfirmPassword(String? value) {
     if (value != _passwordController.text) {
       return 'Passwords do not match';
@@ -90,7 +68,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       PasswordField(
                         key: const Key('password'),
                         controller: _passwordController,
-                        validator: _validatePassword,
                       ),
                       const SizedBox(height: 10),
                       ConfirmPasswordField(

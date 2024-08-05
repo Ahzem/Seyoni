@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import '../../../constants/constants_font.dart';
 import '../../../config/route.dart';
@@ -7,7 +6,6 @@ import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_color.dart';
 import '../otp/components/input_field.dart';
 import '../otp/components/verify_button.dart';
-import '../../../alertbox/alert_success.dart';
 import '../otp/components/resend_button.dart';
 
 class OtpScreenForNewPassword extends StatefulWidget {
