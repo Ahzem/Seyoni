@@ -24,9 +24,7 @@ class FNameField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         style: kTextFieldStyle,
-        decoration: errorText == null
-            ? kFNameFieldDecoration
-            : kFNameFieldErrorDecoration,
+        decoration: kFNameFieldDecoration,
         cursorColor: kPrimaryColor,
         keyboardType: TextInputType.name,
         textInputAction: TextInputAction.next,
@@ -55,9 +53,7 @@ class LNameField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         style: kTextFieldStyle,
-        decoration: errorText == null
-            ? kLNameFieldDecoration
-            : kLNameFieldErrorDecoration,
+        decoration: kLNameFieldDecoration,
         cursorColor: kPrimaryColor,
         keyboardType: TextInputType.name,
         textInputAction: TextInputAction.next,

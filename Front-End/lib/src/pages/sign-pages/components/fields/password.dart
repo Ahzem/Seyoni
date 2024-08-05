@@ -5,11 +5,12 @@ import '../decor/newPw.dart';
 
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
-  final String? errorText;
+  final String? Function(String?)? validator;
+
   const PasswordField({
     required Key key,
     required this.controller,
-    required this.errorText,
+    required this.validator,
   }) : super(key: key);
 
   @override
@@ -29,26 +30,17 @@ class _PasswordFieldState extends State<PasswordField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
+      validator: widget.validator,
       style: kTextFieldStyle,
-      decoration: widget.errorText == null
-          ? kNewPasswordFieldDecoration.copyWith(
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  color: kParagraphTextColor,
-                ),
-                onPressed: _togglePasswordVisibility,
-              ),
-            )
-          : kNewPasswordErrorDecoration.copyWith(
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  color: kParagraphTextColor,
-                ),
-                onPressed: _togglePasswordVisibility,
-              ),
-            ),
+      decoration: kNewPasswordFieldDecoration.copyWith(
+        suffixIcon: IconButton(
+          icon: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: kParagraphTextColor,
+          ),
+          onPressed: _togglePasswordVisibility,
+        ),
+      ),
       cursorColor: kPrimaryColor,
       obscureText: !_isPasswordVisible,
       textInputAction: TextInputAction.done,

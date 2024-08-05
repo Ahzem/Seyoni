@@ -8,6 +8,11 @@ const double width = 30.0;
 const kNewPasswordFieldDecoration = InputDecoration(
   filled: false,
   fillColor: kContainerColor,
+  errorMaxLines: 3,
+  errorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+    borderSide: BorderSide(color: kErrorColor),
+  ),
   hintText: 'New password',
   hintStyle: kBodyTextStyle,
   prefixIcon: Icon(
@@ -38,41 +43,5 @@ const kNewPasswordFieldDecoration = InputDecoration(
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kPrimaryColor),
-  ),
-);
-
-const kNewPasswordErrorDecoration = InputDecoration(
-  filled: false,
-  fillColor: kContainerColor,
-  hintText: 'New password',
-  hintStyle: kBodyTextStyle,
-  prefixIcon: Icon(
-    size: 25,
-    Icons.lock_outline_rounded,
-    color: kErrorColor,
-  ),
-  prefixIconConstraints: BoxConstraints(minWidth: 50),
-  suffixIcon: Icon(
-    key: Key('password_visibility'),
-    size: 20,
-    Icons.visibility_off,
-    color: kParagraphTextColor,
-  ),
-  suffixIconConstraints: BoxConstraints(minWidth: 50),
-  contentPadding: EdgeInsets.symmetric(
-    vertical: height,
-    horizontal: width,
-  ),
-  border: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kErrorColor),
-  ),
-  enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kErrorColor),
-  ),
-  focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kErrorColor),
   ),
 );

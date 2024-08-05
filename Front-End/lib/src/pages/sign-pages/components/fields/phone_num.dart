@@ -21,9 +21,7 @@ class PhoneNumberField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       style: kTextFieldStyle,
-      decoration: errorText == null
-          ? kPhoneNumberFieldDecoration
-          : kPhoneNumberFieldErrorDecoration,
+      decoration: kPhoneNumberFieldDecoration,
       cursorColor: kPrimaryColor,
       keyboardType: TextInputType.phone,
       textInputAction: TextInputAction.next,

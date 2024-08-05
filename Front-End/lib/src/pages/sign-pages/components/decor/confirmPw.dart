@@ -8,42 +8,11 @@ const double width = 30.0;
 const kConfirmPasswordFieldDecoration = InputDecoration(
   filled: false,
   fillColor: kContainerColor,
-  hintText: 'Confirm your password',
-  hintStyle: kBodyTextStyle,
-  prefixIcon: Icon(
-    size: 25,
-    Icons.lock_outline_rounded,
-    color: kPrimaryColor,
-  ),
-  prefixIconConstraints: BoxConstraints(minWidth: 50),
-  suffixIcon: Icon(
-    key: Key('password_visibility'),
-    size: 20,
-    Icons.visibility_off,
-    color: kParagraphTextColor,
-  ),
-  suffixIconConstraints: BoxConstraints(minWidth: 50),
-  contentPadding: EdgeInsets.symmetric(
-    vertical: height,
-    horizontal: width,
-  ),
-  border: OutlineInputBorder(
+  errorMaxLines: 3,
+  errorBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kPrimaryColor),
+    borderSide: BorderSide(color: kErrorColor),
   ),
-  enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kPrimaryColor),
-  ),
-  focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(50.0)),
-    borderSide: BorderSide(color: kPrimaryColor),
-  ),
-);
-
-const kConfirmPasswordErrorDecoration = InputDecoration(
-  filled: false,
-  fillColor: kContainerColor,
   hintText: 'Confirm your password',
   hintStyle: kBodyTextStyle,
   prefixIcon: Icon(

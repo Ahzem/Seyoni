@@ -51,7 +51,15 @@ class SignInPage extends StatelessWidget {
                     PasswordField(
                       key: const Key('password-field'),
                       controller: TextEditingController(),
-                      errorText: 'Password is incorrect',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a password';
+                        }
+                        if (value.length < 8) {
+                          return 'Password must be at least 8 characters long';
+                        }
+                        return null;
+                      },
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

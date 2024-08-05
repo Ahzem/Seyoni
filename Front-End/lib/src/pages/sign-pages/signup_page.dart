@@ -79,13 +79,26 @@ class SignUpPage extends StatelessWidget {
                     PasswordField(
                       key: const Key('password'),
                       controller: TextEditingController(),
-                      errorText: 'Password is incorrect',
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a password';
+                        }
+                        if (value!.length < 8) {
+                          return 'Password must be at least 8 characters long';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 10),
                     ConfirmPasswordField(
                       key: const Key('confirm_password'),
                       controller: TextEditingController(),
-                      errorText: 'Password is incorrect',
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please re-enter your password';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
                     SignUpButton(

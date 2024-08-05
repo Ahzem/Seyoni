@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../constants/constants_color.dart';
 import '../constants.dart';
-import '../decor/text.dart';
+import '../decor/email.dart';
 
 // Email field
 class EmailField extends StatelessWidget {
@@ -19,8 +19,7 @@ class EmailField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       style: kTextFieldStyle,
-      decoration:
-          errorText == null ? kTextFieldDecoration : kTextFieldErrorDecoration,
+      decoration: kTextFieldDecoration,
       cursorColor: kPrimaryColor,
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
