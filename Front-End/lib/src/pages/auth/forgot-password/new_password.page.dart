@@ -6,6 +6,7 @@ import '../../../constants/constants_font.dart';
 import '../../../widgets/background_widget.dart';
 import '../../sign-pages/components/fields/password.dart';
 import '../../sign-pages/components/fields/confirmPw.dart';
+import '../../../widgets/alertbox/password_changed.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -90,7 +91,20 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             text: 'Confirm',
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                Navigator.pushNamed(context, AppRoutes.home);
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return PasswordChanged(
+                                      onPressed: () {
+                                        Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          AppRoutes.signIn,
+                                          (route) => false,
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
                               }
                             },
                           )
