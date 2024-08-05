@@ -4,10 +4,10 @@ import '../../constants/constants_font.dart';
 import '../custom_button.dart';
 import 'dart:ui';
 
-class AlertSuccess extends StatelessWidget {
+class PasswordChanged extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const AlertSuccess({
+  const PasswordChanged({
     super.key,
     required this.onPressed,
   });
@@ -40,7 +40,7 @@ class AlertSuccess extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     const Text(
-                      'Verification Successful',
+                      'Password Changed Successfully',
                       style: kAlertTitleTextStyle,
                     ),
                     const Divider(
@@ -55,13 +55,13 @@ class AlertSuccess extends StatelessWidget {
                       width: 50,
                     ),
                     const Text(
-                      'Your verification was successful! Welcome to Seyoni.',
+                      'Your password has been changed successfully. Please sign in with your new password.',
                       style: kAlertDescriptionTextStyle,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 10),
                     PrimaryFilledButton(
-                      text: 'Continue',
+                      text: 'Sign In',
                       onPressed: onPressed,
                     ),
                   ],

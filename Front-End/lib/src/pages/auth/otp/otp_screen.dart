@@ -7,7 +7,7 @@ import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_color.dart';
 import 'components/input_field.dart';
 import 'components/verify_button.dart';
-import '../../../widgets/alertbox/alert_success.dart';
+import '../../../widgets/alertbox/vrification_success.dart';
 import 'components/resend_button.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -191,7 +191,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             context: context,
                             barrierDismissible: true,
                             builder: (BuildContext context) {
-                              return AlertSuccess(
+                              return VerificationSuccess(
                                 onPressed: () {
                                   Navigator.pushNamedAndRemoveUntil(
                                     context,
