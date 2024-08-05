@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import '../decor/confirmPw.dart';
 import '../../../../constants/constants_color.dart';
 import '../constants.dart';
-import '../decor/confirmPw.dart';
-
-// Sign in form:
 
 class ConfirmPasswordField extends StatefulWidget {
   final TextEditingController controller;
-  final String? errorText;
+  final String? Function(String?)? validator;
+
   const ConfirmPasswordField({
     required Key key,
     required this.controller,
-    required this.errorText,
+    required this.validator,
   }) : super(key: key);
 
   @override
@@ -32,26 +30,17 @@ class _ConfirmPasswordFieldState extends State<ConfirmPasswordField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
+      validator: widget.validator,
       style: kTextFieldStyle,
-      decoration: widget.errorText == null
-          ? kConfirmPasswordFieldDecoration.copyWith(
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  color: kParagraphTextColor,
-                ),
-                onPressed: _togglePasswordVisibility,
-              ),
-            )
-          : kConfirmPasswordErrorDecoration.copyWith(
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  color: kParagraphTextColor,
-                ),
-                onPressed: _togglePasswordVisibility,
-              ),
-            ),
+      decoration: kConfirmPasswordFieldDecoration.copyWith(
+        suffixIcon: IconButton(
+          icon: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: kParagraphTextColor,
+          ),
+          onPressed: _togglePasswordVisibility,
+        ),
+      ),
       cursorColor: kPrimaryColor,
       obscureText: !_isPasswordVisible,
       textInputAction: TextInputAction.done,

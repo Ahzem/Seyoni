@@ -27,7 +27,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case AppRoutes.launch:
       return MaterialPageRoute(builder: (_) => const LaunchScreen());
     case AppRoutes.signIn:
-      return MaterialPageRoute(builder: (_) => const SignInPage());
+      return MaterialPageRoute(builder: (_) => SignInPage());
     case AppRoutes.signUp:
       return MaterialPageRoute(builder: (_) => SignUpPage());
     case AppRoutes.home:

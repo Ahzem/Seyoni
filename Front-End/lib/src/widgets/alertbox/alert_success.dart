@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../constants/constants_color.dart';
-import '../constants/constants_font.dart';
-import '../widgets/custom_button.dart';
+import '../../constants/constants_color.dart';
+import '../../constants/constants_font.dart';
+import '../custom_button.dart';
 import 'dart:ui';
 
 class AlertSuccess extends StatelessWidget {

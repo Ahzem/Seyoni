@@ -5,11 +5,10 @@ import '../decor/newPw.dart';
 
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
-  final String? errorText;
+
   const PasswordField({
     required Key key,
     required this.controller,
-    required this.errorText,
   }) : super(key: key);
 
   @override
@@ -30,28 +29,32 @@ class _PasswordFieldState extends State<PasswordField> {
     return TextFormField(
       controller: widget.controller,
       style: kTextFieldStyle,
-      decoration: widget.errorText == null
-          ? kNewPasswordFieldDecoration.copyWith(
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  color: kParagraphTextColor,
-                ),
-                onPressed: _togglePasswordVisibility,
-              ),
-            )
-          : kNewPasswordErrorDecoration.copyWith(
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  color: kParagraphTextColor,
-                ),
-                onPressed: _togglePasswordVisibility,
-              ),
-            ),
+      decoration: kNewPasswordFieldDecoration.copyWith(
+        suffixIcon: IconButton(
+          icon: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: kParagraphTextColor,
+          ),
+          onPressed: _togglePasswordVisibility,
+        ),
+      ),
       cursorColor: kPrimaryColor,
       obscureText: !_isPasswordVisible,
       textInputAction: TextInputAction.done,
+      onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Password is required';
+        } else if (value.length < 8) {
+          return 'Password must be at least 8 characters long';
+        } else if (value.contains(' ')) {
+          return 'Password must not contain any spaces';
+        } else if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$')
+            .hasMatch(value)) {
+          return 'Password must contain at least one uppercase letter, one lowercase letter and one number';
+        }
+        return null;
+      },
     );
   }
 }

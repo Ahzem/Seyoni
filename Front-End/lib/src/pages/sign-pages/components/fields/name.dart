@@ -3,8 +3,6 @@ import '../constants.dart';
 import '../decor/name.dart';
 import '../../../../constants/constants_color.dart';
 
-// Sign up form:
-
 // Name field
 class FNameField extends StatelessWidget {
   final TextEditingController controller;
@@ -24,13 +22,17 @@ class FNameField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         style: kTextFieldStyle,
-        decoration: errorText == null
-            ? kFNameFieldDecoration
-            : kFNameFieldErrorDecoration,
+        decoration: kFNameFieldDecoration,
         cursorColor: kPrimaryColor,
         keyboardType: TextInputType.name,
         textInputAction: TextInputAction.next,
         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please enter your first name';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -55,13 +57,17 @@ class LNameField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         style: kTextFieldStyle,
-        decoration: errorText == null
-            ? kLNameFieldDecoration
-            : kLNameFieldErrorDecoration,
+        decoration: kLNameFieldDecoration,
         cursorColor: kPrimaryColor,
         keyboardType: TextInputType.name,
         textInputAction: TextInputAction.next,
         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please enter your last name';
+          }
+          return null;
+        },
       ),
     );
   }
