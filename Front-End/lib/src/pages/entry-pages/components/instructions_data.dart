@@ -20,7 +20,7 @@ const instructionTitle2 = Text(
 );
 
 const instructionBody2 = Text(
-  'Seyoni bridges service seekers & providers. Request, track, & communicate with providers easily, with secure payments and trusted ratings.',
+  'Seyoni connects service seekers and providers. Request, track, communicate, and make secure payments with trusted ratings.',
   style: kBodyTextStyle,
   textAlign: TextAlign.center,
 );

@@ -165,25 +165,6 @@ class _OtpScreenState extends State<OtpScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  _remainingTime > 0
-                      ? 'Resend code in 00:${_remainingTime.toString().padLeft(2, '0')}'
-                      : '',
-                  style: const TextStyle(
-                    color: kPrimaryColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _isResendButtonActive
-                    ? ResendButton(
-                        onPressed: () {
-                          // Handle resend code logic
-                        },
-                      )
-                    : Container(),
-                const SizedBox(height: 20),
                 _isVerifyButtonActive
                     ? VerifyButton(
                         onPressed: () {
@@ -209,6 +190,31 @@ class _OtpScreenState extends State<OtpScreen> {
                           // Do nothing or show a message
                         },
                       ),
+                const SizedBox(height: 10),
+                Text(
+                  _remainingTime > 0
+                      ? 'Resend code in 00:${_remainingTime.toString().padLeft(2, '0')}'
+                      : '',
+                  style: const TextStyle(
+                    color: kPrimaryColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                _isResendButtonActive
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Didn\'t receive the code?',
+                            style: kBodyTextStyle,
+                          ),
+                          ResendFlatButton(
+                            onPressed: () {},
+                          ),
+                        ],
+                      )
+                    : const SizedBox(width: 0, height: 0),
                 const SizedBox(height: 100),
               ],
             ),

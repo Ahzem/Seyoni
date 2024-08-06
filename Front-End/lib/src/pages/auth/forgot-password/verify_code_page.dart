@@ -202,7 +202,7 @@ class _OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
                           ),
                         ],
                       )
-                    : Container(width: 0, height: 0),
+                    : const SizedBox(width: 0, height: 0),
                 const SizedBox(height: 100),
               ],
             ),
