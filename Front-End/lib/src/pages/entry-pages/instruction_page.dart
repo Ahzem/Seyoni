@@ -75,7 +75,6 @@ class _InstructionPageState extends State<InstructionPage> {
             width: width,
             padding: EdgeInsets.only(top: topPadding, bottom: bottomPadding),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Column(
                   children: <Widget>[
