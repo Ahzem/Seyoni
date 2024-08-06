@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
         'Tasks Page Content',
         style: kBodyTextStyle,
       ),
-    ), // Replace with your actual page widgets
+    ),
     const Center(
         child: Text(
       'Chat Page Content',
