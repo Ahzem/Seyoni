@@ -95,16 +95,16 @@ class SignInPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
                       const Text(
                         'Or sign in with',
                         style: TextStyle(
                           color: kParagraphTextColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -120,7 +120,7 @@ class SignInPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20), // Adjust bottom spacing
+                      const SizedBox(height: 10), // Adjust bottom spacing
                     ],
                   ),
                 ),

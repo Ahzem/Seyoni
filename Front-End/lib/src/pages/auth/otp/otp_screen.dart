@@ -21,25 +21,22 @@ class _OtpScreenState extends State<OtpScreen> {
   int _remainingTime = 30;
   Timer? _timer;
   bool _isResendButtonActive = false;
-
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
   final TextEditingController _controller4 = TextEditingController();
-
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
   final FocusNode _focusNode3 = FocusNode();
   final FocusNode _focusNode4 = FocusNode();
-
   bool _isVerifyButtonActive = false;
+  bool _isErrorVisible = false;
+  String _errorMessage = '';
 
   @override
   void initState() {
     super.initState();
-
     _startTimer();
-
     _controller1.addListener(_checkInputFields);
     _controller2.addListener(_checkInputFields);
     _controller3.addListener(_checkInputFields);
@@ -74,6 +71,36 @@ class _OtpScreenState extends State<OtpScreen> {
     if (value.isNotEmpty) {
       currentFocus.unfocus();
       FocusScope.of(context).requestFocus(nextFocus);
+    }
+  }
+
+  void _verifyCode() {
+    // Replace this with your actual verification logic
+    bool isCodeCorrect = _controller1.text == '1' &&
+        _controller2.text == '2' &&
+        _controller3.text == '3' &&
+        _controller4.text == '4';
+
+    if (isCodeCorrect) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return VerificationSuccess(
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.home,
+                (route) => false,
+              );
+            },
+          );
+        },
+      );
+    } else {
+      setState(() {
+        _errorMessage = 'The code you entered is incorrect. Please try again.';
+        _isErrorVisible = true;
+      });
     }
   }
 
@@ -164,26 +191,21 @@ class _OtpScreenState extends State<OtpScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                if (_isErrorVisible)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      _errorMessage,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 20),
                 _isVerifyButtonActive
                     ? VerifyButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (BuildContext context) {
-                              return VerificationSuccess(
-                                onPressed: () {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    AppRoutes.home,
-                                    (route) => false,
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
+                        onPressed: _verifyCode,
                       )
                     : VerifyButtonInactive(
                         onPressed: () {
@@ -215,7 +237,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         ],
                       )
                     : const SizedBox(width: 0, height: 0),
-                const SizedBox(height: 100),
+                const SizedBox(height: 50),
               ],
             ),
           ),
