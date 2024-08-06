@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/customNavBar/custom_navbar.dart';
 import '../../widgets/background_widget.dart';
-import '../../constants/constants_color.dart';
+import '../../constants/constants_font.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,12 +16,31 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const Center(
+      child: Text(
+        'Tasks Page Content',
+        style: kBodyTextStyle,
+      ),
+    ), // Replace with your actual page widgets
+    const Center(
         child: Text(
-            'Tasks Page Content')), // Replace with your actual page widgets
-    const Center(child: Text('Chat Page Content')),
-    const Center(child: Text('Home Page Content')),
-    const Center(child: Text('Wallet Page Content')),
-    const Center(child: Text('Profile Page Content')),
+      'Chat Page Content',
+      style: kBodyTextStyle,
+    )),
+    const Center(
+        child: Text(
+      'Home Page Content',
+      style: kBodyTextStyle,
+    )),
+    const Center(
+        child: Text(
+      'Category Page Content',
+      style: kBodyTextStyle,
+    )),
+    const Center(
+        child: Text(
+      'Profile Page Content',
+      style: kBodyTextStyle,
+    )),
   ];
 
   void _onNavBarTapped(int index) {
@@ -32,18 +51,28 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomAppBar(),
-      backgroundColor: kTransparentColor,
-      body: BackgroundWidget(
-        child: SingleChildScrollView(
-          child: _pages[_currentIndex],
+    return Stack(
+      children: [
+        // Background image
+        const Positioned.fill(
+          child: BackgroundWidget(child: SizedBox.expand()),
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onNavBarTapped,
-      ),
+        // Main content with app bar and bottom navigation bar
+        Scaffold(
+          backgroundColor:
+              Colors.transparent, // Make scaffold background transparent
+          appBar: const CustomAppBar(),
+          body: Center(
+            child: SingleChildScrollView(
+              child: _pages[_currentIndex],
+            ),
+          ),
+          bottomNavigationBar: CustomBottomNavBar(
+            currentIndex: _currentIndex,
+            onTap: _onNavBarTapped,
+          ),
+        ),
+      ],
     );
   }
 }

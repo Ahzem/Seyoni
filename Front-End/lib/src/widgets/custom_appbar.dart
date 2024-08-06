@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import '../config/route.dart';
 import 'dart:ui';
 import '../constants/constants_color.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  final Size preferredSize;
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
+  Size preferredSize = const Size.fromHeight(60.0);
+  final Function(int) onTap;
+  CustomAppBar({super.key, required this.onTap});
 
-  const CustomAppBar({super.key}) : preferredSize = const Size.fromHeight(60.0);
+  @override
+  _CustomAppBarState createState() => _CustomAppBarState();
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  bool _isNotificationFilled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +33,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   IconButton(
                     icon: Image.asset(
-                      'assets/icons/AppBar/notification-outlined.png',
+                      _isNotificationFilled
+                          ? 'assets/icons/AppBar/notification-filled.png'
+                          : 'assets/icons/AppBar/notification-outlined.png',
                       height: 24,
                       width: 24,
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      setState(() {
+                        _isNotificationFilled = !_isNotificationFilled;
+                      });
+                      widget.onTap(0); // Call the onTap function with index 0
+                      setState(() {
+                        _isNotificationFilled = !_isNotificationFilled;
+                      });
+                    },
                   ),
                   const Image(
                     image: AssetImage('assets/images/logo.png'),
@@ -43,7 +60,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       height: 24,
                       width: 24,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      widget.onTap(1); // Call the onTap function with index 1
+                    },
                   ),
                 ],
               ),

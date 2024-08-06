@@ -1,4 +1,3 @@
-// background_widget.dart
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
@@ -9,33 +8,37 @@ class BackgroundWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        // Background image with blur effect
-        Positioned.fill(
-          child: Image.asset(
-            'assets/images/background.png', // Replace with your background image path
-            fit: BoxFit.cover, // Optional: Blends the overlay with the image
-          ),
-        ),
-        // Apply blur filter
-        Positioned.fill(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-                sigmaX: 10, sigmaY: 10), // Adjust the blur intensity
-            child: Container(
-              color: Colors
-                  .transparent, // Needs to be transparent to allow the blur effect
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          // Background image with blur effect
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/background.png', // Replace with your background image path
+              fit: BoxFit.cover, // Optional: Blends the overlay with the image
             ),
           ),
-        ),
-        // Your main content goes here
-        Positioned.fill(
-          child: Center(
-            child: child,
+          // Apply blur filter
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                  sigmaX: 10, sigmaY: 10), // Adjust the blur intensity
+              child: Container(
+                color: Colors
+                    .transparent, // Needs to be transparent to allow the blur effect
+              ),
+            ),
           ),
-        ),
-      ],
+          // Your main content goes here
+          Positioned.fill(
+            child: SafeArea(
+              child: Center(
+                child: child,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

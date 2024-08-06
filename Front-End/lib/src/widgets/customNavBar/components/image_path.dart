@@ -10,5 +10,5 @@ const String chatFilled = 'assets/icons/NavBar/chat-filled.png';
 const String profileOutlined = 'assets/icons/NavBar/user-outlined.png';
 const String profileFilled = 'assets/icons/NavBar/user-filled.png';
 
-const String walletOutlined = 'assets/icons/NavBar/wallet-outlined.png';
-const String walletFilled = 'assets/icons/NavBar/wallet-filled.png';
+const String categoryOutlined = 'assets/icons/NavBar/category-outlined.png';
+const String categoryFilled = 'assets/icons/NavBar/category-filled.png';

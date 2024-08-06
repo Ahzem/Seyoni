@@ -9,6 +9,7 @@ import './src/pages/sign-pages/signin_page.dart';
 import './src/config/route.dart';
 import 'src/pages/auth/otp/otp_screen.dart';
 import 'src/pages/auth/forgot-password/forgot_password_page.dart';
+import 'src/pages/notifications/internal/notification_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,8 +32,9 @@ class MyApp extends StatelessWidget {
         AppRoutes.otppage: (context) => const OtpScreen(),
         AppRoutes.otppagefornewpassword: (context) =>
             const OtpScreenForNewPassword(),
-        AppRoutes.forgotpassword: (context) => ForgotPasswordPage(),
-        AppRoutes.resetPassword: (context) => const ResetPasswordPage()
+        AppRoutes.forgotpassword: (context) => const ForgotPasswordPage(),
+        AppRoutes.resetPassword: (context) => const ResetPasswordPage(),
+        AppRoutes.notification: (context) => const NotificationPage(),
       },
     );
   }
