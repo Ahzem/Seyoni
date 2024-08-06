@@ -42,3 +42,9 @@ const kErrorTextStyle = TextStyle(
   color: kErrorColor,
   fontWeight: FontWeight.w400,
 );
+
+const kAppBarTitleTextStyle = TextStyle(
+  fontSize: 22,
+  color: Colors.white,
+  fontWeight: FontWeight.w500,
+);

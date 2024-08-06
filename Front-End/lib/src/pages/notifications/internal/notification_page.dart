@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/custom_appbar.dart';
+import 'package:seyoni/src/constants/constants_color.dart';
 import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_font.dart';
 
@@ -32,7 +32,18 @@ class _NotificationPageState extends State<NotificationPage> {
         // Main content with app bar and bottom navigation bar
         Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: const CustomAppBar(),
+          appBar: AppBar(
+            title: const Text('Notifications', style: kAppBarTitleTextStyle),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
           body: ListView(
             children: notifications,
           ),

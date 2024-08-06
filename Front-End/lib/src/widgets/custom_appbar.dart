@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
-import '../config/route.dart';
+import 'package:seyoni/src/config/route.dart';
 import 'dart:ui';
 import '../constants/constants_color.dart';
 
-class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  Size preferredSize = const Size.fromHeight(60.0);
-  final Function(int) onTap;
-  CustomAppBar({super.key, required this.onTap});
-
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  _CustomAppBarState createState() => _CustomAppBarState();
-}
+  final Size preferredSize;
 
-class _CustomAppBarState extends State<CustomAppBar> {
-  bool _isNotificationFilled = false;
+  const CustomAppBar({super.key}) : preferredSize = const Size.fromHeight(60.0);
 
   @override
   Widget build(BuildContext context) {
@@ -33,20 +27,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 children: [
                   IconButton(
                     icon: Image.asset(
-                      _isNotificationFilled
-                          ? 'assets/icons/AppBar/notification-filled.png'
-                          : 'assets/icons/AppBar/notification-outlined.png',
+                      'assets/icons/AppBar/notification-outlined.png',
                       height: 24,
                       width: 24,
                     ),
-                    onPressed: () async {
-                      setState(() {
-                        _isNotificationFilled = !_isNotificationFilled;
-                      });
-                      widget.onTap(0); // Call the onTap function with index 0
-                      setState(() {
-                        _isNotificationFilled = !_isNotificationFilled;
-                      });
+                    onPressed: () {
+                      // Add notification page
+                      Navigator.pushNamed(context, AppRoutes.notification);
                     },
                   ),
                   const Image(
@@ -60,9 +47,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       height: 24,
                       width: 24,
                     ),
-                    onPressed: () {
-                      widget.onTap(1); // Call the onTap function with index 1
-                    },
+                    onPressed: () {},
                   ),
                 ],
               ),
