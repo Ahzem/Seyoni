@@ -16,40 +16,48 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         decoration: const BoxDecoration(
           color: kTransparentColor,
         ),
-        child: ClipRect(
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
           child: BackdropFilter(
             filter: ImageFilter.blur(
-                sigmaX: 10.0, sigmaY: 10.0), // Apply blur effect
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: Image.asset(
-                      'assets/icons/AppBar/notification-outlined.png',
-                      height: 24,
-                      width: 24,
+                sigmaX: 20.0, sigmaY: 20.0), // Apply blur effect
+            child: Container(
+              color: Colors.black.withOpacity(0.3),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Image.asset(
+                        'assets/icons/AppBar/notification-outlined.png',
+                        height: 24,
+                        width: 24,
+                      ),
+                      onPressed: () {
+                        // Add notification page
+                        Navigator.pushNamed(context, AppRoutes.notification);
+                      },
                     ),
-                    onPressed: () {
-                      // Add notification page
-                      Navigator.pushNamed(context, AppRoutes.notification);
-                    },
-                  ),
-                  const Image(
-                    image: AssetImage('assets/images/logo.png'),
-                    height: 35,
-                    fit: BoxFit.cover,
-                  ),
-                  IconButton(
-                    icon: Image.asset(
-                      'assets/icons/AppBar/menu.png',
-                      height: 24,
-                      width: 24,
+                    const Image(
+                      image: AssetImage('assets/images/logo.png'),
+                      height: 35,
+                      fit: BoxFit.cover,
                     ),
-                    onPressed: () {},
-                  ),
-                ],
+                    IconButton(
+                      icon: Image.asset(
+                        'assets/icons/AppBar/menu.png',
+                        height: 24,
+                        width: 24,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
