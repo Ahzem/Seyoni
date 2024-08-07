@@ -42,6 +42,7 @@ class VerificationSuccess extends StatelessWidget {
                     const Text(
                       'Verification Successful',
                       style: kAlertTitleTextStyle,
+                      textAlign: TextAlign.center,
                     ),
                     const Divider(
                       color: kPrimaryColor,

@@ -42,6 +42,7 @@ class PasswordChanged extends StatelessWidget {
                     const Text(
                       'Password Changed Successfully',
                       style: kAlertTitleTextStyle,
+                      textAlign: TextAlign.center,
                     ),
                     const Divider(
                       color: kPrimaryColor,

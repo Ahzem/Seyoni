@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/constants/constants_color.dart';
 import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_font.dart';
 
