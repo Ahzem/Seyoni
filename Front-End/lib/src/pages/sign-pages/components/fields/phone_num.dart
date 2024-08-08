@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../../../../constants/constants_color.dart';
-import '../decor/phoneNum.dart';
+import '../decor/phone_num.dart';
 
 // Phone number field
 class PhoneNumberField extends StatelessWidget {

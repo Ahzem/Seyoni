@@ -14,10 +14,10 @@ class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
 
   @override
-  _OtpScreenState createState() => _OtpScreenState();
+  OtpScreenState createState() => OtpScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
+class OtpScreenState extends State<OtpScreen> {
   int _remainingTime = 30;
   Timer? _timer;
   bool _isResendButtonActive = false;
@@ -123,12 +123,11 @@ class _OtpScreenState extends State<OtpScreen> {
     final String phoneNumber =
         ModalRoute.of(context)?.settings.arguments as String? ?? 'your number';
     return Scaffold(
-      backgroundColor: kBackgroundColor,
-      resizeToAvoidBottomInset: false,
+      backgroundColor: kTransparentColor,
       body: BackgroundWidget(
         child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -237,7 +236,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         ],
                       )
                     : const SizedBox(width: 0, height: 0),
-                const SizedBox(height: 50),
+                const SizedBox(height: 100),
               ],
             ),
           ),

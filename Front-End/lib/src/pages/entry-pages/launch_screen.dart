@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:seyoni/src/constants/constants_color.dart';
 import '../../widgets/background_widget.dart';
 import '../../config/route.dart';
 
@@ -7,10 +8,10 @@ class LaunchScreen extends StatefulWidget {
   const LaunchScreen({super.key});
 
   @override
-  _LaunchScreenState createState() => _LaunchScreenState();
+  LaunchScreenState createState() => LaunchScreenState();
 }
 
-class _LaunchScreenState extends State<LaunchScreen> {
+class LaunchScreenState extends State<LaunchScreen> {
   double _opacity = 1.0;
 
   @override
@@ -29,9 +30,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: BackgroundWidget(
+    return Scaffold(
+      backgroundColor: kTransparentColor,
+      body: BackgroundWidget(
         child: Center(
           child: AnimatedOpacity(
             opacity: _opacity,

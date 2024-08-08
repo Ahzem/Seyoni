@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../decor/confirmPw.dart';
+import '../decor/confirm_pw.dart';
 import '../../../../constants/constants_color.dart';
 import '../constants.dart';
 
@@ -14,10 +14,10 @@ class ConfirmPasswordField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ConfirmPasswordFieldState createState() => _ConfirmPasswordFieldState();
+  ConfirmPasswordFieldState createState() => ConfirmPasswordFieldState();
 }
 
-class _ConfirmPasswordFieldState extends State<ConfirmPasswordField> {
+class ConfirmPasswordFieldState extends State<ConfirmPasswordField> {
   bool _isPasswordVisible = false;
 
   void _togglePasswordVisibility() {

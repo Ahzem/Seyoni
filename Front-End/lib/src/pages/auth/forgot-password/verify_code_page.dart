@@ -12,11 +12,10 @@ class OtpScreenForNewPassword extends StatefulWidget {
   const OtpScreenForNewPassword({super.key});
 
   @override
-  _OtpScreenForNewPasswordState createState() =>
-      _OtpScreenForNewPasswordState();
+  OtpScreenForNewPasswordState createState() => OtpScreenForNewPasswordState();
 }
 
-class _OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
+class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
   int _remainingTime = 30;
   Timer? _timer;
   bool _isResendButtonActive = false;
@@ -109,15 +108,14 @@ class _OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
     final String email =
         ModalRoute.of(context)?.settings.arguments as String? ?? 'your email';
     return Scaffold(
-      backgroundColor: kBackgroundColor,
-      resizeToAvoidBottomInset: false,
+      backgroundColor: kTransparentColor,
       body: BackgroundWidget(
         child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Align(
                   alignment: Alignment.topLeft,
@@ -223,7 +221,6 @@ class _OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
                         ],
                       )
                     : const SizedBox(width: 0, height: 0),
-                const SizedBox(height: 50),
               ],
             ),
           ),

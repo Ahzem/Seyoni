@@ -28,10 +28,10 @@ class InstructionPage extends StatefulWidget {
   const InstructionPage({super.key});
 
   @override
-  _InstructionPageState createState() => _InstructionPageState();
+  InstructionPageState createState() => InstructionPageState();
 }
 
-class _InstructionPageState extends State<InstructionPage> {
+class InstructionPageState extends State<InstructionPage> {
   int _currentPage = 0;
   final PageController _pageController = PageController();
   final List<String> _images = [
