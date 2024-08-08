@@ -1,30 +1,16 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const mongoose = require("mongoose");
 require("dotenv").config();
 
 const uri = process.env.MONGODB_URI;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+const connection = mongoose
+  .createConnection(uri)
+  .on("open", () => {
+    console.log("Hello Ahzem, I'm connected to MongoDB");
+  })
+  .on("error", (error) => {
+    console.log("Error connecting to MongoDB", error);
+  });
 
-async function connectToDatabase() {
-  try {
-    // Connect the client to the server (optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-  } catch (error) {
-    console.error("Failed to connect to MongoDB", error);
-    throw error;
-  }
-}
-
-module.exports = { client, connectToDatabase };
+// Corrected the typo here
+module.exports = connection;

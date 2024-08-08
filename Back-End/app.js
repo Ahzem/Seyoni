@@ -1,12 +1,9 @@
 const express = require("express");
-const { connectToDatabase } = require("./config/db.js");
 
 const app = express();
 
-// Connect to the database before starting the server
-connectToDatabase().catch((error) => {
-  console.error("Failed to connect to the database", error);
-  process.exit(1); // Exit the process with an error code
+app.get("/", (req, res) => {
+  res.send("Hello Ahzem! I'm a Node.js app!");
 });
 
 module.exports = app;
