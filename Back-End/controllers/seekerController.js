@@ -1,22 +1,12 @@
-const SeekerServices = require("../services/seekerServices");
+const { registerSeeker } = require("../services/seekerServices");
 
 exports.registerSeeker = async (req, res) => {
   try {
-    const { firstName, lastName, phone, email, password } = req.body;
-
-    const seeker = await UserServices.registerSeeker(
-      firstName,
-      lastName,
-      phone,
-      email,
-      password
-    );
-    res.json({
-      status: true,
-      success: "Seeker registered successfully",
-      data: seeker,
-    });
+    const newSeeker = await registerSeeker(req.body);
+    res
+      .status(201)
+      .json({ message: "User created successfully", user: newSeeker });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Server error", error });
   }
 };

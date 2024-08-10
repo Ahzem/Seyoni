@@ -1,37 +1,36 @@
 const mongoose = require("mongoose");
-require("dotenv").config();
-const bcrypt = require("bcryptjs");
-const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
-const { Schema } = mongoose;
-
-const seekerSchema = new Schema(
+const seekerSchema = new mongoose.Schema(
   {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    phone: { type: String, required: true, unique: true },
-    email: { type: String, lowercase: true, required: true, unique: true },
+    phone: { type: String, required: true },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/.+\@.+\..+/, "Please fill a valid email address"],
+    },
     password: { type: String, required: true },
   },
   { timestamps: true }
 );
 
-// Hash the password before saving
+// bcrypt the password before saving
 seekerSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-// Compare entered password with hashed password
-seekerSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+// compare the password
+seekerSchema.methods.comparePassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
 };
 
-// Registering the model with the specific connection instance
-const SeekerModel = db.model("Seeker", seekerSchema);
+const Seeker = mongoose.model("Seeker", seekerSchema);
 
-module.exports = SeekerModel;
+module.exports = Seeker;

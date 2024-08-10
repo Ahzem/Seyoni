@@ -1,22 +1,24 @@
-const SeekerModel = require("../models/seeker");
+const Seeker = require("../models/seekerModel");
 
-class SeekerServices {
-  static async registerSeeker(firstName, lastName, phone, email, password) {
-    // Create a new seeker
-    try {
-      const createSeeker = new SeekerModel({
-        firstName,
-        lastName,
-        phone,
-        email,
-        password,
-      });
-      // Save the seeker
-      return await createSeeker.save();
-    } catch (error) {
-      console.error(error);
-    }
+async function registerSeeker(data) {
+  const { firstName, lastName, phone, email, password } = data;
+
+  const newSeeker = new Seeker({
+    firstName,
+    lastName,
+    phone,
+    email,
+    password,
+  });
+
+  try {
+    await newSeeker.save();
+    console.log("User created:", newSeeker);
+    return newSeeker;
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
   }
 }
 
-module.exports = SeekerServices;
+module.exports = { registerSeeker };
