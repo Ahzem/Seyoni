@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../config/route.dart';
 import '../../pages/sign-pages/components/buttons/sign_in.dart';
@@ -11,15 +12,16 @@ import 'components/fields/name.dart';
 import 'components/buttons/google.dart';
 import 'components/buttons/facebook.dart';
 import 'components/buttons/sign_up.dart';
+import '../../api/register_seeker.dart';
 
 class SignUpPage extends StatelessWidget {
   final TextEditingController phoneNumberController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
       TextEditingController();
 
   SignUpPage({super.key});
@@ -59,7 +61,7 @@ class SignUpPage extends StatelessWidget {
                           Expanded(
                             child: FNameField(
                               key: const Key('first-name-field'),
-                              controller: _firstNameController,
+                              controller: firstNameController,
                               errorText: 'First name is incorrect',
                             ),
                           ),
@@ -67,7 +69,7 @@ class SignUpPage extends StatelessWidget {
                           Expanded(
                             child: LNameField(
                               key: const Key('last-name-field'),
-                              controller: _lastNameController,
+                              controller: lastNameController,
                               errorText: 'Last name is incorrect',
                             ),
                           ),
@@ -76,7 +78,7 @@ class SignUpPage extends StatelessWidget {
                       const SizedBox(height: 10),
                       EmailField(
                         key: const Key('email'),
-                        controller: _emailController,
+                        controller: emailController,
                         errorText: 'Email is incorrect',
                       ),
                       const SizedBox(height: 10),
@@ -88,16 +90,16 @@ class SignUpPage extends StatelessWidget {
                       const SizedBox(height: 10),
                       PasswordField(
                         key: const Key('password'),
-                        controller: _passwordController,
+                        controller: passwordController,
                       ),
                       const SizedBox(height: 10),
                       ConfirmPasswordField(
                         key: const Key('confirm_password'),
-                        controller: _confirmPasswordController,
+                        controller: confirmPasswordController,
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please re-enter your password';
-                          } else if (value != _passwordController.text) {
+                          } else if (value != passwordController.text) {
                             return 'Passwords do not match';
                           }
                           return null;
@@ -107,10 +109,13 @@ class SignUpPage extends StatelessWidget {
                       SignUpButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            Navigator.pushNamed(
+                            registerSeeker(
                               context,
-                              AppRoutes.otppage,
-                              arguments: phoneNumberController.text,
+                              firstNameController,
+                              lastNameController,
+                              emailController,
+                              phoneNumberController,
+                              passwordController,
                             );
                           }
                         },
