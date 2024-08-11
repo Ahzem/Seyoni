@@ -27,8 +27,8 @@ seekerSchema.pre("save", async function (next) {
 });
 
 // compare the password
-seekerSchema.methods.comparePassword = async function (password) {
-  return await bcrypt.compare(password, this.password);
+seekerSchema.methods.comparePassword = async function (seekerPassword) {
+  return await bcrypt.compare(seekerPassword, this.password);
 };
 
 const Seeker = mongoose.model("Seeker", seekerSchema);

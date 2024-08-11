@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import '../../../../constants/constants_color.dart';
 import '../constants.dart';
-import '../decor/password.dart';
+import '../decor/new_pw.dart';
 
-class PasswordField extends StatefulWidget {
+class NewPasswordField extends StatefulWidget {
   final TextEditingController controller;
 
-  const PasswordField({
+  const NewPasswordField({
     required Key key,
     required this.controller,
   }) : super(key: key);
 
   @override
-  PasswordFieldState createState() => PasswordFieldState();
+  NewPasswordFieldState createState() => NewPasswordFieldState();
 }
 
-class PasswordFieldState extends State<PasswordField> {
+class NewPasswordFieldState extends State<NewPasswordField> {
   bool _isPasswordVisible = false;
 
   void _togglePasswordVisibility() {
@@ -29,7 +29,7 @@ class PasswordFieldState extends State<PasswordField> {
     return TextFormField(
       controller: widget.controller,
       style: kTextFieldStyle,
-      decoration: kPasswordFieldDecoration.copyWith(
+      decoration: kNewPasswordFieldDecoration.copyWith(
         suffixIcon: IconButton(
           icon: Icon(
             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,

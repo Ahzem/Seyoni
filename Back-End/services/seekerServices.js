@@ -21,4 +21,25 @@ async function registerSeeker(data) {
   }
 }
 
-module.exports = { registerSeeker };
+async function loginSeeker(data) {
+  const { phone, password } = data;
+  try {
+    const seeker = await Seeker.findOne({ phone }).exec();
+
+    if (!seeker) {
+      throw new Error("User not found");
+    }
+
+    const isPasswordValid = await seeker.comparePassword(password);
+    if (!isPasswordValid) {
+      throw new Error("Invalid password");
+    }
+
+    return seeker;
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    throw error;
+  }
+}
+
+module.exports = { registerSeeker, loginSeeker };

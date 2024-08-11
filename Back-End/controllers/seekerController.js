@@ -1,4 +1,5 @@
-const { registerSeeker } = require("../services/seekerServices");
+const { registerSeeker, loginSeeker } = require("../services/seekerServices");
+const generateToken = require("../utils/generateToken");
 
 exports.registerSeeker = async (req, res) => {
   try {
@@ -21,6 +22,30 @@ exports.registerSeeker = async (req, res) => {
     if (error.code === 11000) {
       // Duplicate key error
       return res.status(409).json({ error: "Phone number already exists" });
+    }
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+exports.loginSeeker = async (req, res) => {
+  try {
+    const { phone, password } = req.body;
+
+    const seeker = await loginSeeker({ phone, password });
+    if (!seeker) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const token = generateToken(seeker._id);
+
+    res.status(200).json({ status: true, token: token });
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    if (
+      error.message === "User not found" ||
+      error.message === "Invalid password"
+    ) {
+      return res.status(401).json({ error: error.message });
     }
     res.status(500).json({ error: "Server error" });
   }

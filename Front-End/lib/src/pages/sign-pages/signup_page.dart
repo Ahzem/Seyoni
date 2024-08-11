@@ -6,8 +6,8 @@ import '../../constants/constants_color.dart';
 import '../../widgets/background_widget.dart';
 import 'components/fields/phone_num.dart';
 import 'components/fields/email.dart';
-import 'components/fields/password.dart';
-import 'components/fields/confirmPw.dart';
+import 'components/fields/new_pw.dart';
+import 'components/fields/confirm_pw.dart';
 import 'components/fields/name.dart';
 import 'components/buttons/google.dart';
 import 'components/buttons/facebook.dart';
@@ -88,7 +88,7 @@ class SignUpPage extends StatelessWidget {
                         errorText: 'Phone number is incorrect',
                       ),
                       const SizedBox(height: 10),
-                      PasswordField(
+                      NewPasswordField(
                         key: const Key('password'),
                         controller: passwordController,
                       ),

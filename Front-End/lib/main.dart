@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'src/pages/auth/forgot-password/new_password.page.dart';
 import 'src/pages/auth/forgot-password/verify_code_page.dart';
 import 'src/pages/main/mainpage.dart';
@@ -11,16 +13,24 @@ import 'src/pages/auth/otp/otp_screen.dart';
 import 'src/pages/auth/forgot-password/forgot_password_page.dart';
 import 'src/pages/notifications/internal/notification_page.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('token');
+  runApp(MyApp(token: token));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String? token;
+  const MyApp({super.key, this.token});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      home: (token != null && !JwtDecoder.isExpired(token!))
+          ? HomePage(token: token)
+          : SignInPage(),
+      onGenerateRoute: generateRoute,
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {

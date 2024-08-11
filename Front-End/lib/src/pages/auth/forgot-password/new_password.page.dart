@@ -5,7 +5,7 @@ import '../../../constants/constants_color.dart';
 import '../../../constants/constants_font.dart';
 import '../../../widgets/background_widget.dart';
 import '../../sign-pages/components/fields/password.dart';
-import '../../sign-pages/components/fields/confirmPw.dart';
+import '../../sign-pages/components/fields/confirm_pw.dart';
 import '../../../widgets/alertbox/password_changed.dart';
 
 class ResetPasswordPage extends StatefulWidget {

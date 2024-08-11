@@ -3,15 +3,25 @@ import '../../widgets/custom_appbar.dart';
 import '../../widgets/customNavBar/custom_navbar.dart';
 import '../../widgets/background_widget.dart';
 import '../../constants/constants_font.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final token;
+  const HomePage({super.key, this.token});
 
   @override
   HomePageState createState() => HomePageState();
 }
 
 class HomePageState extends State<HomePage> {
+  late Map<String, dynamic> _decodedToken;
+
+  @override
+  void initState() {
+    super.initState();
+    _decodedToken = JwtDecoder.decode(widget.token);
+  }
+
   int _currentIndex = 0;
 
   final List<Widget> _pages = [

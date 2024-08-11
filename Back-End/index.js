@@ -13,6 +13,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/register", seekerController.registerSeeker);
+app.post("/login", seekerController.loginSeeker);
 
 const port = process.env.PORT || 3000;
 
