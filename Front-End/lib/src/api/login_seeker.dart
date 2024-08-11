@@ -12,7 +12,6 @@ Future<void> loginSeeker(
   BuildContext context,
   TextEditingController emailController,
   TextEditingController passwordController,
-  ValueNotifier<String?> errorNotifier,
 ) async {
   try {
     if (kDebugMode) {
@@ -43,42 +42,51 @@ Future<void> loginSeeker(
         AppRoutes.home,
         arguments: jsonResponse['token'],
       );
-    } else if (response.statusCode == 409) {
+    } else if (response.statusCode == 404) {
       // call the alert box
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return SeekerDoesntExist(
+          return SeekerNotFound(
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pushNamed(context, AppRoutes.signUp);
             },
           );
         },
       );
-      errorNotifier.value = 'Seeker not found';
     } else if (response.statusCode == 401) {
-      // call the alert box
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return IncorrectPassword(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          );
-        },
-      );
-      errorNotifier.value = 'Incorrect password';
-    } else {
-      if (kDebugMode) {
-        print('Failed to login: ${response.body}');
+      var jsonResponse = jsonDecode(response.body);
+      if (jsonResponse['error'] == 'User not found') {
+        // call the alert box
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return SeekerNotFound(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.signUp);
+              },
+            );
+          },
+        );
+      } else {
+        // call the alert box
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return IncorrectPassword(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            );
+          },
+        );
       }
-      errorNotifier.value = 'Failed to login';
+    } else {
+      throw Exception('Failed to login seeker');
     }
   } catch (e) {
     if (kDebugMode) {
-      print('Connection failed: $e');
+      print('Failed');
     }
-    errorNotifier.value = 'Connection failed: $e';
   }
 }

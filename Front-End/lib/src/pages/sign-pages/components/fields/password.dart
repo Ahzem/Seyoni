@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../constants/constants_color.dart';
 import '../constants.dart';
 import '../decor/new_pw.dart';
+import '../../signin_page.dart';
 
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
@@ -49,9 +50,12 @@ class PasswordFieldState extends State<PasswordField> {
           return 'Password must be at least 8 characters long';
         } else if (value.contains(' ')) {
           return 'Password must not contain any spaces';
-        } else if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$')
+        } else if (!RegExp(r'^(?=.*[!@#\$&*~]).+$').hasMatch(value)) {
+          return 'Password must contain at least one special character';
+        } else if (!RegExp(
+                r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~]).+$')
             .hasMatch(value)) {
-          return 'Password must contain at least one uppercase letter, one lowercase letter and one number';
+          return 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character';
         }
         return null;
       },

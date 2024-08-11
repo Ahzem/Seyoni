@@ -51,7 +51,7 @@ class PasswordChanged extends StatelessWidget {
                       endIndent: 1,
                     ),
                     Image.asset(
-                      'assets/icons/verified.png',
+                      'assets/icons/AlertBox/Edit-Account.png',
                       height: 50,
                       width: 50,
                     ),

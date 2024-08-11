@@ -51,7 +51,7 @@ class VerificationSuccess extends StatelessWidget {
                       endIndent: 1,
                     ),
                     Image.asset(
-                      'assets/icons/verified.png',
+                      'assets/icons/AlertBox/verified.png',
                       height: 50,
                       width: 50,
                     ),

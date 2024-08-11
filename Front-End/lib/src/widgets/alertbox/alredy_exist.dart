@@ -4,10 +4,10 @@ import '../../constants/constants_font.dart';
 import '../custom_button.dart';
 import 'dart:ui';
 
-class SeekerNotFound extends StatelessWidget {
+class AlredyExist extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const SeekerNotFound({
+  const AlredyExist({
     super.key,
     required this.onPressed,
   });
@@ -40,7 +40,7 @@ class SeekerNotFound extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     const Text(
-                      'Account Not Found',
+                      'Account Already Exists',
                       style: kAlertTitleTextStyle,
                       textAlign: TextAlign.center,
                     ),
@@ -51,18 +51,18 @@ class SeekerNotFound extends StatelessWidget {
                       endIndent: 1,
                     ),
                     Image.asset(
-                      'assets/icons/AlertBox/User-Not-Found.png',
+                      'assets/icons/AlertBox/Login.png',
                       height: 50,
                       width: 50,
                     ),
                     const Text(
-                      'The account you are trying to access does not exist. Please sign up to create a new account.',
+                      'The account you are trying to create already exists. Please sign in to access your account.',
                       style: kAlertDescriptionTextStyle,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 10),
                     PrimaryFilledButton(
-                      text: 'Sign Up',
+                      text: 'Sign In',
                       onPressed: onPressed,
                     ),
                   ],

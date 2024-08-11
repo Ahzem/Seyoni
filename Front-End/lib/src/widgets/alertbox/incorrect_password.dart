@@ -51,7 +51,7 @@ class IncorrectPassword extends StatelessWidget {
                       endIndent: 1,
                     ),
                     Image.asset(
-                      'assets/icons/verified.png',
+                      'assets/icons/AlertBox/wrongPincode.png',
                       height: 50,
                       width: 50,
                     ),

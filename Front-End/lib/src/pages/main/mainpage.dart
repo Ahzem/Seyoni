@@ -6,7 +6,7 @@ import '../../constants/constants_font.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class HomePage extends StatefulWidget {
-  final token;
+  final String? token;
   const HomePage({super.key, this.token});
 
   @override
@@ -20,7 +20,7 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     if (widget.token != null) {
-      _decodedToken = JwtDecoder.decode(widget.token);
+      _decodedToken = JwtDecoder.decode(widget.token!);
     } else {
       _decodedToken = {}; // Handle the case where token is null
     }
@@ -36,25 +36,29 @@ class HomePageState extends State<HomePage> {
       ),
     ),
     const Center(
-        child: Text(
-      'Chat Page Content',
-      style: kBodyTextStyle,
-    )),
+      child: Text(
+        'Chat Page Content',
+        style: kBodyTextStyle,
+      ),
+    ),
     const Center(
-        child: Text(
-      'Home Page Content',
-      style: kBodyTextStyle,
-    )),
+      child: Text(
+        'Home Page Content',
+        style: kBodyTextStyle,
+      ),
+    ),
     const Center(
-        child: Text(
-      'Category Page Content',
-      style: kBodyTextStyle,
-    )),
+      child: Text(
+        'Category Page Content',
+        style: kBodyTextStyle,
+      ),
+    ),
     const Center(
-        child: Text(
-      'Profile Page Content',
-      style: kBodyTextStyle,
-    )),
+      child: Text(
+        'Profile Page Content',
+        style: kBodyTextStyle,
+      ),
+    ),
   ];
 
   void _onNavBarTapped(int index) {

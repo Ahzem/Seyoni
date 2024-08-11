@@ -103,4 +103,5 @@ flutter:
     - assets/icons/
     - assets/icons/NavBar/
     - assets/icons/AppBar/
+    - assets/icons/AlertBox/
     - assets/svg/

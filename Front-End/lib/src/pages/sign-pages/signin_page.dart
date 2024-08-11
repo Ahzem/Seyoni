@@ -23,7 +23,6 @@ class SignInPageState extends State<SignInPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final ValueNotifier<String> errorNotifier = ValueNotifier<String>('');
 
   late SharedPreferences prefs;
 
@@ -91,12 +90,13 @@ class SignInPageState extends State<SignInPage> {
                       const SizedBox(height: 20),
                       SignInButton(
                         onPressed: () {
-                          loginSeeker(
-                            context,
-                            emailController,
-                            passwordController,
-                            errorNotifier,
-                          );
+                          if (_formKey.currentState!.validate()) {
+                            loginSeeker(
+                              context,
+                              emailController,
+                              passwordController,
+                            );
+                          }
                         },
                       ),
                       Row(

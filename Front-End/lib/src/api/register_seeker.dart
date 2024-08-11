@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../config/route.dart'; // Adjust the import according to your project structure
-import '../config/url.dart'; // Adjust the import according to your project structure
+import '../config/route.dart';
+import '../config/url.dart';
+import '../widgets/alertbox/alredy_exist.dart';
 
 Future<void> registerSeeker(
   BuildContext context,
@@ -50,20 +51,25 @@ Future<void> registerSeeker(
         arguments: phoneNumberController.text,
       );
     } else if (response.statusCode == 409) {
-      if (kDebugMode) {
-        print('Phone number already exists');
-      }
-      throw Exception('Phone number already exists');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlredyExist(
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.signIn);
+            },
+          );
+        },
+      );
     } else {
       if (kDebugMode) {
-        print('Failed to create user: ${response.body}');
+        print('Failed');
       }
-      throw Exception('Failed to create user');
     }
   } catch (e) {
     if (kDebugMode) {
-      print('Connection failed: $e');
+      print('Failed');
+      print(e);
     }
-    throw Exception('Connection failed: $e');
   }
 }
