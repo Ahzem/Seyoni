@@ -1,3 +1,3 @@
 const url = 'http://localhost:3000';
-const registerSeekersUrl = '$url/register';
-const loginSeekersUrl = '$url/login';
+const registerSeekersUrl = '$url/signup';
+const loginSeekersUrl = '$url/signin';

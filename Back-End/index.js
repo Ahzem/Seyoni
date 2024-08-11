@@ -12,8 +12,8 @@ app.get("/", (req, res) => {
   res.send("Hello Ahzem! Welcome to the Seeker API!");
 });
 
-app.post("/register", seekerController.registerSeeker);
-app.post("/login", seekerController.loginSeeker);
+app.post("/signup", seekerController.signUpSeeker);
+app.post("/signin", seekerController.signInSeeker);
 
 const port = process.env.PORT || 3000;
 

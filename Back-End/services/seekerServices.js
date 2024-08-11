@@ -1,6 +1,6 @@
 const Seeker = require("../models/seekerModel");
 
-async function registerSeeker(data) {
+async function signUpSeeker(data) {
   const { firstName, lastName, phone, email, password } = data;
 
   const newSeeker = new Seeker({
@@ -21,10 +21,10 @@ async function registerSeeker(data) {
   }
 }
 
-async function loginSeeker(data) {
-  const { phone, password } = data;
+async function signInSeeker(data) {
+  const { email, password } = data;
   try {
-    const seeker = await Seeker.findOne({ phone }).exec();
+    const seeker = await Seeker.findOne({ email });
 
     if (!seeker) {
       throw new Error("User not found");
@@ -42,4 +42,4 @@ async function loginSeeker(data) {
   }
 }
 
-module.exports = { registerSeeker, loginSeeker };
+module.exports = { signUpSeeker, signInSeeker };

@@ -3,14 +3,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import '../config/route.dart'; // Adjust the import according to your project structure
-import '../config/url.dart'; // Adjust the import according to your project structure
+import '../config/route.dart';
+import '../config/url.dart';
 import '../widgets/alertbox/incorrect_password.dart';
 import '../widgets/alertbox/seeker_not_found.dart';
 
 Future<void> loginSeeker(
   BuildContext context,
-  TextEditingController phoneNumberController,
+  TextEditingController emailController,
   TextEditingController passwordController,
   ValueNotifier<String?> errorNotifier,
 ) async {
@@ -18,7 +18,7 @@ Future<void> loginSeeker(
     if (kDebugMode) {
       print('Sending request to $loginSeekersUrl');
       print('Request body: ${jsonEncode(<String, String>{
-            'phone': phoneNumberController.text,
+            'email': emailController.text,
             'password': passwordController.text,
           })}');
     }
@@ -29,7 +29,7 @@ Future<void> loginSeeker(
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'phone': phoneNumberController.text,
+        'email': emailController.text,
         'password': passwordController.text,
       }),
     );

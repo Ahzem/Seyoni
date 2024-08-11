@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:seyoni/src/pages/sign-pages/components/fields/email.dart';
 import '../../config/route.dart';
 import 'components/buttons/sign_up.dart';
 import '../../constants/constants_color.dart';
 import '../../widgets/background_widget.dart';
-import 'components/fields/phone_num.dart';
 import 'components/fields/password.dart';
 import 'components/buttons/google.dart';
 import 'components/buttons/facebook.dart';
 import 'components/buttons/sign_in.dart';
-import 'components/buttons/remember_me.dart';
 import 'components/buttons/forgot_pw.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../api/login_seeker.dart'; // Import the loginSeeker function
@@ -22,7 +21,7 @@ class SignInPage extends StatefulWidget {
 
 class SignInPageState extends State<SignInPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final ValueNotifier<String> errorNotifier = ValueNotifier<String>('');
 
@@ -68,9 +67,9 @@ class SignInPageState extends State<SignInPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      PhoneNumberField(
+                      EmailField(
                         key: const Key('phone-num-field'),
-                        controller: phoneNumberController,
+                        controller: emailController,
                         errorText: 'Phone number is incorrect',
                       ),
                       const SizedBox(height: 10),
@@ -79,9 +78,8 @@ class SignInPageState extends State<SignInPage> {
                         controller: passwordController,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          const RememberMeCheckbox(),
                           ForgotPasswordButton(
                             onPressed: () {
                               Navigator.pushNamed(
@@ -93,16 +91,12 @@ class SignInPageState extends State<SignInPage> {
                       const SizedBox(height: 20),
                       SignInButton(
                         onPressed: () {
-                          if (!_formKey.currentState!.validate()) {
-                            loginSeeker(
-                              context,
-                              phoneNumberController,
-                              passwordController,
-                              errorNotifier,
-                            );
-                          } else {
-                            errorNotifier.value = 'Please enter valid details';
-                          }
+                          loginSeeker(
+                            context,
+                            emailController,
+                            passwordController,
+                            errorNotifier,
+                          );
                         },
                       ),
                       Row(

@@ -1,7 +1,7 @@
-const { registerSeeker, loginSeeker } = require("../services/seekerServices");
+const { signUpSeeker, signInSeeker } = require("../services/seekerServices");
 const generateToken = require("../utils/generateToken");
 
-exports.registerSeeker = async (req, res) => {
+exports.signUpSeeker = async (req, res) => {
   try {
     const { firstName, lastName, email, phone, password } = req.body;
     if (!firstName || !lastName || !phone) {
@@ -9,7 +9,7 @@ exports.registerSeeker = async (req, res) => {
         .status(400)
         .json({ error: "firstName, lastName, and phone are required" });
     }
-    const seeker = await registerSeeker({
+    const seeker = await signUpSeeker({
       firstName,
       lastName,
       email,
@@ -27,11 +27,11 @@ exports.registerSeeker = async (req, res) => {
   }
 };
 
-exports.loginSeeker = async (req, res) => {
+exports.signInSeeker = async (req, res) => {
   try {
-    const { phone, password } = req.body;
+    const { email, password } = req.body;
 
-    const seeker = await loginSeeker({ phone, password });
+    const seeker = await signInSeeker({ email, password });
     if (!seeker) {
       return res.status(404).json({ error: "User not found" });
     }
