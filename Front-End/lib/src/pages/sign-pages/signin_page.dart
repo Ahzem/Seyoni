@@ -24,6 +24,7 @@ class SignInPageState extends State<SignInPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final ValueNotifier<String> errorNotifier = ValueNotifier<String>('');
 
   late SharedPreferences prefs;
 
@@ -35,12 +36,6 @@ class SignInPageState extends State<SignInPage> {
 
   void initSharedPreferences() async {
     prefs = await SharedPreferences.getInstance();
-  }
-
-  void login(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      await loginSeeker(context, phoneNumberController, passwordController);
-    }
   }
 
   @override
@@ -98,7 +93,16 @@ class SignInPageState extends State<SignInPage> {
                       const SizedBox(height: 20),
                       SignInButton(
                         onPressed: () {
-                          login(context);
+                          if (!_formKey.currentState!.validate()) {
+                            loginSeeker(
+                              context,
+                              phoneNumberController,
+                              passwordController,
+                              errorNotifier,
+                            );
+                          } else {
+                            errorNotifier.value = 'Please enter valid details';
+                          }
                         },
                       ),
                       Row(

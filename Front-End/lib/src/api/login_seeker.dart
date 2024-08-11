@@ -5,11 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../config/route.dart'; // Adjust the import according to your project structure
 import '../config/url.dart'; // Adjust the import according to your project structure
+import '../widgets/alertbox/incorrect_password.dart';
+import '../widgets/alertbox/seeker_not_found.dart';
 
 Future<void> loginSeeker(
   BuildContext context,
   TextEditingController phoneNumberController,
   TextEditingController passwordController,
+  ValueNotifier<String?> errorNotifier,
 ) async {
   try {
     if (kDebugMode) {
@@ -41,20 +44,41 @@ Future<void> loginSeeker(
         arguments: jsonResponse['token'],
       );
     } else if (response.statusCode == 409) {
-      if (kDebugMode) {
-        print('Phone number already exists');
-      }
-      throw Exception('Phone number already exists');
+      // call the alert box
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SeekerDoesntExist(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          );
+        },
+      );
+      errorNotifier.value = 'Seeker not found';
+    } else if (response.statusCode == 401) {
+      // call the alert box
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return IncorrectPassword(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          );
+        },
+      );
+      errorNotifier.value = 'Incorrect password';
     } else {
       if (kDebugMode) {
         print('Failed to login: ${response.body}');
       }
-      throw Exception('Failed to login');
+      errorNotifier.value = 'Failed to login';
     }
   } catch (e) {
     if (kDebugMode) {
       print('Connection failed: $e');
     }
-    throw Exception('Connection failed: $e');
+    errorNotifier.value = 'Connection failed: $e';
   }
 }

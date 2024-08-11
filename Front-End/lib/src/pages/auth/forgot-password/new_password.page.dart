@@ -4,7 +4,7 @@ import '../../../config/route.dart';
 import '../../../constants/constants_color.dart';
 import '../../../constants/constants_font.dart';
 import '../../../widgets/background_widget.dart';
-import '../../sign-pages/components/fields/password.dart';
+import '../../sign-pages/components/fields/new_pw.dart';
 import '../../sign-pages/components/fields/confirm_pw.dart';
 import '../../../widgets/alertbox/password_changed.dart';
 
@@ -66,7 +66,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                         style: kBodyTextStyle,
                       ),
                       const SizedBox(height: 20),
-                      PasswordField(
+                      NewPasswordField(
                         key: const Key('password'),
                         controller: _passwordController,
                       ),
