@@ -27,9 +27,15 @@ class AppRoutes {
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case AppRoutes.launch:
-      return MaterialPageRoute(builder: (_) => const LaunchScreen());
+      return MaterialPageRoute(
+          builder: (_) => LaunchScreen(
+                onLaunchScreenComplete: (context) {
+                  Navigator.pushReplacementNamed(
+                      context, AppRoutes.instruction);
+                },
+              ));
     case AppRoutes.signIn:
-      return MaterialPageRoute(builder: (_) => SignInPage());
+      return MaterialPageRoute(builder: (_) => const SignInPage());
     case AppRoutes.signUp:
       return MaterialPageRoute(builder: (_) => SignUpPage());
     case AppRoutes.home:

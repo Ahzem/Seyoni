@@ -5,7 +5,9 @@ import '../../widgets/background_widget.dart';
 import '../../config/route.dart';
 
 class LaunchScreen extends StatefulWidget {
-  const LaunchScreen({super.key});
+  final Function(BuildContext) onLaunchScreenComplete;
+
+  const LaunchScreen({super.key, required this.onLaunchScreenComplete});
 
   @override
   LaunchScreenState createState() => LaunchScreenState();

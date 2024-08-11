@@ -17,28 +17,28 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
-  runApp(MyApp(token: token));
+  bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
+  runApp(MyApp(token: token, hasSeenLaunchScreen: hasSeenLaunchScreen));
 }
 
 class MyApp extends StatelessWidget {
   final String? token;
-  const MyApp({super.key, this.token});
+  final bool hasSeenLaunchScreen;
+
+  const MyApp({super.key, this.token, required this.hasSeenLaunchScreen});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: (token != null && !JwtDecoder.isExpired(token!))
-          ? HomePage(token: token)
-          : SignInPage(),
       onGenerateRoute: generateRoute,
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => const LaunchScreen(),
+        '/': (context) => _getInitialPage(),
         AppRoutes.instruction: (context) => const InstructionPage(),
-        AppRoutes.signIn: (context) => SignInPage(),
+        AppRoutes.signIn: (context) => const SignInPage(),
         AppRoutes.signUp: (context) => SignUpPage(),
-        AppRoutes.home: (context) => const HomePage(),
+        AppRoutes.home: (context) => HomePage(token: token),
         AppRoutes.otppage: (context) => const OtpScreen(),
         AppRoutes.otppagefornewpassword: (context) =>
             const OtpScreenForNewPassword(),
@@ -47,5 +47,21 @@ class MyApp extends StatelessWidget {
         AppRoutes.notification: (context) => const NotificationPage(),
       },
     );
+  }
+
+  Widget _getInitialPage() {
+    if (!hasSeenLaunchScreen) {
+      return LaunchScreen(onLaunchScreenComplete: _onLaunchScreenComplete);
+    } else if (token != null && !JwtDecoder.isExpired(token!)) {
+      return HomePage(token: token);
+    } else {
+      return const SignInPage();
+    }
+  }
+
+  void _onLaunchScreenComplete(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hasSeenLaunchScreen', true);
+    Navigator.pushReplacementNamed(context, AppRoutes.signIn);
   }
 }

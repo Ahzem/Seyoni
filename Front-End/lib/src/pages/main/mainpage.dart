@@ -19,7 +19,11 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _decodedToken = JwtDecoder.decode(widget.token);
+    if (widget.token != null) {
+      _decodedToken = JwtDecoder.decode(widget.token);
+    } else {
+      _decodedToken = {}; // Handle the case where token is null
+    }
   }
 
   int _currentIndex = 0;
