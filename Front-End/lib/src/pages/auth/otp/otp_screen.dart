@@ -1,5 +1,7 @@
 import 'dart:async';
-
+import '../../../config/url.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../../constants/constants_font.dart';
 import '../../../config/route.dart';
@@ -27,12 +29,14 @@ class OtpScreenState extends State<OtpScreen> {
   final TextEditingController _controller4 = TextEditingController();
   final TextEditingController _controller5 = TextEditingController();
   final TextEditingController _controller6 = TextEditingController();
+
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
   final FocusNode _focusNode3 = FocusNode();
   final FocusNode _focusNode4 = FocusNode();
   final FocusNode _focusNode5 = FocusNode();
   final FocusNode _focusNode6 = FocusNode();
+
   bool _isVerifyButtonActive = false;
   bool _isErrorVisible = false;
   String _errorMessage = '';
@@ -92,23 +96,51 @@ class OtpScreenState extends State<OtpScreen> {
         _controller6.text == '6';
 
     if (isCodeCorrect) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return VerificationSuccess(
-            onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                AppRoutes.home,
-                (route) => false,
-              );
-            },
-          );
-        },
-      );
+      final userData =
+          ModalRoute.of(context)?.settings.arguments as Map<String, String>;
+      _sendDataToBackend(userData);
     } else {
       setState(() {
         _errorMessage = 'The code you entered is incorrect. Please try again.';
+        _isErrorVisible = true;
+      });
+    }
+  }
+
+  Future<void> _sendDataToBackend(Map<String, String> userData) async {
+    try {
+      final response = await http.post(
+        Uri.parse(registerSeekersUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(userData),
+      );
+
+      if (response.statusCode == 201) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return VerificationSuccess(
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.home,
+                  (route) => false,
+                );
+              },
+            );
+          },
+        );
+      } else {
+        setState(() {
+          _errorMessage = 'Failed to register. Please try again.';
+          _isErrorVisible = true;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to register. Please try again.';
         _isErrorVisible = true;
       });
     }
@@ -134,8 +166,9 @@ class OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String phoneNumber =
-        ModalRoute.of(context)?.settings.arguments as String? ?? 'your number';
+    final Map<String, String>? arguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+    final String phoneNumber = arguments?['phone'] ?? 'your number';
     return Scaffold(
       backgroundColor: kTransparentColor,
       body: BackgroundWidget(

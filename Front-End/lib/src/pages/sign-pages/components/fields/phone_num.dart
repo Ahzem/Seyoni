@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
 import '../constants.dart';
@@ -52,17 +51,17 @@ class PhoneNumberFieldState extends State<PhoneNumberField> {
         hintText: 'Enter your phone number',
         hintStyle: kBodyTextStyle,
         prefixIcon: Container(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10),
           child: InkWell(
             onTap: () {
               showCountryPicker(
                 countryListTheme: const CountryListThemeData(
-                  bottomSheetHeight: 450,
+                  bottomSheetHeight: 500,
                   textStyle: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                   ),
-                  flagSize: 28,
+                  flagSize: 26,
                   searchTextStyle: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -79,7 +78,7 @@ class PhoneNumberFieldState extends State<PhoneNumberField> {
                     ),
                   ),
                   // blured background for bottom sheet
-                  backgroundColor: kSecondaryColor,
+                  backgroundColor: kPrimaryColor,
                 ),
                 context: context,
                 onSelect: (value) {
@@ -91,8 +90,10 @@ class PhoneNumberFieldState extends State<PhoneNumberField> {
             },
             child: Text(
                 '${selectedCountry.flagEmoji} +${selectedCountry.phoneCode}',
-                style: kTextFieldStyle.copyWith(
+                style: TextStyle(
                   color: kPrimaryColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
                 )),
           ),
         ),

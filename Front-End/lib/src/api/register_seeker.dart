@@ -6,7 +6,7 @@ import '../config/route.dart';
 import '../config/url.dart';
 import '../widgets/alertbox/alredy_exist.dart';
 
-Future<void> registerSeeker(
+Future<Map<String, String>?> registerSeeker(
   BuildContext context,
   TextEditingController firstNameController,
   TextEditingController lastNameController,
@@ -15,16 +15,6 @@ Future<void> registerSeeker(
   TextEditingController passwordController,
 ) async {
   try {
-    if (kDebugMode) {
-      print('Sending request to $registerSeekersUrl');
-      print('Request body: ${jsonEncode(<String, String>{
-            'firstName': firstNameController.text,
-            'lastName': lastNameController.text,
-            'email': emailController.text,
-            'phone': phoneNumberController.text,
-          })}');
-    }
-
     final response = await http.post(
       Uri.parse(registerSeekersUrl),
       headers: <String, String>{
@@ -40,15 +30,13 @@ Future<void> registerSeeker(
     );
 
     if (response.statusCode == 201) {
-      if (kDebugMode) {
-        print('Success');
-      }
-      // Navigate to OTP page or show success message
-      Navigator.pushNamed(
-        context,
-        AppRoutes.otppage,
-        arguments: phoneNumberController.text,
-      );
+      return {
+        'firstName': firstNameController.text,
+        'lastName': lastNameController.text,
+        'email': emailController.text,
+        'phone': phoneNumberController.text,
+        'password': passwordController.text,
+      };
     } else if (response.statusCode == 409) {
       showDialog(
         context: context,
@@ -71,4 +59,5 @@ Future<void> registerSeeker(
       print(e);
     }
   }
+  return null;
 }

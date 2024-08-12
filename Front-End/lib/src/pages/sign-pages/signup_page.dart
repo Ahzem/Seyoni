@@ -108,13 +108,17 @@ class SignUpPage extends StatelessWidget {
                       SignUpButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            registerSeeker(
+                            final userData = {
+                              'firstName': firstNameController.text,
+                              'lastName': lastNameController.text,
+                              'email': emailController.text,
+                              'phone': phoneNumberController.text,
+                              'password': passwordController.text,
+                            };
+                            Navigator.pushNamed(
                               context,
-                              firstNameController,
-                              lastNameController,
-                              emailController,
-                              phoneNumberController,
-                              passwordController,
+                              AppRoutes.otppage,
+                              arguments: userData,
                             );
                           }
                         },
