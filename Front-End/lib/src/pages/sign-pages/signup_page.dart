@@ -106,20 +106,24 @@ class SignUpPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       SignUpButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            final userData = {
-                              'firstName': firstNameController.text,
-                              'lastName': lastNameController.text,
-                              'email': emailController.text,
-                              'phone': phoneNumberController.text,
-                              'password': passwordController.text,
-                            };
-                            Navigator.pushNamed(
+                            final userData = await registerSeeker(
                               context,
-                              AppRoutes.otppage,
-                              arguments: userData,
+                              firstNameController,
+                              lastNameController,
+                              emailController,
+                              phoneNumberController,
+                              passwordController,
                             );
+
+                            if (userData != null) {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.otppage,
+                                arguments: userData,
+                              );
+                            }
                           }
                         },
                       ),
