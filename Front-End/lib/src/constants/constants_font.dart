@@ -20,7 +20,7 @@ const kBodyTextStyle = TextStyle(
 );
 
 const kOtpInputTextStyle = TextStyle(
-  fontSize: 24,
+  fontSize: 20,
   color: kParagraphTextColor,
   fontWeight: FontWeight.w500,
 );

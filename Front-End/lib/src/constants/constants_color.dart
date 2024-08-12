@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 // Theme colors
 const kPrimaryColor = Color.fromRGBO(255, 165, 0, 1);
-const kSecondaryColor = Color.fromRGBO(255, 165, 0, 0.5);
+const kSecondaryColor = Color.fromRGBO(255, 165, 0, 0.8);
 const kAccentColor = Color.fromRGBO(255, 165, 0, 0.2);
 const kBackgroundColor = Color.fromRGBO(255, 255, 255, 1);
 const kParagraphTextColor = Color.fromRGBO(255, 255, 255, 0.7);

@@ -52,7 +52,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/icons/Forgot-Password.png',
+                  'assets/icons/AlertBox/Forgot-Password.png',
                   width: 100,
                   height: 100,
                 ),

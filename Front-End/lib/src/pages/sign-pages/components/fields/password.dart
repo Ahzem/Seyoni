@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../constants/constants_color.dart';
 import '../constants.dart';
 import '../decor/new_pw.dart';
-import '../../signin_page.dart';
 
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;

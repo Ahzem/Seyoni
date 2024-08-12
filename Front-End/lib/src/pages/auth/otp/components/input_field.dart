@@ -18,8 +18,8 @@ class InputBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 68,
-      width: 64,
+      height: 52,
+      width: 46,
       child: TextField(
         controller: controller,
         focusNode: focusNode,

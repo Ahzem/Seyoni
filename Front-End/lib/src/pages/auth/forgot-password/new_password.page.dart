@@ -52,7 +52,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Image.asset(
-                        'assets/icons/Password-Reset.png',
+                        'assets/icons/AlertBox/Password-Reset.png',
                         width: 100,
                         height: 100,
                       ),

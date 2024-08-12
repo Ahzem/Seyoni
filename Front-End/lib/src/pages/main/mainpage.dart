@@ -71,14 +71,11 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Background image
         const Positioned.fill(
           child: BackgroundWidget(child: SizedBox.expand()),
         ),
-        // Main content with app bar and bottom navigation bar
         Scaffold(
-          backgroundColor:
-              Colors.transparent, // Make scaffold background transparent
+          backgroundColor: Colors.transparent,
           appBar: const CustomAppBar(),
           body: Center(
             child: SingleChildScrollView(

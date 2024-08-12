@@ -22,7 +22,6 @@ Future<void> registerSeeker(
             'lastName': lastNameController.text,
             'email': emailController.text,
             'phone': phoneNumberController.text,
-            'password': passwordController.text,
           })}');
     }
 

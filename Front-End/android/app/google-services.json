@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "375415547870",
+    "project_id": "seyoniauth",
+    "storage_bucket": "seyoniauth.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375415547870:android:4898ead38d17a44534df4f",
+        "android_client_info": {
+          "package_name": "com.example.seyoni"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQOdp3RJKFN5T-nbNMcXpFDol-MFUFe-8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

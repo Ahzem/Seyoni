@@ -16,17 +16,21 @@ class OtpScreenForNewPassword extends StatefulWidget {
 }
 
 class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
-  int _remainingTime = 30;
+  int _remainingTime = 45;
   Timer? _timer;
   bool _isResendButtonActive = false;
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
   final TextEditingController _controller4 = TextEditingController();
+  final TextEditingController _controller5 = TextEditingController();
+  final TextEditingController _controller6 = TextEditingController();
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
   final FocusNode _focusNode3 = FocusNode();
   final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
   bool _isVerifyButtonActive = false;
   String _errorMessage = '';
   bool _isErrorVisible = false;
@@ -39,6 +43,8 @@ class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
     _controller2.addListener(_checkInputFields);
     _controller3.addListener(_checkInputFields);
     _controller4.addListener(_checkInputFields);
+    _controller5.addListener(_checkInputFields);
+    _controller6.addListener(_checkInputFields);
   }
 
   void _startTimer() {
@@ -61,7 +67,9 @@ class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
       _isVerifyButtonActive = _controller1.text.isNotEmpty &&
           _controller2.text.isNotEmpty &&
           _controller3.text.isNotEmpty &&
-          _controller4.text.isNotEmpty;
+          _controller4.text.isNotEmpty &&
+          _controller5.text.isNotEmpty &&
+          _controller6.text.isNotEmpty;
     });
   }
 
@@ -77,7 +85,9 @@ class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
     bool isCodeCorrect = _controller1.text == '1' &&
         _controller2.text == '2' &&
         _controller3.text == '3' &&
-        _controller4.text == '4';
+        _controller4.text == '4' &&
+        _controller5.text == '5' &&
+        _controller6.text == '6';
 
     if (isCodeCorrect) {
       Navigator.pushNamed(context, AppRoutes.resetPassword);
@@ -96,10 +106,14 @@ class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
     _controller2.dispose();
     _controller3.dispose();
     _controller4.dispose();
+    _controller5.dispose();
+    _controller6.dispose();
     _focusNode1.dispose();
     _focusNode2.dispose();
     _focusNode3.dispose();
     _focusNode4.dispose();
+    _focusNode5.dispose();
+    _focusNode6.dispose();
     super.dispose();
   }
 
@@ -128,7 +142,7 @@ class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
                   ),
                 ),
                 Image.asset(
-                  'assets/icons/One-Time-Password.png',
+                  'assets/icons/AlertBox/One-Time-Password.png',
                   height: 100,
                 ),
                 const SizedBox(height: 20),
@@ -152,26 +166,40 @@ class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
                       onChanged: (value) =>
                           _nextField(value, _focusNode1, _focusNode2),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 6),
                     InputBox(
                       controller: _controller2,
                       focusNode: _focusNode2,
                       onChanged: (value) =>
                           _nextField(value, _focusNode2, _focusNode3),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 6),
                     InputBox(
                       controller: _controller3,
                       focusNode: _focusNode3,
                       onChanged: (value) =>
                           _nextField(value, _focusNode3, _focusNode4),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 6),
                     InputBox(
                       controller: _controller4,
                       focusNode: _focusNode4,
                       onChanged: (value) =>
-                          _nextField(value, _focusNode4, FocusNode()),
+                          _nextField(value, _focusNode4, _focusNode5),
+                    ),
+                    const SizedBox(width: 6),
+                    InputBox(
+                      controller: _controller5,
+                      focusNode: _focusNode5,
+                      onChanged: (value) =>
+                          _nextField(value, _focusNode5, _focusNode6),
+                    ),
+                    const SizedBox(width: 6),
+                    InputBox(
+                      controller: _controller6,
+                      focusNode: _focusNode6,
+                      onChanged: (value) =>
+                          _nextField(value, _focusNode6, FocusNode()),
                     ),
                   ],
                 ),
