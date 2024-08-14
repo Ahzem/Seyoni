@@ -116,7 +116,6 @@ class SignUpPage extends StatelessWidget {
                               phoneNumberController,
                               passwordController,
                             );
-
                             if (userData != null) {
                               Navigator.pushNamed(
                                 context,
