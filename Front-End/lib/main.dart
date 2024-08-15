@@ -13,10 +13,16 @@ import './src/config/route.dart';
 import 'src/pages/auth/otp/otp_screen.dart';
 import 'src/pages/auth/forgot-password/forgot_password_page.dart';
 import 'src/pages/notifications/internal/notification_page.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions
+        .currentPlatform, // Ensure you're using correct options
+  );
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
   bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
