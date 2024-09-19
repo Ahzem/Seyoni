@@ -77,7 +77,7 @@
   - Heating System repair and Installation
   - Air Conditioning Repair and Installation
   - HVAC System Maintenance
-  -Duct Cleaning and Sealing
+  - Duct Cleaning and Sealing
   - Thermostat Installation and Repair
   - Ventilation System Repair
   - System upgrade and Replacement
