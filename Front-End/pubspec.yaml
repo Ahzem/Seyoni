@@ -68,6 +68,7 @@ flutter:
     - assets/icons/NavBar/
     - assets/icons/AppBar/
     - assets/icons/AlertBox/
+    - assets/icons/Category/
     - assets/svg/
 
   # An image asset can refer to one or more resolution-specific "variants", see
