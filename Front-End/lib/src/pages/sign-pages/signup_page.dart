@@ -108,7 +108,7 @@ class SignUpPage extends StatelessWidget {
                       SignUpButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            final userData = await registerSeeker(
+                            final userData = await validateSeekerData(
                               context,
                               firstNameController,
                               lastNameController,
@@ -117,7 +117,6 @@ class SignUpPage extends StatelessWidget {
                               passwordController,
                             );
                             if (userData != null) {
-                              if (!context.mounted) return;
                               Navigator.pushNamed(
                                 context,
                                 AppRoutes.otppage,

@@ -1,8 +1,6 @@
 import 'dart:async';
-import '../../../config/url.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../../api/register_seeker.dart';
 import '../../../constants/constants_font.dart';
 import '../../../config/route.dart';
 import '../../../widgets/background_widget.dart';
@@ -86,7 +84,7 @@ class OtpScreenState extends State<OtpScreen> {
     }
   }
 
-  void _verifyCode() {
+  Future<void> _verifyCode() async {
     // Replace this with your actual verification logic
     bool isCodeCorrect = _controller1.text == '1' &&
         _controller2.text == '2' &&
@@ -98,26 +96,8 @@ class OtpScreenState extends State<OtpScreen> {
     if (isCodeCorrect) {
       final userData =
           ModalRoute.of(context)?.settings.arguments as Map<String, String>;
-      _sendDataToBackend(userData);
-    } else {
-      setState(() {
-        _errorMessage = 'The code you entered is incorrect. Please try again.';
-        _isErrorVisible = true;
-      });
-    }
-  }
-
-  Future<void> _sendDataToBackend(Map<String, String> userData) async {
-    try {
-      final response = await http.post(
-        Uri.parse(registerSeekersUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(userData),
-      );
-
-      if (response.statusCode == 201) {
+      bool isRegistered = await registerSeekerToBackend(userData, context);
+      if (isRegistered) {
         showDialog(
           context: context,
           builder: (context) {
@@ -134,13 +114,13 @@ class OtpScreenState extends State<OtpScreen> {
         );
       } else {
         setState(() {
-          _errorMessage = 'Failed to register. Please try again.';
+          _errorMessage = 'Registration failed. Please try again.';
           _isErrorVisible = true;
         });
       }
-    } catch (e) {
+    } else {
       setState(() {
-        _errorMessage = 'Failed to register. Please try again.';
+        _errorMessage = 'The code you entered is incorrect. Please try again.';
         _isErrorVisible = true;
       });
     }
