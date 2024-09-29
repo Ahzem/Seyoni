@@ -117,6 +117,7 @@ class SignUpPage extends StatelessWidget {
                               passwordController,
                             );
                             if (userData != null) {
+                              if (!context.mounted) return;
                               Navigator.pushNamed(
                                 context,
                                 AppRoutes.otppage,

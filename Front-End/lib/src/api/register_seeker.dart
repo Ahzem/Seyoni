@@ -38,6 +38,7 @@ Future<Map<String, String>?> registerSeeker(
         'password': passwordController.text,
       };
     } else if (response.statusCode == 409) {
+      if (!context.mounted) return null;
       showDialog(
         context: context,
         builder: (BuildContext context) {

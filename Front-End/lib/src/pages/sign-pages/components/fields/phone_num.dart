@@ -90,7 +90,7 @@ class PhoneNumberFieldState extends State<PhoneNumberField> {
             },
             child: Text(
                 '${selectedCountry.flagEmoji} +${selectedCountry.phoneCode}',
-                style: TextStyle(
+                style: const TextStyle(
                   color: kPrimaryColor,
                   fontSize: 18,
                   fontWeight: FontWeight.w500,

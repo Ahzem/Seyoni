@@ -36,13 +36,20 @@ Future<void> loginSeeker(
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('token', jsonResponse['token']);
+      await prefs.setString('token', jsonResponse['token']);
+
+      // Check if the widget is still mounted before using the context
+      if (!context.mounted) return;
+
       Navigator.pushNamed(
         context,
         AppRoutes.home,
         arguments: jsonResponse['token'],
       );
     } else if (response.statusCode == 404) {
+      // Check if the widget is still mounted before using the context
+      if (!context.mounted) return;
+
       // call the alert box
       showDialog(
         context: context,
@@ -56,6 +63,10 @@ Future<void> loginSeeker(
       );
     } else if (response.statusCode == 401) {
       var jsonResponse = jsonDecode(response.body);
+
+      // Check if the widget is still mounted before using the context
+      if (!context.mounted) return;
+
       if (jsonResponse['error'] == 'User not found') {
         // call the alert box
         showDialog(

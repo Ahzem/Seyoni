@@ -70,6 +70,7 @@ class MyApp extends StatelessWidget {
   void _onLaunchScreenComplete(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('hasSeenLaunchScreen', true);
+    if (!context.mounted) return;
     Navigator.pushReplacementNamed(context, AppRoutes.signIn);
   }
 }
