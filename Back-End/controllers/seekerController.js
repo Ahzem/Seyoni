@@ -59,6 +59,18 @@ exports.verifySignUpOtp = async (req, res) => {
   }
 };
 
+exports.resendOtp = async (req, res) => {
+  try {
+    const { phone } = req.body;
+    console.log(`Resending OTP for phone: ${phone}`);
+    generateOtp(phone);
+    res.status(200).send("OTP resent successfully");
+  } catch (error) {
+    console.error("Error resending OTP:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 exports.signInSeeker = async (req, res) => {
   try {
     const { email, password } = req.body;

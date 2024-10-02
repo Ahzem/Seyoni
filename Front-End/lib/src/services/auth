@@ -1,0 +1,47 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class AuthService {
+  static const String baseUrl = 'http://localhost:3000/api/seeker';
+
+  Future<bool> signUp(String firstName, String lastName, String email, String phone, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/signup'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'phone': phone,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to sign up');
+    }
+  }
+
+  Future<bool> verifySignUpOtp(String phone, String otp) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/verifySignUpOtp'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'phone': phone,
+        'otp': otp,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception('Failed to verify OTP');
+    }
+  }
+}

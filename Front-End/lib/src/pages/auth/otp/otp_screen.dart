@@ -85,40 +85,32 @@ class OtpScreenState extends State<OtpScreen> {
   }
 
   Future<void> _verifyCode() async {
-    // Replace this with your actual verification logic
-    bool isCodeCorrect = _controller1.text == '1' &&
-        _controller2.text == '2' &&
-        _controller3.text == '3' &&
-        _controller4.text == '4' &&
-        _controller5.text == '5' &&
-        _controller6.text == '6';
+    final otp = _controller1.text +
+        _controller2.text +
+        _controller3.text +
+        _controller4.text +
+        _controller5.text +
+        _controller6.text;
 
-    if (isCodeCorrect) {
-      final userData =
-          ModalRoute.of(context)?.settings.arguments as Map<String, String>;
-      bool isRegistered = await registerSeekerToBackend(userData, context);
-      if (!mounted) return;
-      if (isRegistered) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return VerificationSuccess(
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  AppRoutes.home,
-                  (route) => false,
-                );
-              },
-            );
-          },
-        );
-      } else {
-        setState(() {
-          _errorMessage = 'Registration failed. Please try again.';
-          _isErrorVisible = true;
-        });
-      }
+    final userData =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String>;
+    final success = await verifyOtpAndRegisterSeeker(userData, otp, context);
+
+    if (success) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return VerificationSuccess(
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.home,
+                (route) => false,
+              );
+            },
+          );
+        },
+      );
     } else {
       setState(() {
         _errorMessage = 'The code you entered is incorrect. Please try again.';
@@ -273,7 +265,9 @@ class OtpScreenState extends State<OtpScreen> {
                             style: kBodyTextStyle,
                           ),
                           ResendFlatButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              // Resend OTP logic here
+                            },
                           ),
                         ],
                       )
