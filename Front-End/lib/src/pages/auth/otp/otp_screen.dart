@@ -7,7 +7,7 @@ import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_color.dart';
 import 'components/input_field.dart';
 import 'components/verify_button.dart';
-import '../../../widgets/alertbox/vrification_success.dart';
+import '../../../widgets/alertbox/verification_success.dart';
 import 'components/resend_button.dart';
 
 class OtpScreen extends StatefulWidget {
