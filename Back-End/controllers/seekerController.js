@@ -78,29 +78,10 @@ exports.signInSeeker = async (req, res) => {
     if (!seeker || !(await seeker.comparePassword(password))) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
-
-    // Generate OTP
-    generateOtp(seeker.phone);
-    return res.status(200).send("OTP sent successfully");
-  } catch (error) {
-    console.error("Error logging in user:", error);
-    res.status(500).json({ error: "Server error" });
-  }
-};
-
-exports.verifySignInOtp = async (req, res) => {
-  try {
-    const { email, otp } = req.body;
-    const seeker = await Seeker.findOne({ email });
-    console.log(`Verifying OTP for phone: ${seeker.phone} with OTP: ${otp}`);
-    if (!seeker || !verifyOtp(seeker.phone, otp)) {
-      return res.status(400).json({ error: "Invalid OTP" });
-    }
-
     const token = generateToken(seeker._id);
-    res.status(200).json({ status: true, token: token });
+    res.status(200).json({ token });
   } catch (error) {
-    console.error("Error verifying OTP:", error);
+    console.error("Error signing in:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
