@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../constants/constants_color.dart';
-import '../../constants/constants_font.dart';
-import '../custom_button.dart';
+import '../../pages/menu/components/menu_item.dart';
 import 'dart:ui';
 
 class MenuSignOut extends StatelessWidget {
@@ -37,92 +35,20 @@ class MenuSignOut extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 255, 255, 255)
-                            .withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: kPrimaryColor,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Image.asset(
-                                  'assets/icons/menu/Logout.png',
-                                  height: 30,
-                                  width: 30,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              const Text(
-                                'Log Out',
-                                style: kMenuItemTextStyle,
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: IconButton(
-                              icon: const Icon(Icons.arrow_forward_ios),
-                              color: kBackgroundColor,
-                              onPressed: () {},
-                            ),
-                          ),
-                        ],
-                      ),
+                    MenuItem(
+                      iconPath: 'assets/icons/menu/Logout.png',
+                      text: 'Log Out',
+                      onPressed: () {
+                        // Add your onPressed logic here
+                      },
                     ),
                     const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 255, 255, 255)
-                            .withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: kPrimaryColor,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Image.asset(
-                                  'assets/icons/menu/Settings.png',
-                                  height: 30,
-                                  width: 30,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              const Text(
-                                'Settings',
-                                style: kMenuItemTextStyle,
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: IconButton(
-                              icon: const Icon(Icons.arrow_forward_ios),
-                              color: kBackgroundColor,
-                              onPressed: () {},
-                            ),
-                          ),
-                        ],
-                      ),
+                    MenuItem(
+                      iconPath: 'assets/icons/menu/Settings.png',
+                      text: 'Settings',
+                      onPressed: () {
+                        // Add your onPressed logic here
+                      },
                     ),
                   ],
                 ),
