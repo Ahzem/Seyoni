@@ -92,3 +92,30 @@ Future<bool> verifyOtpAndRegisterSeeker(
     return false;
   }
 }
+
+Future<bool> resendOtp(String? phone, BuildContext context) async {
+  try {
+    final response = await http.post(
+      Uri.parse(resendOtpUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({'phone': phone}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      if (kDebugMode) {
+        print('Failed to resend OTP');
+      }
+      return false;
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Failed to resend OTP');
+      print(e);
+    }
+    return false;
+  }
+}

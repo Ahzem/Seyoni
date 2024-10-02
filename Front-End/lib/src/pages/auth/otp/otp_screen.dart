@@ -18,7 +18,7 @@ class OtpScreen extends StatefulWidget {
 }
 
 class OtpScreenState extends State<OtpScreen> {
-  int _remainingTime = 45;
+  int _remainingTime = 59;
   Timer? _timer;
   bool _isResendButtonActive = false;
   final TextEditingController _controller1 = TextEditingController();
@@ -119,6 +119,27 @@ class OtpScreenState extends State<OtpScreen> {
     }
   }
 
+  Future<void> _resendOtp() async {
+    final userData =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String>;
+    final phone = userData['phone'];
+
+    final success = await resendOtp(phone, context);
+
+    if (success) {
+      setState(() {
+        _remainingTime = 59;
+        _isResendButtonActive = false;
+        _startTimer();
+      });
+    } else {
+      setState(() {
+        _errorMessage = 'Failed to resend OTP. Please try again.';
+        _isErrorVisible = true;
+      });
+    }
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -173,7 +194,7 @@ class OtpScreenState extends State<OtpScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'A 4-digit code has been sent to $phoneNumber. Please enter the code below.',
+                  'A 6-digit code has been sent to $phoneNumber. Please enter the code below.',
                   style: kBodyTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -265,9 +286,7 @@ class OtpScreenState extends State<OtpScreen> {
                             style: kBodyTextStyle,
                           ),
                           ResendFlatButton(
-                            onPressed: () {
-                              // Resend OTP logic here
-                            },
+                            onPressed: _resendOtp,
                           ),
                         ],
                       )
