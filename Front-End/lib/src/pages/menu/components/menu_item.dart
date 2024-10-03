@@ -17,10 +17,10 @@ class MenuItem extends StatefulWidget {
   });
 
   @override
-  _MenuItemState createState() => _MenuItemState();
+  MenuItemState createState() => MenuItemState();
 }
 
-class _MenuItemState extends State<MenuItem> {
+class MenuItemState extends State<MenuItem> {
   bool _isPressed = false;
 
   void _handlePress() {
