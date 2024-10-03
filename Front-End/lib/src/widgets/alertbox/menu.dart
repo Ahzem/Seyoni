@@ -12,7 +12,7 @@ class MenuSignOut extends StatelessWidget {
     return Stack(
       children: <Widget>[
         const Opacity(
-          opacity: 0.2, // Background opacity
+          opacity: 0.5, // Background opacity
           child: ModalBarrier(
             dismissible: true,
             color: Colors.black,
