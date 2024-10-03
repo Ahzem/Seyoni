@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/config/route.dart';
+import '../config/route.dart';
+import './alertbox/menu.dart';
 import 'dart:ui';
 import '../constants/constants_color.dart';
 
@@ -54,7 +55,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         height: 24,
                         width: 24,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        // Add menu page
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return MenuSignOut();
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),

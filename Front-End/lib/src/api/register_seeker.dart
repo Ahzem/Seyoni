@@ -35,7 +35,7 @@ Future<bool> registerSeekerToBackend(
       body: jsonEncode(userData),
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return true;
     } else if (response.statusCode == 409) {
       if (!context.mounted) return false;
@@ -59,6 +59,61 @@ Future<bool> registerSeekerToBackend(
   } catch (e) {
     if (kDebugMode) {
       print('Failed');
+      print(e);
+    }
+    return false;
+  }
+}
+
+Future<bool> verifyOtpAndRegisterSeeker(
+    Map<String, String> userData, String otp, BuildContext context) async {
+  try {
+    final response = await http.post(
+      Uri.parse(verifyOtpUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({'phone': userData['phone'], 'otp': otp}),
+    );
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      if (kDebugMode) {
+        print('Failed');
+      }
+      return false;
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Failed');
+      print(e);
+    }
+    return false;
+  }
+}
+
+Future<bool> resendOtp(String? phone, BuildContext context) async {
+  try {
+    final response = await http.post(
+      Uri.parse(resendOtpUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({'phone': phone}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      if (kDebugMode) {
+        print('Failed to resend OTP');
+      }
+      return false;
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Failed to resend OTP');
       print(e);
     }
     return false;

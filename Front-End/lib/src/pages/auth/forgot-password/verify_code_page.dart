@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../../../constants/constants_font.dart';
 import '../../../config/route.dart';
 import '../../../widgets/background_widget.dart';
@@ -7,6 +9,7 @@ import '../../../constants/constants_color.dart';
 import '../otp/components/input_field.dart';
 import '../otp/components/verify_button.dart';
 import '../otp/components/resend_button.dart';
+import '../../../config/url.dart';
 
 class OtpScreenForNewPassword extends StatefulWidget {
   const OtpScreenForNewPassword({super.key});
@@ -80,20 +83,74 @@ class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
     }
   }
 
-  void _verifyCode() {
-    // Replace this with your actual verification logic
-    bool isCodeCorrect = _controller1.text == '1' &&
-        _controller2.text == '2' &&
-        _controller3.text == '3' &&
-        _controller4.text == '4' &&
-        _controller5.text == '5' &&
-        _controller6.text == '6';
+  Future<void> _verifyCode() async {
+    final otp = _controller1.text +
+        _controller2.text +
+        _controller3.text +
+        _controller4.text +
+        _controller5.text +
+        _controller6.text;
 
-    if (isCodeCorrect) {
-      Navigator.pushNamed(context, AppRoutes.resetPassword);
-    } else {
+    final phone = ModalRoute.of(context)?.settings.arguments as String? ?? '';
+
+    try {
+      final response = await http.post(
+        Uri.parse(verifyOtpUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'phone': phone,
+          'otp': otp,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        Navigator.pushNamed(context, AppRoutes.resetPassword);
+      } else {
+        setState(() {
+          _errorMessage =
+              'The code you entered is incorrect. Please try again.';
+          _isErrorVisible = true;
+        });
+      }
+    } catch (e) {
       setState(() {
-        _errorMessage = 'The code you entered is incorrect. Please try again.';
+        _errorMessage = 'An error occurred. Please try again.';
+        _isErrorVisible = true;
+      });
+    }
+  }
+
+  Future<void> _resendCode() async {
+    final phone = ModalRoute.of(context)?.settings.arguments as String? ?? '';
+
+    try {
+      final response = await http.post(
+        Uri.parse(registerSeekersUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'phone': phone,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _remainingTime = 45;
+          _isResendButtonActive = false;
+          _startTimer();
+        });
+      } else {
+        setState(() {
+          _errorMessage = 'Failed to resend code. Please try again.';
+          _isErrorVisible = true;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'An error occurred. Please try again.';
         _isErrorVisible = true;
       });
     }
@@ -244,7 +301,7 @@ class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
                             style: kBodyTextStyle,
                           ),
                           ResendFlatButton(
-                            onPressed: () {},
+                            onPressed: _resendCode,
                           ),
                         ],
                       )

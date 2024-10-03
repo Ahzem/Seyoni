@@ -4,6 +4,7 @@ import '../../widgets/customNavBar/custom_navbar.dart';
 import '../../widgets/background_widget.dart';
 import '../../constants/constants_font.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import '../menu/menupage.dart';
 
 class HomePage extends StatefulWidget {
   final String? token;
@@ -53,12 +54,7 @@ class HomePageState extends State<HomePage> {
         style: kBodyTextStyle,
       ),
     ),
-    const Center(
-      child: Text(
-        'Profile Page Content',
-        style: kBodyTextStyle,
-      ),
-    ),
+    const Center(child: MenuPage()),
   ];
 
   void _onNavBarTapped(int index) {
@@ -79,7 +75,17 @@ class HomePageState extends State<HomePage> {
           appBar: const CustomAppBar(),
           body: Center(
             child: SingleChildScrollView(
-              child: _pages[_currentIndex],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (_decodedToken.isNotEmpty)
+                    Text(
+                      'Welcome, ${_decodedToken['name'] ?? 'User'}',
+                      style: kBodyTextStyle,
+                    ),
+                  _pages[_currentIndex],
+                ],
+              ),
             ),
           ),
           bottomNavigationBar: CustomBottomNavBar(

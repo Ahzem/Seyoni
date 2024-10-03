@@ -7,7 +7,7 @@ import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_color.dart';
 import 'components/input_field.dart';
 import 'components/verify_button.dart';
-import '../../../widgets/alertbox/vrification_success.dart';
+import '../../../widgets/alertbox/verification_success.dart';
 import 'components/resend_button.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class OtpScreen extends StatefulWidget {
 }
 
 class OtpScreenState extends State<OtpScreen> {
-  int _remainingTime = 45;
+  int _remainingTime = 59;
   Timer? _timer;
   bool _isResendButtonActive = false;
   final TextEditingController _controller1 = TextEditingController();
@@ -85,43 +85,56 @@ class OtpScreenState extends State<OtpScreen> {
   }
 
   Future<void> _verifyCode() async {
-    // Replace this with your actual verification logic
-    bool isCodeCorrect = _controller1.text == '1' &&
-        _controller2.text == '2' &&
-        _controller3.text == '3' &&
-        _controller4.text == '4' &&
-        _controller5.text == '5' &&
-        _controller6.text == '6';
+    final otp = _controller1.text +
+        _controller2.text +
+        _controller3.text +
+        _controller4.text +
+        _controller5.text +
+        _controller6.text;
 
-    if (isCodeCorrect) {
-      final userData =
-          ModalRoute.of(context)?.settings.arguments as Map<String, String>;
-      bool isRegistered = await registerSeekerToBackend(userData, context);
-      if (!mounted) return;
-      if (isRegistered) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return VerificationSuccess(
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  AppRoutes.home,
-                  (route) => false,
-                );
-              },
-            );
-          },
-        );
-      } else {
-        setState(() {
-          _errorMessage = 'Registration failed. Please try again.';
-          _isErrorVisible = true;
-        });
-      }
+    final userData =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String>;
+    final success = await verifyOtpAndRegisterSeeker(userData, otp, context);
+
+    if (success) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return VerificationSuccess(
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.home,
+                (route) => false,
+              );
+            },
+          );
+        },
+      );
     } else {
       setState(() {
         _errorMessage = 'The code you entered is incorrect. Please try again.';
+        _isErrorVisible = true;
+      });
+    }
+  }
+
+  Future<void> _resendOtp() async {
+    final userData =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String>;
+    final phone = userData['phone'];
+
+    final success = await resendOtp(phone, context);
+
+    if (success) {
+      setState(() {
+        _remainingTime = 59;
+        _isResendButtonActive = false;
+        _startTimer();
+      });
+    } else {
+      setState(() {
+        _errorMessage = 'Failed to resend OTP. Please try again.';
         _isErrorVisible = true;
       });
     }
@@ -181,7 +194,7 @@ class OtpScreenState extends State<OtpScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'A 4-digit code has been sent to $phoneNumber. Please enter the code below.',
+                  'A 6-digit code has been sent to $phoneNumber. Please enter the code below.',
                   style: kBodyTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -273,7 +286,7 @@ class OtpScreenState extends State<OtpScreen> {
                             style: kBodyTextStyle,
                           ),
                           ResendFlatButton(
-                            onPressed: () {},
+                            onPressed: _resendOtp,
                           ),
                         ],
                       )

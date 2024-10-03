@@ -9,6 +9,7 @@ import '../pages/entry-pages/instruction_page.dart';
 import '../pages/auth/forgot-password/forgot_password_page.dart';
 import '../pages/auth/forgot-password/new_password.page.dart';
 import '../pages/notifications/internal/notification_page.dart';
+import '../widgets/alertbox/menu.dart';
 
 class AppRoutes {
   static const String launch = '/';
@@ -22,6 +23,7 @@ class AppRoutes {
   static const String otppagefornewpassword = '/otp-for-new-password';
   static const String resetPassword = '/reset-password';
   static const String notification = '/notification';
+  static const String alertMenu = '/alertMenu';
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -52,6 +54,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const ResetPasswordPage());
     case AppRoutes.notification:
       return MaterialPageRoute(builder: (_) => const NotificationPage());
+    case AppRoutes.alertMenu:
+      return MaterialPageRoute(builder: (_) => const MenuSignOut());
     default:
       return MaterialPageRoute(
         builder: (_) => Scaffold(

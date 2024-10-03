@@ -117,11 +117,15 @@ class SignUpPage extends StatelessWidget {
                               passwordController,
                             );
                             if (userData != null) {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoutes.otppage,
-                                arguments: userData,
-                              );
+                              bool isOtpSent = await registerSeekerToBackend(
+                                  userData, context);
+                              if (isOtpSent) {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.otppage,
+                                  arguments: userData,
+                                );
+                              }
                             }
                           }
                         },

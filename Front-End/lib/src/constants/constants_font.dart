@@ -19,6 +19,12 @@ const kBodyTextStyle = TextStyle(
   fontWeight: FontWeight.w400,
 );
 
+const kBodyTextStyle2 = TextStyle(
+  fontSize: 12,
+  color: kParagraphTextColor,
+  fontWeight: FontWeight.w400,
+);
+
 const kOtpInputTextStyle = TextStyle(
   fontSize: 20,
   color: kParagraphTextColor,
@@ -29,6 +35,12 @@ const kAlertTitleTextStyle = TextStyle(
   fontSize: 20,
   color: Colors.white,
   fontWeight: FontWeight.w500,
+);
+
+const kMenuItemTextStyle = TextStyle(
+  fontSize: 20,
+  color: Colors.white,
+  fontWeight: FontWeight.w400,
 );
 
 const kAlertDescriptionTextStyle = TextStyle(
