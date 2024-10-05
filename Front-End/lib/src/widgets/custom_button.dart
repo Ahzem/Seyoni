@@ -84,7 +84,7 @@ class PrimaryFilledButtonTwo extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: kPrimaryColor,
         padding: const EdgeInsets.symmetric(
-          horizontal: 30,
+          horizontal: 40,
           vertical: 10,
         ),
         textStyle: const TextStyle(

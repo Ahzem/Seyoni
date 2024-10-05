@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seyoni/src/constants/constants_color.dart';
 
 class CustomIconButton extends StatelessWidget {
   final IconData icon;
@@ -12,12 +13,12 @@ class CustomIconButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.transparent,
-        border: Border.all(color: Colors.blue, width: 1),
+        border: Border.all(color: kPrimaryColor, width: 1),
         borderRadius: BorderRadius.circular(50),
       ),
       child: IconButton(
         onPressed: onPressed,
-        icon: Icon(icon, color: Colors.blue),
+        icon: Icon(icon, color: kPrimaryColor),
       ),
     );
   }

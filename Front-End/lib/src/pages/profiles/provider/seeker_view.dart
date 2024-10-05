@@ -1,10 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'components/badge_widget.dart';
 import '../../../constants/constants_color.dart';
 import '../../../constants/constants_font.dart';
 import '../../../widgets/custom_button.dart';
+import 'components/full_screen_image.dart';
 import 'components/profile_avatar.dart';
 import 'components/icon_button_widget.dart';
+import 'components/stat_widget.dart';
+import './components/image_paths.dart'; // Import the image paths
 
 class SeekerView extends StatefulWidget {
   const SeekerView({super.key});
@@ -114,12 +118,12 @@ class _SeekerViewState extends State<SeekerView> {
                         icon: Icons.phone,
                         onPressed: () {},
                       ),
-                      SizedBox(width: 10),
+                      SizedBox(width: 20),
                       CustomIconButton(
                         icon: Icons.chat,
                         onPressed: () {},
                       ),
-                      SizedBox(width: 10),
+                      SizedBox(width: 20),
                       CustomIconButton(
                         icon: Icons.bookmark_added_sharp,
                         onPressed: () {},
@@ -133,15 +137,33 @@ class _SeekerViewState extends State<SeekerView> {
         ),
 
         // Badges Section
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BadgeWidget(icon: Icons.favorite, label: "Love"),
-              BadgeWidget(icon: Icons.thumb_up, label: "Thumbs Up"),
-              BadgeWidget(icon: Icons.check_circle, label: "Verified"),
-            ],
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+            child: Container(
+              padding: EdgeInsets.all(10),
+              margin: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(10),
+                border: Border(
+                  bottom: BorderSide(
+                    color: Color.fromARGB(150, 255, 255, 255),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  BadgeWidget(icon: Icons.star, label: "Hero"),
+                  BadgeWidget(icon: Icons.flash_on, label: "Superman"),
+                  BadgeWidget(icon: Icons.speed, label: "Quicker"),
+                  BadgeWidget(icon: Icons.verified, label: "Trustabler"),
+                ],
+              ),
+            ),
           ),
         ),
 
@@ -149,83 +171,59 @@ class _SeekerViewState extends State<SeekerView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            StatWidget(label: 'Completed Works', value: '244+'),
+            StatWidget(label: 'Completed Works', value: '240+'),
             StatWidget(label: 'Customer Reviews', value: '85+'),
           ],
         ),
 
         // Gallery Section
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Gallery',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              GridView.count(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                crossAxisCount: 3,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: List.generate(3, (index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                        image: AssetImage(
-                            'assets/images/logo-icon.png'), // Replace with gallery images
-                        fit: BoxFit.cover,
+        Container(
+          margin: EdgeInsets.all(20),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Gallery',
+                  style: kTitleTextStyle,
+                ),
+                SizedBox(height: 10),
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  children: List.generate(imagePaths.length, (index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FullScreenImage(
+                              imagePath: imagePaths[index],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            image: AssetImage(
+                                imagePaths[index]), // Use image from the list
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
-                    ),
-                  );
-                }),
-              ),
-            ],
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
-      ],
-    );
-  }
-}
-
-class BadgeWidget extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const BadgeWidget({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, size: 40, color: kPrimaryColor),
-        SizedBox(height: 5),
-        Text(label, style: TextStyle(fontSize: 12)),
-      ],
-    );
-  }
-}
-
-class StatWidget extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const StatWidget({super.key, required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 5),
-        Text(label, style: TextStyle(fontSize: 12)),
       ],
     );
   }
