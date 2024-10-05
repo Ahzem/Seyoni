@@ -1,7 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/constants/constants_color.dart';
-import 'package:seyoni/src/constants/constants_font.dart';
-import 'package:seyoni/src/widgets/custom_button.dart';
+import '../../../constants/constants_color.dart';
+import '../../../constants/constants_font.dart';
+import '../../../widgets/custom_button.dart';
+import 'components/profile_avatar.dart';
+import 'components/icon_button_widget.dart';
 
 class SeekerView extends StatefulWidget {
   const SeekerView({super.key});
@@ -38,104 +41,94 @@ class _SeekerViewState extends State<SeekerView> {
           ],
         ),
         // Top profile section
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          padding: EdgeInsets.symmetric(
-            vertical: 20,
-            horizontal: 10,
-          ),
-          decoration: BoxDecoration(
-            color: kPrimaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage:
-                    AssetImage('assets/images/profile-1.jpg'), // Profile image
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(
+                vertical: 20,
+                horizontal: 10,
               ),
-              SizedBox(height: 10),
-              Text(
-                "Mark Antony",
-                style: kTitleTextStyleBold,
+              decoration: BoxDecoration(
+                border: const Border(
+                  bottom: BorderSide(
+                    color: Color.fromARGB(150, 255, 255, 255),
+                    width: 1,
+                  ),
+                ),
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white.withOpacity(0.05),
               ),
-              SizedBox(height: 5),
-              Text(
-                "Service Type - Plumber",
-                style: TextStyle(color: Colors.white),
-              ),
-              SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
                 children: [
-                  Icon(Icons.star, color: kPrimaryColor),
-                  Icon(Icons.star, color: kPrimaryColor),
-                  Icon(Icons.star, color: kPrimaryColor),
-                  Icon(Icons.star, color: kPrimaryColor),
-                  Icon(Icons.star_border, color: kPrimaryColor),
-                ],
-              ),
-              SizedBox(height: 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                  ProfileAvatar(
+                    imagePath: 'assets/images/profile-1.jpg', // Profile image
+                    isOnline: true, // Online status
+                  ),
+                  SizedBox(height: 10),
                   Text(
-                    "4.0",
-                    style: TextStyle(color: kParagraphTextColor),
+                    "Mark Antony",
+                    style: kTitleTextStyleBold,
                   ),
-                  SizedBox(width: 15),
+                  SizedBox(height: 5),
                   Text(
-                    "(85 Reviews)",
-                    style: TextStyle(color: kParagraphTextColor),
+                    "Service Type - Plumber",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.star, color: kPrimaryColor),
+                      Icon(Icons.star, color: kPrimaryColor),
+                      Icon(Icons.star, color: kPrimaryColor),
+                      Icon(Icons.star, color: kPrimaryColor),
+                      Icon(Icons.star_border, color: kPrimaryColor),
+                    ],
+                  ),
+                  SizedBox(height: 2),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "4.0",
+                        style: TextStyle(color: kParagraphTextColor),
+                      ),
+                      SizedBox(width: 15),
+                      Text(
+                        "(85 Reviews)",
+                        style: TextStyle(color: kParagraphTextColor),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  PrimaryFilledButtonTwo(text: "Hire", onPressed: () {}),
+                  SizedBox(height: 10),
+                  // Icons section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomIconButton(
+                        icon: Icons.phone,
+                        onPressed: () {},
+                      ),
+                      SizedBox(width: 10),
+                      CustomIconButton(
+                        icon: Icons.chat,
+                        onPressed: () {},
+                      ),
+                      SizedBox(width: 10),
+                      CustomIconButton(
+                        icon: Icons.bookmark_added_sharp,
+                        onPressed: () {},
+                      ),
+                    ],
                   ),
                 ],
               ),
-              SizedBox(height: 10),
-              PrimaryFilledButtonTwo(text: "Hire", onPressed: () {}),
-              SizedBox(height: 10),
-              // Icons section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: kTransparentColor,
-                      border: Border.all(color: kPrimaryColor, width: 1),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.phone, color: kPrimaryColor),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: kTransparentColor,
-                      border: Border.all(color: kPrimaryColor, width: 1),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.chat, color: kPrimaryColor),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: kTransparentColor,
-                      border: Border.all(color: kPrimaryColor, width: 1),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.info_outline, color: kPrimaryColor),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
 
