@@ -95,6 +95,7 @@ class OtpScreenState extends State<OtpScreen> {
     final userData =
         ModalRoute.of(context)?.settings.arguments as Map<String, String>;
     final success = await verifyOtpAndRegisterSeeker(userData, otp, context);
+    if (!mounted) return;
 
     if (success) {
       showDialog(

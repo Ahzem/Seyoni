@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../pages/menu/components/menu_item.dart';
+import 'package:seyoni/src/pages/sign-pages/signin_page.dart';
 import 'dart:ui';
+import '../../services/auth.dart';
+import '../../pages/menu/components/menu_item.dart';
 
 class MenuSignOut extends StatelessWidget {
   const MenuSignOut({
@@ -38,8 +40,12 @@ class MenuSignOut extends StatelessWidget {
                     MenuItem(
                       iconPath: 'assets/icons/menu/Logout.png',
                       text: 'Log Out',
-                      onPressed: () {
-                        // Add your onPressed logic here
+                      onPressed: () async {
+                        await AuthService().signOut();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignInPage()),
+                        );
                       },
                     ),
                     const SizedBox(height: 10),

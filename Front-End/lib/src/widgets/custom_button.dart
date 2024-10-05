@@ -67,6 +67,39 @@ class PrimaryFilledButton extends StatelessWidget {
   }
 }
 
+class PrimaryFilledButtonTwo extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+
+  const PrimaryFilledButtonTwo({
+    super.key,
+    required this.text,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: kPrimaryColor,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 40,
+          vertical: 10,
+        ),
+        textStyle: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.black, fontSize: 22),
+      ),
+    );
+  }
+}
+
 class PrimaryFilledInactiveButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;

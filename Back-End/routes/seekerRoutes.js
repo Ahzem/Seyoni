@@ -1,9 +1,16 @@
 const router = require("express").Router();
-const SeekerController = require("../controllers/seekerController.js");
+const {
+  signUpSeeker,
+  verifySignUpOtp,
+  resendOtp,
+  signInSeeker,
+  signOutSeeker,
+} = require("../controllers");
 
-router.post("/signup", SeekerController.signUpSeeker);
-router.post("/verifySignUpOtp", SeekerController.verifySignUpOtp);
-router.post("/signin", SeekerController.signInSeeker);
-router.post("/resendOtp", SeekerController.resendOtp);
+router.post("/signup", signUpSeeker.signUpSeeker);
+router.post("/verifySignUpOtp", verifySignUpOtp.verifySignUpOtp);
+router.post("/resendOtp", resendOtp.resendOtp);
+router.post("/signin", signInSeeker.signInSeeker);
+router.post("/signout", signOutSeeker.signOutSeeker);
 
 module.exports = router;

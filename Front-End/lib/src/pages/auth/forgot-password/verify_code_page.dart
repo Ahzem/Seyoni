@@ -106,7 +106,9 @@ class OtpScreenForNewPasswordState extends State<OtpScreenForNewPassword> {
       );
 
       if (response.statusCode == 201) {
-        Navigator.pushNamed(context, AppRoutes.resetPassword);
+        if (mounted) {
+          Navigator.pushNamed(context, AppRoutes.resetPassword);
+        }
       } else {
         setState(() {
           _errorMessage =
