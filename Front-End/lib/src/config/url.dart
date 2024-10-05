@@ -3,3 +3,4 @@ const registerSeekersUrl = '$url/api/seeker/signup';
 const loginSeekersUrl = '$url/api/seeker/signin';
 const verifyOtpUrl = '$url/api/seeker/verifySignUpOtp';
 const resendOtpUrl = '$url/api/seeker/resendSignUpOtp';
+const signOutUrl = '$url/api/seeker/signout';
