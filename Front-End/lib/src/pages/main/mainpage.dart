@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../pages/profiles/provider/seeker_view.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/customNavBar/custom_navbar.dart';
 import '../../widgets/background_widget.dart';
@@ -30,12 +31,7 @@ class HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const Center(
-      child: Text(
-        'Tasks Page Content',
-        style: kBodyTextStyle,
-      ),
-    ),
+    const Center(child: SeekerView()),
     const Center(
       child: Text(
         'Chat Page Content',
@@ -79,11 +75,11 @@ class HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (_decodedToken.isNotEmpty)
-                    Text(
-                      'Welcome, ${_decodedToken['name'] ?? 'User'}',
-                      style: kBodyTextStyle,
-                    ),
-                  _pages[_currentIndex],
+                    // Text(
+                    //   'Welcome, ${_decodedToken['name'] ?? 'User'}',
+                    //   style: kBodyTextStyle,
+                    // ),
+                    _pages[_currentIndex],
                 ],
               ),
             ),
