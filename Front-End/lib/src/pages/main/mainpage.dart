@@ -75,11 +75,11 @@ class HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (_decodedToken.isNotEmpty)
-                    // Text(
-                    //   'Welcome, ${_decodedToken['name'] ?? 'User'}',
-                    //   style: kBodyTextStyle,
-                    // ),
-                    _pages[_currentIndex],
+                    Text(
+                      'Welcome, ${_decodedToken['name'] ?? 'User'}',
+                      style: kBodyTextStyle,
+                    ),
+                  _pages[_currentIndex],
                 ],
               ),
             ),
