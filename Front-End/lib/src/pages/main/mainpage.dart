@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seyoni/src/pages/chat/chat_page.dart';
 import '../../pages/profiles/provider/seeker_view.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/customNavBar/custom_navbar.dart';
@@ -33,10 +34,7 @@ class HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const Center(child: SeekerView()),
     const Center(
-      child: Text(
-        'Chat Page Content',
-        style: kBodyTextStyle,
-      ),
+      child: ChatScreen()
     ),
     const Center(
       child: Text(
@@ -79,7 +77,7 @@ class HomePageState extends State<HomePage> {
                       'Welcome, ${_decodedToken['name'] ?? 'User'}',
                       style: kBodyTextStyle,
                     ),
-                  _pages[_currentIndex],
+                    _pages[_currentIndex],
                 ],
               ),
             ),
