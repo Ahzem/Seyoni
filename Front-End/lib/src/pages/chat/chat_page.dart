@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import intl for date formatting
-import 'package:seyoni/src/constants/constants_font.dart';
-import '../../constants/constants_color.dart';
+import '../../constants/constants_color.dart'; // Ensure this import is correct
+import '../../constants/constants_font.dart'; // Import the constants_font.dart file
 
 // Color definitions
 const Color black = Color(0xFF191919);
@@ -21,7 +21,7 @@ class ChatScreenState extends State<ChatScreen> {
   int _selectedIndex = 0;
 
   // Simulated user for incoming messages
-  final String otherUserProfilePic = 'assets/images/profile-8.jpg';
+  final String otherUserProfilePic = 'assets/images/profile-2.jpg';
 
   void sendMessage(String message) {
     if (message.trim().isNotEmpty) {
@@ -30,7 +30,7 @@ class ChatScreenState extends State<ChatScreen> {
           content: message,
           sentByMe: true,
           timestamp: DateTime.now(), // Capture current time when sending the message
-          profilePic: 'assets/images/profile-8.jpg', // Path to the sender's profile picture
+          profilePic: 'assets/images/profile-5.jpg', // Path to the sender's profile picture
         ));
       });
     }
@@ -58,7 +58,6 @@ class ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      
       children: [
         Flexible(
           fit: FlexFit.loose,
@@ -109,7 +108,7 @@ class ChatScreenState extends State<ChatScreen> {
                       onPressed: () {
                         sendMessage(msgInputController.text);
                         msgInputController.clear(); // Clears the text input after sending
-              
+
                         // Simulate receiving a message after sending
                         Future.delayed(const Duration(seconds: 2), () {
                           receiveMessage("Hello! This is an incoming message.");
@@ -180,13 +179,13 @@ class MessageItem extends StatelessWidget {
                   ),
                   child: Text(
                     message.content, // Display the message
-                    style: const TextStyle(color: Colors.white), // Black text for contrast on kPrimaryColor
+                    style: const TextStyle(color: Colors.white), // White text for contrast on kPrimaryColor
                   ),
                 ),
                 const SizedBox(height: 4), // Space between message and timestamp
                 Text(
                   formattedTime, // Display the formatted time
-                  style: const TextStyle(color: Colors.white54 , fontSize: 12),
+                  style: const TextStyle(color: Colors.white54, fontSize: 12),
                 ),
               ],
             ),
