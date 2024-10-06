@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../forms/hiring_form.dart';
 import 'components/badge_widget.dart';
 import '../../../constants/constants_color.dart';
 import '../../../constants/constants_font.dart';
@@ -18,6 +19,11 @@ class SeekerView extends StatefulWidget {
 }
 
 class _SeekerViewState extends State<SeekerView> {
+  final String name = "Mark Antony";
+  final String profileImage = 'assets/images/profile-1.jpg';
+  final double rating = 4.0;
+  final String serviceType = "Plumber";
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -68,17 +74,17 @@ class _SeekerViewState extends State<SeekerView> {
               child: Column(
                 children: [
                   ProfileAvatar(
-                    imagePath: 'assets/images/profile-1.jpg', // Profile image
+                    imagePath: profileImage, // Profile image
                     isOnline: true, // Online status
                   ),
                   SizedBox(height: 10),
                   Text(
-                    "Mark Antony",
+                    name,
                     style: kTitleTextStyleBold,
                   ),
                   SizedBox(height: 5),
                   Text(
-                    "Service Type - Plumber",
+                    "Service Type - $serviceType",
                     style: TextStyle(color: Colors.white),
                   ),
                   SizedBox(height: 5),
@@ -97,7 +103,7 @@ class _SeekerViewState extends State<SeekerView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "4.0",
+                        rating.toString(),
                         style: TextStyle(color: kParagraphTextColor),
                       ),
                       SizedBox(width: 15),
@@ -108,7 +114,21 @@ class _SeekerViewState extends State<SeekerView> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  PrimaryFilledButtonTwo(text: "Hire", onPressed: () {}),
+                  PrimaryFilledButtonTwo(
+                      text: "Hire",
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HiringForm(
+                              name: name,
+                              profileImage: profileImage,
+                              rating: rating,
+                              serviceType: serviceType,
+                            ),
+                          ),
+                        );
+                      }),
                   SizedBox(height: 10),
                   // Icons section
                   Row(
