@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import intl for date formatting
-import 'package:seyoni/src/constants/constants_font.dart';
-import '../../constants/constants_color.dart';
+import '../../constants/constants_color.dart'; // Ensure this import is correct
+import '../../constants/constants_font.dart'; // Import the constants_font.dart file
 
 // Color definitions
 const Color black = Color(0xFF191919);
@@ -116,7 +116,7 @@ class ChatScreenState extends State<ChatScreen> {
                         sendMessage(msgInputController.text);
                         msgInputController
                             .clear(); // Clears the text input after sending
-
+                        
                         // Simulate receiving a message after sending
                         Future.delayed(const Duration(seconds: 2), () {
                           receiveMessage("Hello! This is an incoming message.");
