@@ -21,7 +21,7 @@ class ChatScreenState extends State<ChatScreen> {
   int _selectedIndex = 0;
 
   // Simulated user for incoming messages
-  final String otherUserProfilePic = 'assets/images/profile-2.jpg';
+  final String otherUserProfilePic = 'assets/images/profile-7.jpg';
 
   void sendMessage(String message) {
     if (message.trim().isNotEmpty) {
@@ -29,8 +29,10 @@ class ChatScreenState extends State<ChatScreen> {
         messages.add(Message(
           content: message,
           sentByMe: true,
-          timestamp: DateTime.now(), // Capture current time when sending the message
-          profilePic: 'assets/images/profile-5.jpg', // Path to the sender's profile picture
+          timestamp:
+              DateTime.now(), // Capture current time when sending the message
+          profilePic:
+              'assets/images/profile-6.jpg', // Path to the sender's profile picture
         ));
       });
     }
@@ -43,7 +45,8 @@ class ChatScreenState extends State<ChatScreen> {
         content: message,
         sentByMe: false,
         timestamp: DateTime.now(),
-        profilePic: otherUserProfilePic, // Path to the other user's profile picture
+        profilePic:
+            otherUserProfilePic, // Path to the other user's profile picture
       ));
     });
   }
@@ -82,18 +85,21 @@ class ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: TextField(
                       style: const TextStyle(color: Colors.white),
-                      cursorColor: kPrimaryColor, // Change cursor color to kPrimaryColor
+                      cursorColor:
+                          kPrimaryColor, // Change cursor color to kPrimaryColor
                       controller: msgInputController,
                       decoration: InputDecoration(
                         hintText: "Type your message...", // Placeholder text
                         hintStyle: kBodyTextStyle,
                         enabledBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: kPrimaryColor),
-                          borderRadius: BorderRadius.circular(30), // Round corners
+                          borderRadius:
+                              BorderRadius.circular(30), // Round corners
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: kPrimaryColor),
-                          borderRadius: BorderRadius.circular(30), // Round corners on focus
+                          borderRadius: BorderRadius.circular(
+                              30), // Round corners on focus
                         ),
                       ),
                     ),
@@ -102,13 +108,15 @@ class ChatScreenState extends State<ChatScreen> {
                   Container(
                     decoration: BoxDecoration(
                       color: kPrimaryColor,
-                      borderRadius: BorderRadius.circular(30), // Edge round for the input area
+                      borderRadius: BorderRadius.circular(
+                          30), // Edge round for the input area
                     ),
                     child: IconButton(
                       onPressed: () {
                         sendMessage(msgInputController.text);
-                        msgInputController.clear(); // Clears the text input after sending
-
+                        msgInputController
+                            .clear(); // Clears the text input after sending
+                        
                         // Simulate receiving a message after sending
                         Future.delayed(const Duration(seconds: 2), () {
                           receiveMessage("Hello! This is an incoming message.");
@@ -153,36 +161,49 @@ class MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String formattedTime = DateFormat.jm().format(message.timestamp); // Format the time
+    String formattedTime =
+        DateFormat.jm().format(message.timestamp); // Format the time
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: Row(
-        mainAxisAlignment: message.sentByMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            message.sentByMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!message.sentByMe) // Display profile picture for received messages
+          if (!message
+              .sentByMe) // Display profile picture for received messages
             CircleAvatar(
               backgroundImage: AssetImage(message.profilePic),
               radius: 15,
             ),
-          if (!message.sentByMe) const SizedBox(width: 8), // Space between avatar and message bubble
+          if (!message.sentByMe)
+            const SizedBox(width: 8), // Space between avatar and message bubble
           Expanded(
             child: Column(
-              crossAxisAlignment: message.sentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: message.sentByMe
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   decoration: BoxDecoration(
-                    color: message.sentByMe ? kPrimaryColor : Colors.grey[800], // kPrimaryColor for sent messages, dark grey for received
+                    color: message.sentByMe
+                        ? kPrimaryColor
+                        : Colors.grey[
+                            800], // kPrimaryColor for sent messages, dark grey for received
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     message.content, // Display the message
-                    style: const TextStyle(color: Colors.white), // White text for contrast on kPrimaryColor
+                    style: const TextStyle(
+                        color: Colors
+                            .white), // Black text for contrast on kPrimaryColor
                   ),
                 ),
-                const SizedBox(height: 4), // Space between message and timestamp
+                const SizedBox(
+                    height: 4), // Space between message and timestamp
                 Text(
                   formattedTime, // Display the formatted time
                   style: const TextStyle(color: Colors.white54, fontSize: 12),
@@ -190,7 +211,8 @@ class MessageItem extends StatelessWidget {
               ],
             ),
           ),
-          if (message.sentByMe) const SizedBox(width: 8), // Space between message bubble and avatar
+          if (message.sentByMe)
+            const SizedBox(width: 8), // Space between message bubble and avatar
           if (message.sentByMe) // Display profile picture for sent messages
             CircleAvatar(
               backgroundImage: AssetImage(message.profilePic),
