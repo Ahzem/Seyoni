@@ -46,10 +46,21 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.1
 
-flutter_icons:
-  android: true
-  ios: true
+flutter_launcher_icons:
+  android:
+    generate: true
+  ios:
+    generate: true
+  windows:
+    generate: true
+  macos:
+    generate: true
+  linux:
+    generate: true
+  web:
+    generate: true
   image_path: "assets/images/logo-icon.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
