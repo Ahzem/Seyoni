@@ -97,18 +97,18 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    PrimaryOutlinedButton(
+                    PrimaryOutlinedButtonTwo(
                       text: 'Back to Sign In',
                       onPressed: () {
                         Navigator.pushNamed(context, AppRoutes.signIn);
                       },
                     ),
                     _isEmailEmpty || !_isEmailValid
-                        ? PrimaryFilledInactiveButton(
+                        ? PrimaryFilledInactiveButtonTwo(
                             text: 'Send OTP',
                             onPressed: () {},
                           )
-                        : PrimaryFilledButton(
+                        : PrimaryFilledButtonThree(
                             text: 'Send OTP',
                             onPressed: () {
                               final email = _emailController.text;
