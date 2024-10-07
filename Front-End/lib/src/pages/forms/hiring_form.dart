@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../constants/constants_font.dart';
 import '../../widgets/background_widget.dart';
 import 'components/service_provider_info.dart';
@@ -8,7 +9,6 @@ import 'components/google_map_widget.dart';
 import 'components/date_picker.dart';
 import 'components/time_picker.dart';
 import 'components/image_picker.dart';
-import 'components/record_field.dart';
 import 'components/text_field.dart';
 import 'components/buttons.dart';
 
@@ -31,17 +31,25 @@ class HiringForm extends StatefulWidget {
 }
 
 class HiringFormState extends State<HiringForm> {
-  File? _selectedImage;
+  List<File> _selectedImages = [];
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  LatLng? _selectedLocation;
 
   Future<void> _pickImage() async {
+    if (_selectedImages.length >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('You can only add up to 3 images.')),
+      );
+      return;
+    }
+
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
-        _selectedImage = File(pickedFile.path);
+        _selectedImages.add(File(pickedFile.path));
       });
     }
   }
@@ -54,11 +62,9 @@ class HiringFormState extends State<HiringForm> {
       lastDate: DateTime(2030),
       barrierColor: Colors.black.withOpacity(0.7),
     );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
+    setState(() {
+      _selectedDate = picked;
+    });
   }
 
   Future<void> _pickTime() async {
@@ -71,6 +77,12 @@ class HiringFormState extends State<HiringForm> {
         _selectedTime = picked;
       });
     }
+  }
+
+  void _pickLocation(LatLng location) {
+    setState(() {
+      _selectedLocation = location;
+    });
   }
 
   @override
@@ -107,7 +119,10 @@ class HiringFormState extends State<HiringForm> {
                     serviceType: widget.serviceType,
                   ),
                   SizedBox(height: 20),
-                  GoogleMapWidget(),
+                  GoogleMapWidget(
+                    initialLocation: _selectedLocation,
+                    onLocationPicked: _pickLocation,
+                  ),
                   SizedBox(height: 20),
                   Row(
                     children: [
@@ -126,18 +141,15 @@ class HiringFormState extends State<HiringForm> {
                   Row(
                     children: [
                       ImagePickerWidget(
-                        selectedImage: _selectedImage,
                         onPickImage: _pickImage,
                       ),
                       SizedBox(width: 10),
-                      RecordField(
-                        onRecord: () {},
-                      ),
+                      SelectedImagesWidget(selectedImages: _selectedImages),
                     ],
                   ),
                   SizedBox(height: 20),
                   CustomTextField(),
-                  SizedBox(width: 20),
+                  SizedBox(height: 20),
                   Buttons(),
                 ],
               ),

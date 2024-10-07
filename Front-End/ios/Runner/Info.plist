@@ -51,5 +51,9 @@
 		<string>We need access to your documents to store the recording.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>We need access to your photo library to save the recording.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Your location is used to show your current position on the map.</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>Your location is used to show your current position on the map.</string>
 	</dict>
 </plist>
