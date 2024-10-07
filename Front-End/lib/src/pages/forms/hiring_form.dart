@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:seyoni/src/constants/constants_color.dart';
 import '../../constants/constants_font.dart';
 import '../../widgets/background_widget.dart';
 import 'components/service_provider_info.dart';
@@ -35,11 +36,15 @@ class HiringFormState extends State<HiringForm> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   LatLng? _selectedLocation;
+  final TextEditingController _descriptionController = TextEditingController();
 
   Future<void> _pickImage() async {
     if (_selectedImages.length >= 3) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('You can only add up to 3 images.')),
+        SnackBar(
+            content: Text('You can only add up to 3 images.',
+                style: TextStyle(color: Colors.black)),
+            backgroundColor: kPrimaryColor),
       );
       return;
     }
@@ -86,6 +91,12 @@ class HiringFormState extends State<HiringForm> {
   }
 
   @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
@@ -123,7 +134,7 @@ class HiringFormState extends State<HiringForm> {
                     initialLocation: _selectedLocation,
                     onLocationPicked: _pickLocation,
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   Row(
                     children: [
                       DatePicker(
@@ -147,9 +158,36 @@ class HiringFormState extends State<HiringForm> {
                       SelectedImagesWidget(selectedImages: _selectedImages),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  CustomTextField(),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
+                  CustomTextField(controller: _descriptionController),
+                  SizedBox(height: 10),
+                  // Clear form text button including custom text description
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _selectedImages = [];
+                            _selectedDate = null;
+                            _selectedTime = null;
+                            _selectedLocation = null;
+                            _descriptionController.clear();
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            Text('Clear Form',
+                                style: kBodyTextStyle,
+                                textAlign: TextAlign.right),
+                            SizedBox(width: 5),
+                            Icon(Icons.clear_all, color: kPrimaryColor),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
                   Buttons(),
                 ],
               ),

@@ -4,7 +4,12 @@ import '../../../constants/constants_color.dart';
 import '../../../constants/constants_font.dart';
 
 class CustomTextField extends StatelessWidget {
-  const CustomTextField({super.key});
+  final TextEditingController controller;
+
+  const CustomTextField({
+    super.key,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +28,7 @@ class CustomTextField extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             color: Colors.white.withOpacity(0.1),
             child: TextField(
+              controller: controller,
               decoration: InputDecoration(
                 icon: Icon(Icons.message, color: kPrimaryColor),
                 hintText: "Enter your message",
