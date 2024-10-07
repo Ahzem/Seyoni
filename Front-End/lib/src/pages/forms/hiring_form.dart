@@ -12,6 +12,8 @@ import 'components/time_picker.dart';
 import 'components/image_picker.dart';
 import 'components/text_field.dart';
 import 'components/buttons.dart';
+import '../../widgets/alertbox/unsaved_changes.dart'; // Corrected import path
+import '../../widgets/alertbox/reservation_confirmation.dart'; // Corrected import path
 
 class HiringForm extends StatefulWidget {
   final String name;
@@ -96,6 +98,42 @@ class HiringFormState extends State<HiringForm> {
     super.dispose();
   }
 
+  void _showUnsavedChangesDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => UnsavedChanges(
+        onContinueEditing: () {
+          Navigator.of(ctx).pop();
+        },
+        onLeave: () {
+          Navigator.of(ctx).pop();
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+
+  void _showReservationConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => ReservationConfirmation(
+        onContinueEditing: () {
+          Navigator.of(ctx).pop();
+        },
+        onConfirm: () {
+          // Add your confirmation logic here
+          Navigator.of(ctx).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Reservation confirmed!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -112,9 +150,7 @@ class HiringFormState extends State<HiringForm> {
             centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: _showUnsavedChangesDialog,
             ),
           ),
           body: SingleChildScrollView(
