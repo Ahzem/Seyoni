@@ -1,25 +1,33 @@
 const Reservation = require("../models/reservation");
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs");
+const { S3Client } = require("@aws-sdk/client-s3");
+const { Upload } = require("@aws-sdk/lib-storage");
+const multerS3 = require("multer-s3");
 
-// Ensure the uploads directory exists
-const uploadsDir = path.join(__dirname, "../uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-}
-
-// Set up multer for image uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadsDir);
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
+// Set up AWS S3 client
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 
-const upload = multer({ storage: storage });
+// Set up multer for image uploads to S3
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_S3_BUCKET_NAME,
+    // acl: "public-read",
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: function (req, file, cb) {
+      cb(null, Date.now().toString() + path.extname(file.originalname));
+    },
+  }),
+});
 
 exports.uploadImages = upload.array("images", 3);
 
@@ -27,7 +35,7 @@ exports.createReservation = async (req, res) => {
   try {
     const reservationData = req.body;
     if (req.files) {
-      reservationData.images = req.files.map((file) => file.path);
+      reservationData.images = req.files.map((file) => file.location); // S3 URL
     }
     const reservation = new Reservation(reservationData);
     await reservation.save();
