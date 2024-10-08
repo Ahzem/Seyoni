@@ -49,6 +49,8 @@
 		<string>We need access to your microphone to record audio.</string>
 		<key>NSDocumentsFolderUsageDescription</key>
 		<string>We need access to your documents to store the recording.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>We need access to your camera to allow you to take photos.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>We need access to your photo library to save the recording.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>

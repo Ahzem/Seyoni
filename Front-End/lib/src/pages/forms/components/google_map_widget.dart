@@ -31,10 +31,15 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
 
   Future<void> _getCurrentLocation() async {
     final location = Location();
-    final hasPermission = await location.hasPermission();
-    if (hasPermission == PermissionStatus.denied) {
-      await location.requestPermission();
+    PermissionStatus permissionStatus = await location.hasPermission();
+    if (permissionStatus == PermissionStatus.denied) {
+      permissionStatus = await location.requestPermission();
+      if (permissionStatus != PermissionStatus.granted) {
+        // Handle permission denied
+        return;
+      }
     }
+
     final currentLocation = await location.getLocation();
     setState(() {
       _currentLocation = currentLocation;

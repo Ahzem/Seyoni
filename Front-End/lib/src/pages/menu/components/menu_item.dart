@@ -73,7 +73,7 @@ class MenuItemState extends State<MenuItem> {
                         width: 30,
                       ),
                     ),
-                    const SizedBox(width: 15),
+                    const SizedBox(width: 10),
                     Text(
                       widget.text,
                       style: kMenuItemTextStyle,

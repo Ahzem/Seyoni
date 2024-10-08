@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import '../../constants/constants_font.dart';
 import '../../widgets/background_widget.dart';
@@ -12,8 +13,8 @@ import 'components/time_picker.dart';
 import 'components/image_picker.dart';
 import 'components/text_field.dart';
 import 'components/buttons.dart';
-import '../../widgets/alertbox/unsaved_changes.dart'; // Corrected import path
-import '../../widgets/alertbox/reservation_confirmation.dart'; // Corrected import path
+import '../../widgets/alertbox/unsaved_changes.dart';
+import '../../widgets/alertbox/reservation_confirmation.dart';
 
 class HiringForm extends StatefulWidget {
   final String name;
@@ -153,79 +154,87 @@ class HiringFormState extends State<HiringForm> {
               onPressed: _showUnsavedChangesDialog,
             ),
           ),
-          body: SingleChildScrollView(
+          body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ServiceProviderInfo(
-                    name: widget.name,
-                    profileImage: widget.profileImage,
-                    rating: widget.rating,
-                    serviceType: widget.serviceType,
-                  ),
-                  SizedBox(height: 20),
-                  GoogleMapWidget(
-                    initialLocation: _selectedLocation,
-                    onLocationPicked: _pickLocation,
-                  ),
-                  SizedBox(height: 10),
-                  Row(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DatePicker(
-                        selectedDate: _selectedDate,
-                        onPickDate: _pickDate,
+                      ServiceProviderInfo(
+                        name: widget.name,
+                        profileImage: widget.profileImage,
+                        rating: widget.rating,
+                        serviceType: widget.serviceType,
                       ),
-                      SizedBox(width: 10),
-                      TimePicker(
-                        selectedTime: _selectedTime,
-                        onPickTime: _pickTime,
+                      SizedBox(height: 20),
+                      GoogleMapWidget(
+                        initialLocation: _selectedLocation,
+                        onLocationPicked: _pickLocation,
                       ),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          DatePicker(
+                            selectedDate: _selectedDate,
+                            onPickDate: _pickDate,
+                          ),
+                          SizedBox(width: 10),
+                          TimePicker(
+                            selectedTime: _selectedTime,
+                            onPickTime: _pickTime,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          ImagePickerWidget(
+                            onPickImage: _pickImage,
+                          ),
+                          SizedBox(width: 10),
+                          SelectedImagesWidget(selectedImages: _selectedImages),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      CustomTextField(controller: _descriptionController),
+                      SizedBox(height: 10),
+                      // Clear form text button including custom text description
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedImages = [];
+                                _selectedDate = null;
+                                _selectedTime = null;
+                                _selectedLocation = null;
+                                _descriptionController.clear();
+                              });
+                            },
+                            child: Row(
+                              children: [
+                                Text('Clear Form',
+                                    style: kBodyTextStyle,
+                                    textAlign: TextAlign.right),
+                                SizedBox(width: 5),
+                                Icon(Icons.clear_all, color: kPrimaryColor),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Buttons(),
+                      SizedBox(height: 80),
                     ],
                   ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      ImagePickerWidget(
-                        onPickImage: _pickImage,
-                      ),
-                      SizedBox(width: 10),
-                      SelectedImagesWidget(selectedImages: _selectedImages),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  CustomTextField(controller: _descriptionController),
-                  SizedBox(height: 10),
-                  // Clear form text button including custom text description
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectedImages = [];
-                            _selectedDate = null;
-                            _selectedTime = null;
-                            _selectedLocation = null;
-                            _descriptionController.clear();
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            Text('Clear Form',
-                                style: kBodyTextStyle,
-                                textAlign: TextAlign.right),
-                            SizedBox(width: 5),
-                            Icon(Icons.clear_all, color: kPrimaryColor),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Buttons(),
-                ],
+                ),
               ),
             ),
           ),

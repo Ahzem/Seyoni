@@ -44,7 +44,7 @@ const kAlertTitleTextStyle = TextStyle(
 );
 
 const kMenuItemTextStyle = TextStyle(
-  fontSize: 18,
+  fontSize: 17,
   color: Colors.white70,
   fontWeight: FontWeight.w400,
 );
