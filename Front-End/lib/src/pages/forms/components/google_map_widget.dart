@@ -8,20 +8,25 @@ import 'package:seyoni/src/constants/constants_font.dart';
 class GoogleMapWidget extends StatefulWidget {
   final LatLng? initialLocation;
   final Function(LatLng) onLocationPicked;
+  final Function() onClearLocation;
+  final Function(String) onAddressEntered; // Add this line
 
   const GoogleMapWidget({
     super.key,
     this.initialLocation,
     required this.onLocationPicked,
+    required this.onClearLocation,
+    required this.onAddressEntered, // Add this line
   });
 
   @override
-  _GoogleMapWidgetState createState() => _GoogleMapWidgetState();
+  GoogleMapWidgetState createState() => GoogleMapWidgetState();
 }
 
-class _GoogleMapWidgetState extends State<GoogleMapWidget> {
+class GoogleMapWidgetState extends State<GoogleMapWidget> {
   LatLng? _pickedLocation;
   LocationData? _currentLocation;
+  final TextEditingController _addressController = TextEditingController();
 
   @override
   void initState() {
@@ -61,6 +66,13 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
     }
   }
 
+  void clearLocation() {
+    setState(() {
+      _pickedLocation = null;
+      _addressController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -76,13 +88,12 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 10),
             color: Colors.white.withOpacity(0.1),
             child: Row(
               children: [
-                Icon(Icons.location_on, size: 24, color: kPrimaryColor),
-                SizedBox(width: 5),
-                TextButton(
+                IconButton(
+                  icon: Icon(Icons.location_on, size: 24, color: kPrimaryColor),
                   onPressed: () {
                     showModalBottomSheet(
                       barrierColor: Colors.black.withOpacity(0.8),
@@ -135,9 +146,20 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
                       ),
                     );
                   },
-                  child: Text(
-                    "Pick Location on Map",
+                ),
+                SizedBox(width: 5),
+                Expanded(
+                  child: TextFormField(
+                    controller: _addressController,
+                    decoration: InputDecoration(
+                      hintText: "Enter Address or Pick Location",
+                      hintStyle: kBodyTextStyle,
+                      border: InputBorder.none,
+                    ),
                     style: kBodyTextStyle,
+                    onChanged: (value) {
+                      widget.onAddressEntered(value); // Add this line
+                    },
                   ),
                 ),
               ],
