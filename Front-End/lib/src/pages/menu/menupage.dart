@@ -176,7 +176,7 @@ class MenuPage extends StatelessWidget {
               // Add your onPressed logic here
             },
           ),
-         
+
           const SizedBox(height: 10),
           MenuItem(
             iconPath: 'assets/icons/menu/reward.png',
@@ -224,7 +224,7 @@ class MenuPage extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           MenuItem(
-            iconPath: 'assets/icons/menu/Authentication.png',
+            iconPath: 'assets/icons/menu/authentication.png',
             text: 'Two-Factor Authentication',
             onPressed: () {
               // Add your onPressed logic here
@@ -238,7 +238,7 @@ class MenuPage extends StatelessWidget {
               // Add your onPressed logic here
             },
           ),
-           const SizedBox(height: 20),
+          const SizedBox(height: 20),
           // Account Settings
           Container(
               alignment: Alignment.centerLeft,
@@ -254,7 +254,7 @@ class MenuPage extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           MenuItem(
-            iconPath: 'assets/icons/menu/payment_history.png',
+            iconPath: 'assets/icons/menu/Payment_History.png',
             text: 'Payment History',
             onPressed: () {
               // Add your onPressed logic here
@@ -268,7 +268,7 @@ class MenuPage extends StatelessWidget {
               // Add your onPressed logic here
             },
           ),
-            const SizedBox(height: 20),
+          const SizedBox(height: 20),
           // Account Settings
           Container(
               alignment: Alignment.centerLeft,
@@ -276,7 +276,7 @@ class MenuPage extends StatelessWidget {
               child: Text('Favourite Location', style: kAppBarTitleTextStyle)),
           const SizedBox(height: 10),
           MenuItem(
-            iconPath: 'assets/icons/menu/home.png',
+            iconPath: 'assets/icons/menu/Home.png',
             text: 'Add Home',
             onPressed: () {
               // Add your onPressed logic here
@@ -306,13 +306,13 @@ class MenuPage extends StatelessWidget {
               // Add your onPressed logic here
             },
           ),
-            const SizedBox(height: 20),
+          const SizedBox(height: 20),
           // Account Settings
           Container(
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.only(left: 10, bottom: 10),
               child: Text('Support', style: kAppBarTitleTextStyle)),
-           const SizedBox(height: 10),
+          const SizedBox(height: 10),
           MenuItem(
             iconPath: 'assets/icons/menu/about_us.png',
             text: 'About Us',
@@ -347,7 +347,7 @@ class MenuPage extends StatelessWidget {
           const SizedBox(height: 10),
           MenuItem(
             iconPath: 'assets/icons/menu/feedback.png',
-            text: 'Feedback/Report an Issue',
+            text: 'Feedback',
             onPressed: () {
               // Add your onPressed logic here
             },
