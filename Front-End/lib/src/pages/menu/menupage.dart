@@ -170,16 +170,17 @@ class MenuPage extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           MenuItem(
-            iconPath: 'assets/icons/menu/Info.png',
-            text: 'About Us',
+            iconPath: 'assets/icons/menu/history.png',
+            text: 'Order History',
             onPressed: () {
               // Add your onPressed logic here
             },
           ),
+         
           const SizedBox(height: 10),
           MenuItem(
-            iconPath: 'assets/icons/menu/Privacy.png',
-            text: 'Emergency Contacts',
+            iconPath: 'assets/icons/menu/reward.png',
+            text: 'Refferal Rewards',
             onPressed: () {
               // Add your onPressed logic here
             },
@@ -215,16 +216,146 @@ class MenuPage extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           MenuItem(
-            iconPath: 'assets/icons/menu/CreditCard.png',
-            text: 'Add Card',
+            iconPath: 'assets/icons/menu/Notification.png',
+            text: 'Notification Preferences',
             onPressed: () {
               // Add your onPressed logic here
             },
           ),
           const SizedBox(height: 10),
           MenuItem(
-            iconPath: 'assets/icons/menu/Logout.png',
-            text: 'Log Out',
+            iconPath: 'assets/icons/menu/Authentication.png',
+            text: 'Two-Factor Authentication',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/Delete.png',
+            text: 'Delete Account',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+           const SizedBox(height: 20),
+          // Account Settings
+          Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 10, bottom: 10),
+              child: Text('Payment', style: kAppBarTitleTextStyle)),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/add_payment.png',
+            text: 'Add Payment Method',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/payment_history.png',
+            text: 'Payment History',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/manage_payment.png',
+            text: 'Manage Payment Methods',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+            const SizedBox(height: 20),
+          // Account Settings
+          Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 10, bottom: 10),
+              child: Text('Favourite Location', style: kAppBarTitleTextStyle)),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/home.png',
+            text: 'Add Home',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/Business.png',
+            text: 'Add Work',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/saved_location.png',
+            text: 'Saved Locations',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/d_location.png',
+            text: 'Set default location',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+            const SizedBox(height: 20),
+          // Account Settings
+          Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 10, bottom: 10),
+              child: Text('Support', style: kAppBarTitleTextStyle)),
+           const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/about_us.png',
+            text: 'About Us',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/privacy_policy.png',
+            text: 'Privacy Policy',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/t&c.png',
+            text: 'Terms & Conditions',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/live_chat.png',
+            text: 'Live Chat',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/feedback.png',
+            text: 'Feedback/Report an Issue',
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+          ),
+          const SizedBox(height: 10),
+          MenuItem(
+            iconPath: 'assets/icons/menu/Star.png',
+            text: 'Rate Us',
             onPressed: () {
               // Add your onPressed logic here
             },
