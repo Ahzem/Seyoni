@@ -6,6 +6,6 @@ const providerController = require("../controllers/providerController");
 router.post("/providers", providerController.createProvider);
 
 // GET route to retrieve provider details
-router.get("/providers/:providerId", providerController.getProviderDetails);
+router.get("/providers", providerController.getAllProviders);
 
 module.exports = router;

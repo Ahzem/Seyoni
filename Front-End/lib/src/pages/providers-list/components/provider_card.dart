@@ -1,25 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'dart:ui';
-import 'provider_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../profiles/provider/seeker_view.dart';
 import '../../forms/hiring_form.dart';
+import '../../../config/url.dart'; // Import the URL constants
 
 class ProviderCard extends StatelessWidget {
-  final ProviderData provider;
+  final String providerId;
+  final String name;
+  final String imageUrl;
+  final double rating;
+  final String profession;
+  final int completedWorks;
+  final bool isAvailable;
 
-  const ProviderCard({super.key, required this.provider});
+  const ProviderCard({
+    super.key,
+    required this.providerId,
+    required this.name,
+    required this.imageUrl,
+    required this.rating,
+    required this.profession,
+    required this.completedWorks,
+    required this.isAvailable,
+  });
 
   Future<Map<String, dynamic>> fetchProviderDetails(String providerId) async {
-    final response = await http
-        .get(Uri.parse('http://localhost:3000/providers/$providerId'));
+    final response =
+        await http.get(Uri.parse('$url/api/providers/$providerId'));
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to load provider details');
+    }
+  }
+
+  void _navigateToSeekerView(BuildContext context, String providerId) async {
+    try {
+      final providerDetails = await fetchProviderDetails(providerId);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SeekerView(providerDetails: providerDetails),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load provider details'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _navigateToHiringForm(BuildContext context, String providerId) async {
+    try {
+      final providerDetails = await fetchProviderDetails(providerId);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HiringForm(
+            name: providerDetails['name'],
+            profileImage: providerDetails['imageUrl'],
+            rating: providerDetails['rating'],
+            serviceType: providerDetails['category'],
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load provider details'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -44,8 +102,8 @@ class ProviderCard extends StatelessWidget {
                 Stack(
                   children: [
                     CircleAvatar(
-                      backgroundImage: provider.imageUrl.isNotEmpty
-                          ? AssetImage(provider.imageUrl)
+                      backgroundImage: imageUrl.isNotEmpty
+                          ? AssetImage(imageUrl)
                           : AssetImage(
                               'assets/images/profile-1.jpg'), // Fallback image
                       radius: 35,
@@ -57,7 +115,7 @@ class ProviderCard extends StatelessWidget {
                         width: 12,
                         height: 12,
                         decoration: BoxDecoration(
-                          color: provider.isAvailable
+                          color: isAvailable
                               ? Colors.green
                               : Colors.red, // Availability color
                           shape: BoxShape.circle,
@@ -73,7 +131,7 @@ class ProviderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        provider.name,
+                        name,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -90,21 +148,45 @@ class ProviderCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 3),
                           Text(
-                            'Rating: ${provider.rating}',
+                            'Rating: $rating',
                             style: const TextStyle(
                                 color: Colors.white70, fontSize: 12),
                           ),
                         ],
                       ),
-                      Text(
-                        'Completed Works: ${provider.completedWorks}',
-                        style: const TextStyle(
-                            color: Colors.white70, fontSize: 12),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.work,
+                            color: kPrimaryColor,
+                            size: 12,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            'Completed Works: $completedWorks',
+                            style: const TextStyle(
+                                color: Colors.white70, fontSize: 12),
+                          ),
+                        ],
                       ),
-                      Text(
-                        provider.profession,
-                        style: const TextStyle(
-                            color: Colors.white70, fontSize: 12),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.person,
+                            color: kPrimaryColor,
+                            size: 12,
+                          ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Text(
+                            profession,
+                            style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -118,30 +200,12 @@ class ProviderCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: TextButton(
-                        onPressed: () async {
-                          try {
-                            final providerDetails =
-                                await fetchProviderDetails(provider.id);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SeekerView(
-                                  providerDetails: providerDetails,
-                                ),
-                              ),
-                            );
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    Text('Failed to load provider details'),
-                                backgroundColor: kPrimaryColor,
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text('View',
-                            style: TextStyle(color: Colors.white)),
+                        onPressed: () =>
+                            _navigateToSeekerView(context, providerId),
+                        child: Text(
+                          'View',
+                          style: TextStyle(color: kPrimaryColor),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -152,33 +216,12 @@ class ProviderCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: TextButton(
-                        onPressed: () async {
-                          try {
-                            final providerDetails =
-                                await fetchProviderDetails(provider.id);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HiringForm(
-                                  name: providerDetails['name'],
-                                  profileImage: providerDetails['profileImage'],
-                                  rating: providerDetails['rating'],
-                                  serviceType: providerDetails['serviceType'],
-                                ),
-                              ),
-                            );
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    Text('Failed to load provider details'),
-                                backgroundColor: kPrimaryColor,
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text('Hire',
-                            style: TextStyle(color: Colors.white)),
+                        onPressed: () =>
+                            _navigateToHiringForm(context, providerId),
+                        child: Text(
+                          'Hire',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],

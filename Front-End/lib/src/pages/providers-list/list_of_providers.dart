@@ -1,39 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../../constants/constants_color.dart';
 import '../../widgets/background_widget.dart';
 import 'components/provider_card.dart';
-import 'components/provider_data.dart';
+import '../../config/url.dart'; // Import the URL constants
 
 class ListOfProviders extends StatefulWidget {
   final String selectedLocation;
   final List<String> selectedSubCategories;
 
-  const ListOfProviders(
-      {super.key,
-      required this.selectedLocation,
-      required this.selectedSubCategories});
+  const ListOfProviders({
+    super.key,
+    required this.selectedLocation,
+    required this.selectedSubCategories,
+  });
 
   @override
   ListOfProvidersState createState() => ListOfProvidersState();
 }
 
 class ListOfProvidersState extends State<ListOfProviders> {
-  List<ProviderData> filteredProviders = [];
+  List<dynamic> filteredProviders = [];
+  bool isLoading = true;
+  String errorMessage = '';
 
   @override
   void initState() {
     super.initState();
-    _filterProviders();
+    _fetchProviders();
   }
 
-  // Filter based on location and subcategories
-  void _filterProviders() {
+  Future<void> _fetchProviders() async {
+    try {
+      final response = await http.get(Uri.parse('$url/api/providers'));
+      if (response.statusCode == 200) {
+        final List<dynamic> providers = json.decode(response.body);
+        _filterProviders(providers);
+      } else {
+        print('Failed to load providers: ${response.statusCode}');
+        throw Exception('Failed to load providers');
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        errorMessage = 'Failed to load providers';
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _filterProviders(List<dynamic> providers) {
     setState(() {
       filteredProviders = providers.where((provider) {
-        return provider.location.contains(widget.selectedLocation) &&
-            provider.subCategories.any((subCategory) =>
+        return provider['location'].contains(widget.selectedLocation) &&
+            provider['subCategories'].any((subCategory) =>
                 widget.selectedSubCategories.contains(subCategory));
       }).toList();
+      isLoading = false;
     });
   }
 
@@ -59,36 +89,56 @@ class ListOfProvidersState extends State<ListOfProviders> {
               },
             ),
           ),
-          body: filteredProviders.isNotEmpty
-              ? ListView.builder(
-                  itemCount: filteredProviders.length,
-                  itemBuilder: (context, index) {
-                    return ProviderCard(provider: filteredProviders[index]);
-                  },
-                )
-              : Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          textAlign: TextAlign.center,
-                          'No providers available for this location and subcategories.',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
+          body: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : errorMessage.isNotEmpty
+                  ? Center(
+                      child: Text(
+                        errorMessage,
+                        style: TextStyle(color: Colors.red, fontSize: 18),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : filteredProviders.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: filteredProviders.length,
+                          itemBuilder: (context, index) {
+                            final provider = filteredProviders[index];
+                            return ProviderCard(
+                              providerId: provider['_id'],
+                              name: provider['name'],
+                              imageUrl: provider['imageUrl'],
+                              rating: provider['rating'].toDouble(),
+                              profession: provider['profession'],
+                              completedWorks: provider['completedWorks'],
+                              isAvailable: provider['isAvailable'],
+                            );
                           },
-                          child: const Text('Refine Search',
-                              style: TextStyle(
-                                  fontSize: 16, color: kPrimaryColor)),
+                        )
+                      : Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  textAlign: TextAlign.center,
+                                  'No providers available for this location and subcategories.',
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.white),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Refine Search',
+                                      style: TextStyle(
+                                          fontSize: 16, color: kPrimaryColor)),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
         ),
       ],
     );

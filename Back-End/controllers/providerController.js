@@ -1,4 +1,3 @@
-// providerController.js
 const Provider = require("../models/providerModel");
 
 exports.createProvider = async (req, res) => {
@@ -8,6 +7,15 @@ exports.createProvider = async (req, res) => {
     res.status(201).json(provider);
   } catch (error) {
     res.status(400).json({ message: "Error creating provider", error });
+  }
+};
+
+exports.getAllProviders = async (req, res) => {
+  try {
+    const providers = await Provider.find();
+    res.status(200).json(providers);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching providers", error });
   }
 };
 
