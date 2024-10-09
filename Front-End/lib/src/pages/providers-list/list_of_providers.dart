@@ -5,8 +5,12 @@ import 'components/provider_data.dart';
 
 class ListOfProviders extends StatefulWidget {
   final String selectedLocation;
+  final List<String> selectedSubCategories;
 
-  const ListOfProviders({super.key, required this.selectedLocation});
+  const ListOfProviders(
+      {super.key,
+      required this.selectedLocation,
+      required this.selectedSubCategories});
 
   @override
   ListOfProvidersState createState() => ListOfProvidersState();
@@ -21,12 +25,13 @@ class ListOfProvidersState extends State<ListOfProviders> {
     _filterProviders();
   }
 
-  // Mock filter based on location and category
+  // Filter based on location and subcategories
   void _filterProviders() {
-    // Simulated filtering logic
     setState(() {
       filteredProviders = providers.where((provider) {
-        return provider.location.contains(widget.selectedLocation);
+        return provider.location.contains(widget.selectedLocation) &&
+            provider.subCategories.any((subCategory) =>
+                widget.selectedSubCategories.contains(subCategory));
       }).toList();
     });
   }
@@ -65,7 +70,7 @@ class ListOfProvidersState extends State<ListOfProviders> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
-                        'No providers available for this location.',
+                        'No providers available for this location and subcategories.',
                         style: TextStyle(fontSize: 18),
                       ),
                       TextButton(

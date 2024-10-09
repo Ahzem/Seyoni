@@ -7,6 +7,7 @@ import '../../widgets/customNavBar/custom_navbar.dart';
 import '../../widgets/background_widget.dart';
 import '../../constants/constants_font.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import '../category/category_page.dart';
 import '../menu/menupage.dart';
 
 class HomePage extends StatefulWidget {
@@ -46,12 +47,7 @@ class HomePageState extends State<HomePage> {
         style: kBodyTextStyle,
       ),
     ),
-    const Center(
-      child: Text(
-        'Category Page Content',
-        style: kBodyTextStyle,
-      ),
-    ),
+    const Center(child: CategoryPage()),
     const Center(child: MenuPage()),
   ];
 

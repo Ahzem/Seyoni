@@ -29,8 +29,7 @@ class ProviderCard extends StatelessWidget {
                 Stack(
                   children: [
                     CircleAvatar(
-                      backgroundImage: provider.imageUrl != null &&
-                              provider.imageUrl.isNotEmpty
+                      backgroundImage: provider.imageUrl.isNotEmpty
                           ? AssetImage(provider.imageUrl)
                           : AssetImage(
                               'assets/images/profile-1.jpg'), // Fallback image
@@ -88,7 +87,7 @@ class ProviderCard extends StatelessWidget {
                             color: Colors.white70, fontSize: 12),
                       ),
                       Text(
-                        'Category: ${provider.category}',
+                        provider.profession,
                         style: const TextStyle(
                             color: Colors.white70, fontSize: 12),
                       ),
