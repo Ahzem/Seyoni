@@ -45,89 +45,10 @@ class HiringFormState extends State<HiringForm> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   LatLng? _selectedLocation;
-  String? _enteredAddress; // Add this line
+  String? _enteredAddress;
   final TextEditingController _descriptionController = TextEditingController();
   final GlobalKey<GoogleMapWidgetState> _googleMapKey =
       GlobalKey<GoogleMapWidgetState>();
-
-  Future<void> _pickImage() async {
-    if (_selectedImages.length >= 3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('You can only add up to 3 images.',
-              style: TextStyle(color: Colors.black)),
-          backgroundColor: kPrimaryColor,
-        ),
-      );
-      return;
-    }
-
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImages.add(File(pickedFile.path));
-      });
-    }
-  }
-
-  Future<void> _pickDate() async {
-    DateTime now = DateTime.now();
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: now,
-      firstDate: now,
-      lastDate: DateTime(2030),
-      barrierColor: Colors.black.withOpacity(0.7),
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-        // Reset the selected time if the date is changed
-        _selectedTime = null;
-      });
-    }
-  }
-
-  Future<void> _pickTime() async {
-    TimeOfDay now = TimeOfDay.now();
-    TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: now,
-    );
-    if (picked != null) {
-      // Ensure the selected time is not in the past if the selected date is today
-      if (_selectedDate != null &&
-          _selectedDate!.isAtSameMomentAs(DateTime.now())) {
-        if (picked.hour < now.hour ||
-            (picked.hour == now.hour && picked.minute < now.minute)) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text('Please select a future time.',
-                    style: TextStyle(color: Colors.black)),
-                backgroundColor: kPrimaryColor),
-          );
-          return;
-        }
-      }
-      setState(() {
-        _selectedTime = picked;
-      });
-    }
-  }
-
-  void _pickLocation(LatLng location) {
-    setState(() {
-      _selectedLocation = location;
-    });
-  }
-
-  void _enterAddress(String address) {
-    setState(() {
-      _enteredAddress = address;
-    });
-  }
 
   Future<void> _confirmReservation() async {
     if (_selectedDate == null ||
@@ -156,10 +77,7 @@ class HiringFormState extends State<HiringForm> {
       'description': _descriptionController.text,
     };
 
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse(sendReservationsUrl),
-    );
+    var request = http.MultipartRequest('POST', Uri.parse(sendReservationsUrl));
 
     request.fields.addAll(
         reservationData.map((key, value) => MapEntry(key, value.toString())));
@@ -205,10 +123,52 @@ class HiringFormState extends State<HiringForm> {
     }
   }
 
-  @override
-  void dispose() {
-    _descriptionController.dispose();
-    super.dispose();
+  void _pickLocation(LatLng location) {
+    setState(() {
+      _selectedLocation = location;
+    });
+  }
+
+  void _pickDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
+
+  void _pickTime() async {
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (pickedTime != null) {
+      setState(() {
+        _selectedTime = pickedTime;
+      });
+    }
+  }
+
+  void _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImages.add(File(pickedFile.path));
+      });
+    }
+  }
+
+  void _enterAddress(String address) {
+    setState(() {
+      _enteredAddress = address;
+    });
   }
 
   void _showUnsavedChangesDialog() {
@@ -234,11 +194,17 @@ class HiringFormState extends State<HiringForm> {
           Navigator.of(ctx).pop();
         },
         onConfirm: () {
-          Navigator.of(ctx).pop(); // Close the dialog
-          _confirmReservation(); // Call the method to confirm reservation
+          Navigator.of(ctx).pop();
+          _confirmReservation();
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -284,7 +250,7 @@ class HiringFormState extends State<HiringForm> {
                         onLocationPicked: _pickLocation,
                         onClearLocation: () =>
                             _googleMapKey.currentState?.clearLocation(),
-                        onAddressEntered: _enterAddress, // Add this line
+                        onAddressEntered: _enterAddress,
                       ),
                       SizedBox(height: 10),
                       Row(
@@ -314,7 +280,6 @@ class HiringFormState extends State<HiringForm> {
                       SizedBox(height: 10),
                       CustomTextField(controller: _descriptionController),
                       SizedBox(height: 5),
-                      // Clear form text button including custom text description
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -325,10 +290,8 @@ class HiringFormState extends State<HiringForm> {
                                 _selectedDate = null;
                                 _selectedTime = null;
                                 _selectedLocation = null;
-                                _enteredAddress = null; // Add this line
+                                _enteredAddress = null;
                                 _descriptionController.clear();
-                                _googleMapKey.currentState
-                                    ?.clearLocation(); // Clear the location field
                               });
                             },
                             child: Row(

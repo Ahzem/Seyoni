@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../constants/constants_color.dart';
 import '../../widgets/background_widget.dart';
 import 'components/provider_card.dart';
 import 'components/provider_data.dart';
@@ -66,20 +67,26 @@ class ListOfProvidersState extends State<ListOfProviders> {
                   },
                 )
               : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'No providers available for this location and subcategories.',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Refine Search'),
-                      ),
-                    ],
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          textAlign: TextAlign.center,
+                          'No providers available for this location and subcategories.',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Refine Search',
+                              style: TextStyle(
+                                  fontSize: 16, color: kPrimaryColor)),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
         ),

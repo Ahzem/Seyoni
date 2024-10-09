@@ -39,7 +39,7 @@ class HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const Center(child: SeekerView()),
+    const Center(),
     const Center(child: ChatScreen()),
     const Center(
       child: Text(

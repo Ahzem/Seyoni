@@ -1,4 +1,5 @@
 class ProviderData {
+  final String id;
   final String name;
   final double rating;
   final int completedWorks;
@@ -10,6 +11,7 @@ class ProviderData {
   bool isAvailable;
 
   ProviderData({
+    required this.id,
     required this.name,
     required this.rating,
     required this.completedWorks,
@@ -24,6 +26,7 @@ class ProviderData {
 
 List<ProviderData> providers = [
   ProviderData(
+    id: '1',
     name: 'John Doe',
     rating: 4.5,
     completedWorks: 120,
@@ -40,7 +43,8 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
-    name: 'Jane Doe',
+    id: '2',
+    name: 'Jane Kumara',
     rating: 4.2,
     completedWorks: 90,
     location: 'Kandy',
@@ -57,6 +61,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '3',
     name: 'Alice Smith',
     rating: 4.8,
     completedWorks: 150,
@@ -73,6 +78,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '4',
     name: 'Bob Brown',
     rating: 4.6,
     completedWorks: 110,
@@ -84,6 +90,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '5',
     name: 'Charlie Green',
     rating: 4.4,
     completedWorks: 100,
@@ -101,6 +108,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '6',
     name: 'David White',
     rating: 4.7,
     completedWorks: 140,
@@ -119,6 +127,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '7',
     name: 'Eve Black',
     rating: 4.3,
     completedWorks: 80,
@@ -135,6 +144,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '8',
     name: 'Frank Grey',
     rating: 4.9,
     completedWorks: 160,
@@ -151,6 +161,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '9',
     name: 'Grace Brown',
     rating: 4.1,
     completedWorks: 70,
@@ -167,6 +178,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '10',
     name: 'Henry Green',
     rating: 4.0,
     completedWorks: 60,
@@ -183,6 +195,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '11',
     name: 'Ivy White',
     rating: 4.2,
     completedWorks: 90,
@@ -199,6 +212,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '12',
     name: 'Jack Black',
     rating: 4.4,
     completedWorks: 100,
@@ -215,6 +229,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '13',
     name: 'Kelly Grey',
     rating: 4.6,
     completedWorks: 110,
@@ -234,6 +249,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '14',
     name: 'Larry Brown',
     rating: 4.8,
     completedWorks: 150,
@@ -251,6 +267,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '15',
     name: 'Mandy Green',
     rating: 4.5,
     completedWorks: 120,
@@ -268,6 +285,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '16',
     name: 'Nancy White',
     rating: 4.7,
     completedWorks: 140,
@@ -284,6 +302,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '17',
     name: 'Oliver Black',
     rating: 4.9,
     completedWorks: 160,
@@ -301,6 +320,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '18',
     name: 'Peter Grey',
     rating: 4.3,
     completedWorks: 80,
@@ -317,6 +337,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '19',
     name: 'Quincy Brown',
     rating: 4.1,
     completedWorks: 70,
@@ -328,6 +349,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '20',
     name: 'Rose Green',
     rating: 4.0,
     completedWorks: 60,
@@ -345,6 +367,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '21',
     name: 'Sam White',
     rating: 4.2,
     completedWorks: 90,
@@ -363,6 +386,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '22',
     name: 'Tom Black',
     rating: 4.4,
     completedWorks: 100,
@@ -379,6 +403,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '23',
     name: 'Uma Grey',
     rating: 4.6,
     completedWorks: 110,
@@ -395,6 +420,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '24',
     name: 'Vince Brown',
     rating: 4.8,
     completedWorks: 150,
@@ -411,6 +437,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '25',
     name: 'Wendy Green',
     rating: 4.5,
     completedWorks: 120,
@@ -427,6 +454,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '26',
     name: 'Xavier White',
     rating: 4.7,
     completedWorks: 140,
@@ -443,6 +471,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '27',
     name: 'Yvonne Black',
     rating: 4.9,
     completedWorks: 160,
@@ -459,6 +488,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '28',
     name: 'Zack Grey',
     rating: 4.3,
     completedWorks: 80,
@@ -478,6 +508,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '29',
     name: 'Adam White',
     rating: 4.1,
     completedWorks: 70,
@@ -495,6 +526,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '30',
     name: 'Betty Black',
     rating: 4.0,
     completedWorks: 60,
@@ -512,6 +544,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '31',
     name: 'Carl Green',
     rating: 4.2,
     completedWorks: 90,
@@ -528,6 +561,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '32',
     name: 'Diana White',
     rating: 4.4,
     completedWorks: 100,
@@ -545,6 +579,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '33',
     name: 'Ethan Black',
     rating: 4.6,
     completedWorks: 110,
@@ -561,6 +596,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '34',
     name: 'Fiona Grey',
     rating: 4.8,
     completedWorks: 150,
@@ -572,6 +608,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '35',
     name: 'George Green',
     rating: 4.5,
     completedWorks: 120,
@@ -589,6 +626,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '36',
     name: 'Hannah White',
     rating: 4.7,
     completedWorks: 140,
@@ -607,6 +645,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '37',
     name: 'Ian Black',
     rating: 4.3,
     completedWorks: 80,
@@ -623,6 +662,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '38',
     name: 'Jenny Grey',
     rating: 4.9,
     completedWorks: 160,
@@ -639,6 +679,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '39',
     name: 'Kevin Green',
     rating: 4.1,
     completedWorks: 70,
@@ -655,6 +696,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '40',
     name: 'Lily White',
     rating: 4.0,
     completedWorks: 60,
@@ -671,6 +713,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '41',
     name: 'Mike Black',
     rating: 4.2,
     completedWorks: 90,
@@ -687,6 +730,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '42',
     name: 'Nina Grey',
     rating: 4.4,
     completedWorks: 100,
@@ -703,6 +747,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '43',
     name: 'Oscar White',
     rating: 4.6,
     completedWorks: 110,
@@ -722,6 +767,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '44',
     name: 'Patty Black',
     rating: 4.8,
     completedWorks: 150,
@@ -739,6 +785,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '45',
     name: 'Quinn Green',
     rating: 4.5,
     completedWorks: 120,
@@ -756,6 +803,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '46',
     name: 'Randy White',
     rating: 4.7,
     completedWorks: 140,
@@ -772,6 +820,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '47',
     name: 'Sally Black',
     rating: 4.9,
     completedWorks: 160,
@@ -789,6 +838,7 @@ List<ProviderData> providers = [
     isAvailable: true,
   ),
   ProviderData(
+    id: '48',
     name: 'Tim Grey',
     rating: 4.3,
     completedWorks: 80,
@@ -801,6 +851,36 @@ List<ProviderData> providers = [
       'Wood Flooring Installation',
       'Trim and Molding Installation',
       'Deck Building and Repair'
+    ],
+    isAvailable: true,
+  ),
+  ProviderData(
+    id: '49',
+    name: 'Ursula Brown',
+    rating: 4.1,
+    completedWorks: 70,
+    location: 'Kalutara',
+    imageUrl: 'assets/images/profile-7.jpg',
+    category: 'Masonry',
+    profession: 'Mason',
+    subCategories: ['Masonry Repairs'],
+    isAvailable: true,
+  ),
+  ProviderData(
+    id: '50',
+    name: 'Victor Green',
+    rating: 4.0,
+    completedWorks: 60,
+    location: 'Kegalle',
+    imageUrl: 'assets/images/profile-1.jpg',
+    category: 'Electrical Services',
+    profession: 'Electrician',
+    subCategories: [
+      'Electrical Wiring and Rewiring',
+      'Circuit Breaker Installation',
+      'Electrical Panel Upgrades',
+      'Lightning Installation',
+      'Generator Installation'
     ],
     isAvailable: true,
   ),

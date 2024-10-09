@@ -2,11 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'dart:ui';
 import 'provider_data.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../profiles/provider/seeker_view.dart';
+import '../../forms/hiring_form.dart';
 
 class ProviderCard extends StatelessWidget {
   final ProviderData provider;
 
   const ProviderCard({super.key, required this.provider});
+
+  Future<Map<String, dynamic>> fetchProviderDetails(String providerId) async {
+    final response = await http
+        .get(Uri.parse('http://localhost:3000/providers/$providerId'));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load provider details');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +118,27 @@ class ProviderCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: TextButton(
-                        onPressed: () {
-                          // Handle view action
+                        onPressed: () async {
+                          try {
+                            final providerDetails =
+                                await fetchProviderDetails(provider.id);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SeekerView(
+                                  providerDetails: providerDetails,
+                                ),
+                              ),
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('Failed to load provider details'),
+                                backgroundColor: kPrimaryColor,
+                              ),
+                            );
+                          }
                         },
                         child: const Text('View',
                             style: TextStyle(color: Colors.white)),
@@ -118,8 +152,30 @@ class ProviderCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: TextButton(
-                        onPressed: () {
-                          // Handle hire action
+                        onPressed: () async {
+                          try {
+                            final providerDetails =
+                                await fetchProviderDetails(provider.id);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HiringForm(
+                                  name: providerDetails['name'],
+                                  profileImage: providerDetails['profileImage'],
+                                  rating: providerDetails['rating'],
+                                  serviceType: providerDetails['serviceType'],
+                                ),
+                              ),
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('Failed to load provider details'),
+                                backgroundColor: kPrimaryColor,
+                              ),
+                            );
+                          }
                         },
                         child: const Text('Hire',
                             style: TextStyle(color: Colors.white)),

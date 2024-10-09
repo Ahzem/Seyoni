@@ -75,19 +75,11 @@ class CategoryPageState extends State<CategoryPage> {
                 final category = categories[index];
                 return GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => SubCategoryPage(
-                          category: category['name']!,
-                          selectedCity: _selectedCity,
-                        ),
-                      ),
-                    );
+                    _showSubCategoryBottomSheet(context, category['name']!);
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withOpacity(0.06),
                       borderRadius: BorderRadius.circular(20),
                       border: Border(
                           bottom:
@@ -110,7 +102,7 @@ class CategoryPageState extends State<CategoryPage> {
                           category['name']!,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Colors.white70,
                             fontSize: 13,
                           ),
                         ),
@@ -123,6 +115,20 @@ class CategoryPageState extends State<CategoryPage> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showSubCategoryBottomSheet(BuildContext context, String category) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return SubCategoryBottomSheet(
+          category: category,
+          selectedCity: _selectedCity,
+        );
+      },
     );
   }
 }
