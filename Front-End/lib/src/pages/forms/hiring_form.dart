@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import '../../config/url.dart';
 import '../../constants/constants_font.dart';
 import '../../widgets/background_widget.dart';
 import '../../widgets/custom_button.dart';
@@ -157,7 +158,7 @@ class HiringFormState extends State<HiringForm> {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/api/reservations'),
+      Uri.parse(sendReservationsUrl),
     );
 
     request.fields.addAll(

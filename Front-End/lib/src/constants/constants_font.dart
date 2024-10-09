@@ -66,3 +66,10 @@ const kAppBarTitleTextStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.w500,
 );
+
+// Reservations View Page Text Styles
+const kReservationsTitleTextStyle = TextStyle(
+  fontSize: 16,
+  color: Colors.white,
+  fontWeight: FontWeight.w400,
+);

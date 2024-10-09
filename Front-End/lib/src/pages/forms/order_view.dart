@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import '../../config/route.dart';
+import '../../config/url.dart';
 import '../../constants/constants_font.dart';
 import '../../widgets/background_widget.dart';
+import '../profiles/provider/components/icon_button_widget.dart';
 import 'components/service_provider_info.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -36,6 +38,12 @@ class OrderView extends StatefulWidget {
 class OrderViewState extends State<OrderView> {
   List<dynamic> _reservations = [];
 
+  String get requestStatus {
+    return _reservations.isEmpty
+        ? 'pending'
+        : 'accepted'; // Adjust the logic as needed
+  }
+
   @override
   void initState() {
     super.initState();
@@ -43,8 +51,7 @@ class OrderViewState extends State<OrderView> {
   }
 
   Future<void> _fetchReservations() async {
-    final response =
-        await http.get(Uri.parse('http://localhost:3000/api/reservations'));
+    final response = await http.get(Uri.parse(getReservationsUrl));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -100,72 +107,168 @@ class OrderViewState extends State<OrderView> {
                         serviceType: widget.serviceType,
                       ),
                       SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Icon(Icons.location_on,
-                              size: 24, color: kPrimaryColor),
-                          SizedBox(width: 10),
-                          Text(
-                            widget.location,
-                            style: kTitleTextStyle,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Icon(Icons.access_time,
-                              size: 24, color: kPrimaryColor),
-                          SizedBox(width: 10),
-                          Text(
-                            widget.time,
-                            style: kTitleTextStyle,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Icon(Icons.date_range,
-                              size: 24, color: kPrimaryColor),
-                          SizedBox(width: 10),
-                          Text(
-                            widget.date,
-                            style: kTitleTextStyle,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Column(
-                        children: [
-                          Text(
-                            'Description',
-                            style: kTitleTextStyle,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            widget.description,
-                            style: kBodyTextStyle,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        'Reservations',
-                        style: kTitleTextStyle,
-                      ),
-                      SizedBox(height: 10),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _reservations.length,
-                        itemBuilder: (context, index) {
-                          final reservation = _reservations[index];
-                          return ListTile(
-                            title: Text(reservation['name']),
-                            subtitle: Text(reservation['description']),
-                          );
-                        },
-                      ),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.location_on,
+                                    size: 22, color: kPrimaryColor),
+                                SizedBox(width: 10),
+                                Text(
+                                  widget.location,
+                                  style: kReservationsTitleTextStyle,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Icon(Icons.access_time,
+                                    size: 22, color: kPrimaryColor),
+                                SizedBox(width: 10),
+                                Text(
+                                  widget.time,
+                                  style: kReservationsTitleTextStyle,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Icon(Icons.date_range,
+                                    size: 22, color: kPrimaryColor),
+                                SizedBox(width: 10),
+                                Text(
+                                  widget.date,
+                                  style: kReservationsTitleTextStyle,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Icon(Icons.description,
+                                    size: 22, color: kPrimaryColor),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Description',
+                                  style: kReservationsTitleTextStyle,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              widget.description,
+                              style: kBodyTextStyle,
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      if (requestStatus == 'pending') ...[
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                kPrimaryColor.withOpacity(0.3),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Text('Request is pending',
+                                                  style:
+                                                      kReservationsTitleTextStyle),
+                                              SizedBox(width: 10),
+                                              Icon(Icons.change_circle,
+                                                  size: 26,
+                                                  color: kPrimaryColor),
+                                            ],
+                                          ),
+                                        ),
+                                      ] else if (requestStatus ==
+                                          'accepted') ...[
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                kSuccessColor.withOpacity(0.3),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Text('Request has been accepted',
+                                                  style:
+                                                      kReservationsTitleTextStyle),
+                                              SizedBox(width: 10),
+                                              Icon(Icons.check_circle,
+                                                  size: 26,
+                                                  color: kSuccessColor),
+                                            ],
+                                          ),
+                                        ),
+                                      ] else if (requestStatus ==
+                                          'rejected') ...[
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            color: kErrorColor.withOpacity(0.3),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Text('Request has been rejected',
+                                                  style:
+                                                      kReservationsTitleTextStyle),
+                                              SizedBox(width: 10),
+                                              Icon(Icons.cancel,
+                                                  size: 26, color: kErrorColor),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CustomIconButton(
+                                  icon: Icons.phone,
+                                  onPressed: () {},
+                                ),
+                                SizedBox(width: 30),
+                                CustomIconButton(
+                                  icon: Icons.chat,
+                                  onPressed: () {},
+                                ),
+                                SizedBox(width: 30),
+                                CustomIconButton(
+                                  icon: Icons.bookmark_added_sharp,
+                                  onPressed: () {},
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
