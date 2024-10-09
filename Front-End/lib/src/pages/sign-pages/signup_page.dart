@@ -36,7 +36,6 @@ class SignUpPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: height * 0.1), // Adjust top spacing
               Image.asset(
                 'assets/images/logo-icon.png',
                 height: height * 0.15,
@@ -171,7 +170,6 @@ class SignUpPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10), // Adjust bottom spacing
                     ],
                   ),
                 ),

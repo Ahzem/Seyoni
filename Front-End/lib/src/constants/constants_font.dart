@@ -44,8 +44,8 @@ const kAlertTitleTextStyle = TextStyle(
 );
 
 const kMenuItemTextStyle = TextStyle(
-  fontSize: 20,
-  color: Colors.white,
+  fontSize: 17,
+  color: Colors.white70,
   fontWeight: FontWeight.w400,
 );
 
@@ -65,4 +65,11 @@ const kAppBarTitleTextStyle = TextStyle(
   fontSize: 22,
   color: Colors.white,
   fontWeight: FontWeight.w500,
+);
+
+// Reservations View Page Text Styles
+const kReservationsTitleTextStyle = TextStyle(
+  fontSize: 16,
+  color: Colors.white,
+  fontWeight: FontWeight.w400,
 );

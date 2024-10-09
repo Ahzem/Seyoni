@@ -50,6 +50,10 @@ class PhoneNumberFieldState extends State<PhoneNumberField> {
         ),
         hintText: 'Enter your phone number',
         hintStyle: kBodyTextStyle,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: height,
+          horizontal: width,
+        ),
         prefixIcon: Container(
           padding: const EdgeInsets.all(10),
           child: InkWell(
@@ -92,7 +96,7 @@ class PhoneNumberFieldState extends State<PhoneNumberField> {
                 '${selectedCountry.flagEmoji} +${selectedCountry.phoneCode}',
                 style: const TextStyle(
                   color: kPrimaryColor,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                 )),
           ),
