@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/constants/constants_color.dart';
+import '../../../constants/constants_color.dart';
 import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../profiles/provider/seeker_view.dart';
 import '../../forms/hiring_form.dart';
-import '../../../config/url.dart'; // Import the URL constants
+import '../../../config/url.dart';
 
 class ProviderCard extends StatelessWidget {
   final String providerId;
@@ -34,11 +34,14 @@ class ProviderCard extends StatelessWidget {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
+      print('Failed to load provider details: ${response.statusCode}');
+      print('Response: ${response.body}');
       throw Exception('Failed to load provider details');
     }
   }
 
   void _navigateToSeekerView(BuildContext context, String providerId) async {
+    print('Navigating to seeker view for provider: $providerId');
     try {
       final providerDetails = await fetchProviderDetails(providerId);
       Navigator.push(
@@ -50,7 +53,7 @@ class ProviderCard extends StatelessWidget {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to load provider details'),
+          content: Text('Failed to load provider details: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -58,6 +61,7 @@ class ProviderCard extends StatelessWidget {
   }
 
   void _navigateToHiringForm(BuildContext context, String providerId) async {
+    print('Navigating to hiring form for provider: $providerId');
     try {
       final providerDetails = await fetchProviderDetails(providerId);
       Navigator.push(
@@ -74,7 +78,7 @@ class ProviderCard extends StatelessWidget {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to load provider details'),
+          content: Text('Failed to load provider details: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -105,7 +109,7 @@ class ProviderCard extends StatelessWidget {
                       backgroundImage: imageUrl.isNotEmpty
                           ? AssetImage(imageUrl)
                           : AssetImage(
-                              'assets/images/profile-1.jpg'), // Fallback image
+                              'assets/images/profile-3.jpg'), // Fallback image
                       radius: 35,
                     ),
                     Positioned(

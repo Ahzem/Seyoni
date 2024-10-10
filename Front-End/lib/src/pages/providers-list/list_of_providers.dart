@@ -35,7 +35,7 @@ class ListOfProvidersState extends State<ListOfProviders> {
     try {
       final response = await http.get(Uri.parse('$url/api/providers'));
       if (response.statusCode == 200) {
-        final List<dynamic> providers = json.decode(response.body);
+        final providers = json.decode(response.body);
         _filterProviders(providers);
       } else {
         print('Failed to load providers: ${response.statusCode}');
@@ -122,10 +122,10 @@ class ListOfProvidersState extends State<ListOfProviders> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
-                                  textAlign: TextAlign.center,
                                   'No providers available for this location and subcategories.',
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
+                                  textAlign: TextAlign.center,
                                 ),
                                 TextButton(
                                   onPressed: () {
