@@ -85,3 +85,15 @@ const kReservationsTitleTextStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.w400,
 );
+
+const kCardTitleTextStyle = TextStyle(
+  fontSize: 16,
+  color: Colors.white,
+  fontWeight: FontWeight.w700,
+);
+
+const kCardTextStyle = TextStyle(
+  fontSize: 12,
+  color: kParagraphTextColor,
+  fontWeight: FontWeight.w400,
+);

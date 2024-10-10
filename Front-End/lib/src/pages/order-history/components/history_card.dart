@@ -95,14 +95,14 @@ class HistoryCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(providerName, style: kSubtitleTextStyle2),
-                      Text(profession, style: kBodyTextStyle),
+                      Text(providerName, style: kCardTitleTextStyle),
+                      Text(profession, style: kCardTextStyle),
                       Row(
                         children: [
                           const Icon(Icons.calendar_today,
                               size: 14, color: kParagraphTextColor),
                           const SizedBox(width: 4),
-                          Text(_formatDate(date), style: kBodyTextStyle),
+                          Text(_formatDate(date), style: kCardTextStyle),
                         ],
                       ),
                       Row(
@@ -110,7 +110,7 @@ class HistoryCard extends StatelessWidget {
                           const Icon(Icons.access_time,
                               size: 14, color: kParagraphTextColor),
                           const SizedBox(width: 4),
-                          Text(_formatTime(time), style: kBodyTextStyle),
+                          Text(_formatTime(time), style: kCardTextStyle),
                         ],
                       ),
                     ],

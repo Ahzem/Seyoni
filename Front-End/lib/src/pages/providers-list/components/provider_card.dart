@@ -3,6 +3,7 @@ import '../../../constants/constants_color.dart';
 import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../../constants/constants_font.dart';
 import '../../profiles/provider/seeker_view.dart';
 import '../../forms/hiring_form.dart';
 import '../../../config/url.dart';
@@ -151,11 +152,7 @@ class ProviderCardState extends State<ProviderCard> {
                     children: [
                       Text(
                         widget.name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        style: kCardTitleTextStyle,
                       ),
                       const SizedBox(height: 2),
                       Row(
@@ -168,8 +165,7 @@ class ProviderCardState extends State<ProviderCard> {
                           const SizedBox(width: 3),
                           Text(
                             'Rating: ${widget.rating}',
-                            style: const TextStyle(
-                                color: Colors.white70, fontSize: 12),
+                            style: kCardTextStyle,
                           ),
                         ],
                       ),
@@ -183,8 +179,7 @@ class ProviderCardState extends State<ProviderCard> {
                           const SizedBox(width: 3),
                           Text(
                             'Completed Works: ${widget.completedWorks}',
-                            style: const TextStyle(
-                                color: Colors.white70, fontSize: 12),
+                            style: kCardTextStyle,
                           ),
                         ],
                       ),
@@ -200,10 +195,7 @@ class ProviderCardState extends State<ProviderCard> {
                           ),
                           Text(
                             widget.profession,
-                            style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500),
+                            style: kCardTextStyle,
                           ),
                         ],
                       ),

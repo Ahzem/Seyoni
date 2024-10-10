@@ -94,7 +94,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       'Order History',
-                      style: kTitleTextStyle,
+                      style: kAlertTitleTextStyle,
                     ),
                   ),
                   const SizedBox(height: 16),
