@@ -36,7 +36,7 @@ class SignInPageState extends State<SignInPage> {
     prefs = await SharedPreferences.getInstance();
   }
 
-  Future<void> _signIn() async {
+  Future<void> signIn() async {
     if (_formKey.currentState!.validate()) {
       try {
         await loginSeeker(
