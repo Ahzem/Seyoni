@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../config/url.dart';
 import '../../constants/constants_font.dart';
 import '../../widgets/background_widget.dart';
@@ -53,12 +54,31 @@ class HiringFormState extends State<HiringForm> {
   Future<void> _confirmReservation() async {
     if (_selectedDate == null ||
         _selectedTime == null ||
-        (_selectedLocation == null &&
-            (_enteredAddress == null || _enteredAddress!.isEmpty)) ||
+        _selectedLocation == null && _enteredAddress == null ||
         _descriptionController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            'Please fill all the required fields'
+            ' before confirming the reservation.',
+            style: TextStyle(color: Colors.black)),
+        backgroundColor: kPrimaryColor,
+      ));
+      return;
+    }
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? seekerId = prefs.getString('seekerId');
+    String? firstName = prefs.getString('firstName');
+    String? lastName = prefs.getString('lastName');
+    String? email = prefs.getString('email');
+
+    if (seekerId == null ||
+        firstName == null ||
+        lastName == null ||
+        email == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please fill all the fields.',
+          content: Text('Failed to retrieve seeker details.',
               style: TextStyle(color: Colors.black)),
           backgroundColor: kPrimaryColor,
         ),
@@ -66,7 +86,7 @@ class HiringFormState extends State<HiringForm> {
       return;
     }
 
-    final reservationData = {
+    var reservationData = {
       'name': widget.name,
       'profileImage': widget.profileImage,
       'rating': widget.rating,
@@ -75,9 +95,16 @@ class HiringFormState extends State<HiringForm> {
       'time': _selectedTime.toString(),
       'date': _selectedDate.toString(),
       'description': _descriptionController.text,
+      'seeker': {
+        'id': seekerId,
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+      },
     };
 
     var request = http.MultipartRequest('POST', Uri.parse(sendReservationsUrl));
+    request.headers['seeker-id'] = seekerId; // Add seeker ID to headers
 
     request.fields.addAll(
         reservationData.map((key, value) => MapEntry(key, value.toString())));

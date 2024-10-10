@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../config/route.dart';
 import '../../pages/sign-pages/components/buttons/sign_in.dart';
 import '../../constants/constants_color.dart';
+import '../../widgets/alertbox/alredy_exist.dart';
 import '../../widgets/background_widget.dart';
 import 'components/fields/phone_num.dart';
 import 'components/fields/email.dart';
@@ -116,9 +117,32 @@ class SignUpPage extends StatelessWidget {
                               passwordController,
                             );
                             if (userData != null) {
-                              bool isOtpSent = await registerSeekerToBackend(
-                                  userData, context);
-                              if (isOtpSent) {
+                              bool exists = await checkSeekerExists(
+                                emailController.text,
+                                phoneNumberController.text,
+                                context,
+                              );
+                              if (exists) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlredyExist(
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.signIn);
+                                      },
+                                    );
+                                  },
+                                );
+                              } else {
+                                // Save temporary user data
+                                await saveTempUser(
+                                  phoneNumberController.text,
+                                  userData,
+                                );
+
+                                // Generate OTP and navigate to OTP screen
+                                await generateOtp(phoneNumberController.text);
                                 Navigator.pushNamed(
                                   context,
                                   AppRoutes.otppage,

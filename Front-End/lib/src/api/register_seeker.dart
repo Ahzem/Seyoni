@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config/route.dart';
 import '../config/url.dart';
 import '../widgets/alertbox/alredy_exist.dart';
@@ -24,18 +25,62 @@ Future<Map<String, String>?> validateSeekerData(
   };
 }
 
+Future<bool> checkSeekerExists(
+    String email, String phone, BuildContext context) async {
+  try {
+    final response = await http.post(
+      Uri.parse(checkSeekerExistsUrl), // Use the correct URL constant
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({'email': email, 'phone': phone}),
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body);
+      return jsonResponse['exists'];
+    } else {
+      if (kDebugMode) {
+        print('Failed to check seeker existence');
+      }
+      return false;
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Failed to check seeker existence');
+      print(e);
+    }
+    return false;
+  }
+}
+
 Future<bool> registerSeekerToBackend(
     Map<String, String> userData, BuildContext context) async {
   try {
     final response = await http.post(
-      Uri.parse(registerSeekersUrl),
+      Uri.parse(registerSeekersUrl), // Use the correct URL constant
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(userData),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
+      var jsonResponse = jsonDecode(response.body);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', jsonResponse['token']);
+      await prefs.setString('firstName', jsonResponse['seeker']['firstName']);
+      await prefs.setString('lastName', jsonResponse['seeker']['lastName']);
+      await prefs.setString('email', jsonResponse['seeker']['email']);
+
+      // Check if the widget is still mounted before using the context
+      if (!context.mounted) return false;
+
+      Navigator.pushNamed(
+        context,
+        AppRoutes.home,
+        arguments: jsonResponse['token'],
+      );
       return true;
     } else if (response.statusCode == 409) {
       if (!context.mounted) return false;
@@ -117,5 +162,47 @@ Future<bool> resendOtp(String? phone, BuildContext context) async {
       print(e);
     }
     return false;
+  }
+}
+
+Future<void> saveTempUser(String phone, Map<String, String> userData) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$url/api/otp/saveTempUser'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({'phone': phone, 'userData': userData}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to save temporary user data');
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Failed to save temporary user data');
+      print(e);
+    }
+  }
+}
+
+Future<void> generateOtp(String phone) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$url/api/otp/generateOtp'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({'phone': phone}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to generate OTP');
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Failed to generate OTP');
+      print(e);
+    }
   }
 }

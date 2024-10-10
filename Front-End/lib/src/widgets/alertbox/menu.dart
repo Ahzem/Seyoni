@@ -3,11 +3,22 @@ import 'package:seyoni/src/pages/sign-pages/signin_page.dart';
 import 'dart:ui';
 import '../../services/auth.dart';
 import '../../pages/menu/components/menu_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuSignOut extends StatelessWidget {
   const MenuSignOut({
     super.key,
   });
+
+  Future<void> _signOut(BuildContext context) async {
+    await AuthService().signOut();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SignInPage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +52,7 @@ class MenuSignOut extends StatelessWidget {
                       iconPath: 'assets/icons/menu/Logout.png',
                       text: 'Log Out',
                       onPressed: () async {
-                        await AuthService().signOut();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignInPage()),
-                        );
+                        await _signOut(context);
                       },
                     ),
                     const SizedBox(height: 10),

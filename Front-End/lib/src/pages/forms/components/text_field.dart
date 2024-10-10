@@ -52,7 +52,7 @@ class CustomTextField extends StatelessWidget {
                   ),
                 ),
               ),
-              style: kBodyTextStyle,
+              style: kInputTextStyle,
               maxLines: 5,
             ),
           ),

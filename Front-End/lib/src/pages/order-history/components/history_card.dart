@@ -7,7 +7,7 @@ import '../../profiles/provider/seeker_view.dart';
 import '../../forms/hiring_form.dart';
 import '../../../config/url.dart';
 
-class ProviderCard extends StatefulWidget {
+class HistoryCard extends StatefulWidget {
   final String providerId;
   final String name;
   final String imageUrl;
@@ -16,7 +16,7 @@ class ProviderCard extends StatefulWidget {
   final int completedWorks;
   final bool isAvailable;
 
-  const ProviderCard({
+  const HistoryCard({
     super.key,
     required this.providerId,
     required this.name,
@@ -28,10 +28,10 @@ class ProviderCard extends StatefulWidget {
   });
 
   @override
-  ProviderCardState createState() => ProviderCardState();
+  HistoryCardState createState() => HistoryCardState();
 }
 
-class ProviderCardState extends State<ProviderCard> {
+class HistoryCardState extends State<HistoryCard> {
   Future<Map<String, dynamic>> fetchProviderDetails(String providerId) async {
     final response =
         await http.get(Uri.parse('$url/api/providers/$providerId'));

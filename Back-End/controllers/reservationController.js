@@ -1,4 +1,5 @@
 const Reservation = require("../models/reservation");
+const Seeker = require("../models/seekerModel");
 const multer = require("multer");
 const path = require("path");
 const { S3Client } = require("@aws-sdk/client-s3");
@@ -37,10 +38,19 @@ exports.createReservation = async (req, res) => {
     if (req.files) {
       reservationData.images = req.files.map((file) => file.location); // S3 URL
     }
+    const seekerId = req.user._id; // Assuming you have middleware to set req.user
+    const seeker = await Seeker.findById(seekerId);
+    reservationData.seeker = {
+      id: seeker._id,
+      firstName: seeker.firstName,
+      lastName: seeker.lastName,
+      email: seeker.email,
+    };
     const reservation = new Reservation(reservationData);
     await reservation.save();
     res.status(201).send(reservation);
   } catch (error) {
+    console.error("Error creating reservation:", error);
     res.status(400).send(error);
   }
 };
