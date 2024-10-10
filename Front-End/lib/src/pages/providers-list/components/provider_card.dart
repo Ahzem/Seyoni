@@ -90,6 +90,19 @@ class ProviderCardState extends State<ProviderCard> {
     }
   }
 
+  ImageProvider _getImageProvider(String imageUrl) {
+    if (imageUrl.isNotEmpty) {
+      try {
+        return AssetImage(imageUrl);
+      } catch (e) {
+        print('Error loading image: $e');
+        return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+      }
+    } else {
+      return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -111,10 +124,7 @@ class ProviderCardState extends State<ProviderCard> {
                 Stack(
                   children: [
                     CircleAvatar(
-                      backgroundImage: widget.imageUrl.isNotEmpty
-                          ? AssetImage(widget.imageUrl)
-                          : AssetImage(
-                              'assets/images/profile-3.jpg'), // Fallback image
+                      backgroundImage: _getImageProvider(widget.imageUrl),
                       radius: 35,
                     ),
                     Positioned(

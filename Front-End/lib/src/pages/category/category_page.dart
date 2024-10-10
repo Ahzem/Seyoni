@@ -38,7 +38,8 @@ class CategoryPageState extends State<CategoryPage> {
                     fillColor: Colors.transparent,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
-                      borderSide: const BorderSide(color: kPrimaryColor),
+                      borderSide:
+                          const BorderSide(color: kPrimaryColor, width: 1),
                     ),
                   ),
                   style: const TextStyle(color: Colors.white),
@@ -104,8 +105,8 @@ class CategoryPageState extends State<CategoryPage> {
                             child: Image.asset(
                               category['icon']!, // Use the asset icon path
                               color: kPrimaryColor,
-                              width: 35,
-                              height: 35,
+                              width: 40,
+                              height: 40,
                             ),
                           ),
                           const SizedBox(height: 8),

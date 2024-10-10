@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../config/route.dart';
 import '../../config/url.dart';
 import '../../constants/constants_font.dart';
@@ -51,20 +52,32 @@ class OrderViewState extends State<OrderView> {
   }
 
   Future<void> _fetchReservations() async {
-    final response = await http.get(Uri.parse(getReservationsUrl));
+    final url = Uri.parse(getReservationsUrl);
 
-    if (response.statusCode == 200) {
-      setState(() {
-        _reservations = json.decode(response.body);
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to load reservations.',
-              style: TextStyle(color: Colors.black)),
-          backgroundColor: kPrimaryColor,
-        ),
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? seekerId = prefs.getString('seekerId');
+
+      if (seekerId == null) {
+        throw Exception('Seeker ID is not available');
+      }
+
+      final response = await http.get(
+        url,
+        headers: {
+          'seeker-id': seekerId,
+        },
       );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _reservations = json.decode(response.body);
+        });
+      } else {
+        throw Exception('Failed to load reservations');
+      }
+    } catch (e) {
+      throw Exception('Failed to load reservations');
     }
   }
 

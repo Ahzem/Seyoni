@@ -2,7 +2,7 @@ const Seeker = require("../models/seekerModel");
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const seekerId = req.headers["seeker-id"]; // Assuming the seeker ID is sent in the headers
+    const seekerId = req.headers["seeker-id"] || req.query.seekerId; // Check both headers and query parameters
     if (!seekerId) {
       return res.status(401).send({ error: "Seeker ID is required" });
     }

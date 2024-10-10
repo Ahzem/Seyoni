@@ -1,93 +1,70 @@
-import 'package:flutter/material.dart';
-import '../../../constants/constants_color.dart';
 import 'dart:ui';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../../profiles/provider/seeker_view.dart';
-import '../../forms/hiring_form.dart';
-import '../../../config/url.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../../constants/constants_font.dart';
+import '../../../constants/constants_color.dart';
+import '../../../widgets/custom_button.dart';
 
-class HistoryCard extends StatefulWidget {
-  final String providerId;
-  final String name;
-  final String imageUrl;
-  final double rating;
+class HistoryCard extends StatelessWidget {
+  final String providerName;
+  final String profileImage;
   final String profession;
-  final int completedWorks;
-  final bool isAvailable;
+  final String date;
+  final String time;
+  final String status;
+  final VoidCallback onTrack;
+  final VoidCallback onView;
+  final VoidCallback onDelete;
 
   const HistoryCard({
     super.key,
-    required this.providerId,
-    required this.name,
-    required this.imageUrl,
-    required this.rating,
+    required this.providerName,
+    required this.profileImage,
     required this.profession,
-    required this.completedWorks,
-    required this.isAvailable,
+    required this.date,
+    required this.time,
+    required this.status,
+    required this.onTrack,
+    required this.onView,
+    required this.onDelete,
   });
 
-  @override
-  HistoryCardState createState() => HistoryCardState();
-}
-
-class HistoryCardState extends State<HistoryCard> {
-  Future<Map<String, dynamic>> fetchProviderDetails(String providerId) async {
-    final response =
-        await http.get(Uri.parse('$url/api/providers/$providerId'));
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
+  ImageProvider getImageProvider(String imageUrl) {
+    if (imageUrl.isNotEmpty) {
+      try {
+        return AssetImage(imageUrl);
+      } catch (e) {
+        print('Error loading image: $e');
+        return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+      }
     } else {
-      throw Exception('Failed to load provider details');
+      return AssetImage('assets/images/profile-3.jpg'); // Fallback image
     }
   }
 
-  void _navigateToSeekerView(BuildContext context, String providerId) async {
-    try {
-      final providerDetails = await fetchProviderDetails(providerId);
-      if (!mounted) return;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SeekerView(providerDetails: providerDetails),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to load provider details: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+  String _formatDate(String date) {
+    final DateTime parsedDate = DateTime.parse(date);
+    final DateFormat formatter = DateFormat('d MMM yyyy');
+    return formatter.format(parsedDate);
   }
 
-  void _navigateToHiringForm(BuildContext context, String providerId) async {
-    try {
-      final providerDetails = await fetchProviderDetails(providerId);
-      if (!mounted) return;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HiringForm(
-            name: providerDetails['name'],
-            profileImage: providerDetails['imageUrl'],
-            rating: providerDetails['rating'],
-            profession: providerDetails['profession'],
-          ),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to load provider details: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+  String _formatTime(String time) {
+    // Extract the time from the TimeOfDay string format
+    final timeString = time.replaceAll(RegExp(r'[^\d:]'), '');
+    final TimeOfDay parsedTime = TimeOfDay(
+      hour: int.parse(timeString.split(":")[0]),
+      minute: int.parse(timeString.split(":")[1]),
+    );
+    final DateTime now = DateTime.now();
+    final DateTime formattedTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      parsedTime.hour,
+      parsedTime.minute,
+    );
+    final DateFormat formatter = DateFormat('HH:mm');
+    return formatter.format(formattedTime);
   }
 
   @override
@@ -104,97 +81,36 @@ class HistoryCardState extends State<HistoryCard> {
               color: Colors.white.withOpacity(0.05),
               borderRadius: BorderRadius.circular(20),
               border: Border(
-                  bottom: BorderSide(color: Colors.white.withOpacity(0.8))),
+                bottom: BorderSide(color: Colors.white.withOpacity(0.8)),
+              ),
             ),
             child: Row(
               children: [
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: widget.imageUrl.isNotEmpty
-                          ? AssetImage(widget.imageUrl)
-                          : AssetImage(
-                              'assets/images/profile-3.jpg'), // Fallback image
-                      radius: 35,
-                    ),
-                    Positioned(
-                      right: 0,
-                      bottom: 5,
-                      child: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: widget.isAvailable
-                              ? Colors.green
-                              : Colors.red, // Availability color
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 1),
-                        ),
-                      ),
-                    ),
-                  ],
+                CircleAvatar(
+                  backgroundImage: getImageProvider(profileImage),
+                  radius: 35,
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
+                      Text(providerName, style: kSubtitleTextStyle2),
+                      Text(profession, style: kBodyTextStyle),
                       Row(
                         children: [
-                          Icon(
-                            Icons.star,
-                            color: kPrimaryColor,
-                            size: 12,
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            'Rating: ${widget.rating}',
-                            style: const TextStyle(
-                                color: Colors.white70, fontSize: 12),
-                          ),
+                          const Icon(Icons.calendar_today,
+                              size: 14, color: kParagraphTextColor),
+                          const SizedBox(width: 4),
+                          Text(_formatDate(date), style: kBodyTextStyle),
                         ],
                       ),
                       Row(
                         children: [
-                          Icon(
-                            Icons.work,
-                            color: kPrimaryColor,
-                            size: 12,
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            'Completed Works: ${widget.completedWorks}',
-                            style: const TextStyle(
-                                color: Colors.white70, fontSize: 12),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.person,
-                            color: kPrimaryColor,
-                            size: 12,
-                          ),
-                          SizedBox(
-                            width: 3,
-                          ),
-                          Text(
-                            widget.profession,
-                            style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500),
-                          ),
+                          const Icon(Icons.access_time,
+                              size: 14, color: kParagraphTextColor),
+                          const SizedBox(width: 4),
+                          Text(_formatTime(time), style: kBodyTextStyle),
                         ],
                       ),
                     ],
@@ -202,36 +118,37 @@ class HistoryCardState extends State<HistoryCard> {
                 ),
                 Column(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: kPrimaryColor),
-                        borderRadius: BorderRadius.circular(50),
+                    if (status == 'accepted')
+                      Row(
+                        children: [
+                          PrimaryFilledButton(
+                            text: 'Track',
+                            onPressed: onTrack,
+                          ),
+                        ],
+                      )
+                    else if (status == 'rejected')
+                      Row(
+                        children: [
+                          PrimaryFilledButton(
+                            text: 'Delete',
+                            onPressed: onDelete,
+                          ),
+                        ],
+                      )
+                    else if (status == 'pending')
+                      Row(
+                        children: [
+                          PrimaryFilledInactiveButton(
+                            text: 'Track',
+                            onPressed: () {},
+                          ),
+                        ],
                       ),
-                      child: TextButton(
-                        onPressed: () =>
-                            _navigateToSeekerView(context, widget.providerId),
-                        child: Text(
-                          'View',
-                          style: TextStyle(color: kPrimaryColor),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: kPrimaryColor,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: TextButton(
-                        onPressed: () =>
-                            _navigateToHiringForm(context, widget.providerId),
-                        child: Text(
-                          'Hire',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                    const SizedBox(width: 5),
+                    PrimaryFilledButtonThree(
+                      text: 'View',
+                      onPressed: onView,
                     ),
                   ],
                 ),

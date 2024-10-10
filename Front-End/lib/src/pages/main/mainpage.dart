@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/pages/chat/chat_page.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission handler package
+import 'package:seyoni/src/pages/order-history/order_history_page.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/customNavBar/custom_navbar.dart';
 import '../../widgets/background_widget.dart';
@@ -38,7 +39,7 @@ class HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const Center(),
+    const Center(child: OrderHistoryPage()),
     const Center(child: ChatScreen()),
     const Center(
       child: Text(

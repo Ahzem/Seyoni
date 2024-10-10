@@ -1,144 +1,144 @@
-// import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
-// import '../../constants/constants_color.dart';
-// import '../../widgets/background_widget.dart';
-// import 'components/history_card.dart';
-// import '../../config/url.dart'; // Import the URL constants
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../config/url.dart';
+import '../../widgets/background_widget.dart';
+import '../forms/order_view.dart';
+import 'components/history_card.dart';
+import '../../constants/constants_font.dart';
 
-// class OrderHistoryPage extends StatefulWidget {
-//   final String selectedLocation;
-//   final List<String> selectedSubCategories;
+class OrderHistoryPage extends StatefulWidget {
+  const OrderHistoryPage({super.key});
 
-//   const OrderHistoryPage({
-//     super.key,
-//     required this.selectedLocation,
-//     required this.selectedSubCategories,
-//   });
+  @override
+  State<OrderHistoryPage> createState() => _OrderHistoryPageState();
+}
 
-//   @override
-//   OrderHistoryPageState createState() => OrderHistoryPageState();
-// }
+class _OrderHistoryPageState extends State<OrderHistoryPage> {
+  List<dynamic> reservations = [];
+  bool isLoading = true;
+  String errorMessage = '';
 
-// class OrderHistoryPageState extends State<OrderHistoryPage> {
-//   List<dynamic> filteredProviders = [];
-//   bool isLoading = true;
-//   String errorMessage = '';
+  @override
+  void initState() {
+    super.initState();
+    _fetchReservations();
+  }
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _fetchProviders();
-//   }
+  Future<void> _fetchReservations() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? seekerId = prefs.getString('seekerId');
+      if (seekerId == null || seekerId.isEmpty) {
+        setState(() {
+          errorMessage = 'User not logged in';
+          isLoading = false;
+        });
+        return;
+      }
 
-//   Future<void> _fetchProviders() async {
-//     try {
-//       final response = await http.get(Uri.parse('$url/api/providers'));
-//       if (response.statusCode == 200) {
-//         final providers = json.decode(response.body);
-//         _filterProviders(providers);
-//       } else {
-//         throw Exception('Failed to load providers');
-//       }
-//     } catch (e) {
-//       setState(() {
-//         errorMessage = 'Failed to load providers';
-//         isLoading = false;
-//       });
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(
-//           content: Text(errorMessage),
-//           backgroundColor: Colors.red,
-//         ),
-//       );
-//     }
-//   }
+      final url = getReservationsUrl;
 
-//   void _filterProviders(List<dynamic> providers) {
-//     setState(() {
-//       filteredProviders = providers.where((provider) {
-//         return provider['location'].contains(widget.selectedLocation) &&
-//             provider['subCategories'].any((subCategory) =>
-//                 widget.selectedSubCategories.contains(subCategory));
-//       }).toList();
-//       isLoading = false;
-//     });
-//   }
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'seeker-id': seekerId, // Send seekerId in headers
+        },
+      );
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Stack(
-//       children: [
-//         const Positioned.fill(
-//           child: BackgroundWidget(child: SizedBox.expand()),
-//         ),
-//         Scaffold(
-//           backgroundColor: Colors.transparent,
-//           appBar: AppBar(
-//             title: Text('Providers in ${widget.selectedLocation}',
-//                 style: const TextStyle(fontSize: 20, color: Colors.white)),
-//             backgroundColor: Colors.transparent,
-//             elevation: 0,
-//             centerTitle: true,
-//             leading: IconButton(
-//               icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-//               onPressed: () {
-//                 Navigator.pop(context);
-//               },
-//             ),
-//           ),
-//           body: isLoading
-//               ? Center(child: CircularProgressIndicator())
-//               : errorMessage.isNotEmpty
-//                   ? Center(
-//                       child: Text(
-//                         errorMessage,
-//                         style: TextStyle(color: Colors.red, fontSize: 18),
-//                         textAlign: TextAlign.center,
-//                       ),
-//                     )
-//                   : filteredProviders.isNotEmpty
-//                       ? ListView.builder(
-//                           itemCount: filteredProviders.length,
-//                           itemBuilder: (context, index) {
-//                             final provider = filteredProviders[index];
-//                             return ProviderCard(
-//                               providerId: provider['_id'].toString(),
-//                               name: provider['name'],
-//                               imageUrl: provider['imageUrl'],
-//                               rating: provider['rating'].toDouble(),
-//                               profession: provider['profession'],
-//                               completedWorks: provider['completedWorks'],
-//                               isAvailable: provider['isAvailable'],
-//                             );
-//                           },
-//                         )
-//                       : Center(
-//                           child: Container(
-//                             padding: const EdgeInsets.all(20),
-//                             child: Column(
-//                               mainAxisAlignment: MainAxisAlignment.center,
-//                               children: [
-//                                 const Text(
-//                                   'No providers available for this location and subcategories.',
-//                                   style: TextStyle(
-//                                       fontSize: 18, color: Colors.white),
-//                                   textAlign: TextAlign.center,
-//                                 ),
-//                                 TextButton(
-//                                   onPressed: () {
-//                                     Navigator.pop(context);
-//                                   },
-//                                   child: const Text('Refine Search',
-//                                       style: TextStyle(
-//                                           fontSize: 16, color: kPrimaryColor)),
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ),
-//         ),
-//       ],
-//     );
-//   }
-// }
+      if (response.statusCode == 200) {
+        setState(() {
+          reservations = json.decode(response.body);
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errorMessage = 'Failed to load reservations: ${response.body}';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to load reservations: $e';
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        const Positioned.fill(
+          child: BackgroundWidget(child: SizedBox.expand()),
+        ),
+        if (isLoading)
+          const Center(child: CircularProgressIndicator())
+        else if (errorMessage.isNotEmpty)
+          Center(
+            child: Text(
+              errorMessage,
+              style: const TextStyle(color: Colors.red, fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+          )
+        else
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'Order History',
+                      style: kTitleTextStyle,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Column(
+                    children: reservations.map((reservation) {
+                      return HistoryCard(
+                        providerName: reservation['name'] ?? '',
+                        profileImage: reservation['profileImage'] ?? '',
+                        profession: reservation['profession'] ?? '',
+                        date: reservation['date'] ?? '',
+                        time: reservation['time'] ?? '',
+                        status: reservation['status'] ?? '',
+                        onTrack: () {
+                          // Implement track logic
+                        },
+                        onView: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OrderView(
+                                name: reservation['name'] ?? '',
+                                profileImage: reservation['profileImage'] ?? '',
+                                rating:
+                                    reservation['rating']?.toDouble() ?? 0.0,
+                                profession: reservation['profession'] ?? '',
+                                location: reservation['location'] ?? '',
+                                time: reservation['time'] ?? '',
+                                date: reservation['date'] ?? '',
+                                description: reservation['description'] ?? '',
+                              ),
+                            ),
+                          );
+                        },
+                        onDelete: () {
+                          // Implement delete logic
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}

@@ -92,7 +92,7 @@ class HiringFormState extends State<HiringForm> {
       'rating': widget.rating,
       'profession': widget.profession,
       'location': _selectedLocation?.toString() ?? _enteredAddress!,
-      'time': _selectedTime.toString(),
+      'time': _selectedTime!.format(context), // Format the time correctly
       'date': _selectedDate.toString(),
       'description': _descriptionController.text,
       'seeker': {
@@ -133,7 +133,7 @@ class HiringFormState extends State<HiringForm> {
             rating: widget.rating,
             profession: widget.profession,
             location: _selectedLocation?.toString() ?? _enteredAddress!,
-            time: _selectedTime.toString(),
+            time: _selectedTime!.format(context), // Format the time correctly
             date: _selectedDate.toString(),
             description: _descriptionController.text,
           ),

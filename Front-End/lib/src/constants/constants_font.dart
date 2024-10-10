@@ -19,6 +19,12 @@ const kSubtitleTextStyle = TextStyle(
   fontWeight: FontWeight.w600,
 );
 
+const kSubtitleTextStyle2 = TextStyle(
+  fontSize: 18,
+  color: Colors.white,
+  fontWeight: FontWeight.w500,
+);
+
 const kBodyTextStyle = TextStyle(
   fontSize: 14,
   color: kParagraphTextColor,

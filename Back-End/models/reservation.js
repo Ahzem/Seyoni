@@ -4,6 +4,7 @@ const reservationSchema = new mongoose.Schema({
   name: String,
   profileImage: String,
   rating: Number,
+  profession: String,
   serviceType: String,
   location: String,
   time: String,
