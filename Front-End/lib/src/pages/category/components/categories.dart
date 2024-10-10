@@ -21,7 +21,7 @@ const List<Map<String, String>> categories = [
   },
   {
     'name': 'Mechanic Services',
-    'icon': 'assets/icons/Category/Repair.png',
+    'icon': 'assets/icons/Category/mechanic.png',
   },
   {
     'name': 'Gardening Services',
@@ -29,7 +29,7 @@ const List<Map<String, String>> categories = [
   },
   {
     'name': 'Appliance Repair',
-    'icon': 'assets/icons/Category/Wrench.png',
+    'icon': 'assets/icons/Category/appliance.png',
   },
   {
     'name': 'Pest Control',
@@ -41,7 +41,7 @@ const List<Map<String, String>> categories = [
   },
   {
     'name': 'Gutter Repair',
-    'icon': 'assets/icons/Category/Wrench.png',
+    'icon': 'assets/icons/Category/gutter.png',
   },
   {
     'name': 'Door Installations',
@@ -49,7 +49,7 @@ const List<Map<String, String>> categories = [
   },
   {
     'name': 'HVAC Services',
-    'icon': 'assets/icons/Category/Wrench.png',
+    'icon': 'assets/icons/Category/fan.png',
   },
   {
     'name': 'Elder Care Services',
