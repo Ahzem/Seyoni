@@ -34,6 +34,9 @@ exports.uploadImages = upload.array("images", 3);
 
 exports.createReservation = async (req, res) => {
   try {
+    console.log("Incoming request body:", req.body);
+    console.log("Incoming request files:", req.files);
+
     const reservationData = req.body;
     if (req.files) {
       reservationData.images = req.files.map((file) => file.location); // S3 URL
@@ -50,6 +53,7 @@ exports.createReservation = async (req, res) => {
     await reservation.save();
     res.status(201).send(reservation);
   } catch (error) {
+    console.error("Error creating reservation:", error);
     res.status(400).send(error);
   }
 };

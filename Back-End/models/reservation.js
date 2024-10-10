@@ -10,6 +10,12 @@ const reservationSchema = new mongoose.Schema({
   date: String,
   description: String,
   images: [String],
+  seeker: {
+    id: mongoose.Schema.Types.ObjectId,
+    firstName: String,
+    lastName: String,
+    email: String,
+  },
 });
 
 module.exports = mongoose.model("Reservation", reservationSchema);

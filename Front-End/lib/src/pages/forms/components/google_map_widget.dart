@@ -156,7 +156,7 @@ class GoogleMapWidgetState extends State<GoogleMapWidget> {
                       hintStyle: kBodyTextStyle,
                       border: InputBorder.none,
                     ),
-                    style: kBodyTextStyle,
+                    style: kInputTextStyle,
                     onChanged: (value) {
                       widget.onAddressEntered(value); // Add this line
                     },

@@ -31,6 +31,12 @@ const kBodyTextStyle2 = TextStyle(
   fontWeight: FontWeight.w400,
 );
 
+const kInputTextStyle = TextStyle(
+  fontSize: 16,
+  color: Colors.white,
+  fontWeight: FontWeight.w400,
+);
+
 const kOtpInputTextStyle = TextStyle(
   fontSize: 20,
   color: kParagraphTextColor,

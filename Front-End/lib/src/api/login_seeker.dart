@@ -14,14 +14,6 @@ Future<void> loginSeeker(
   TextEditingController passwordController,
 ) async {
   try {
-    if (kDebugMode) {
-      print('Sending request to $loginSeekersUrl');
-      print('Request body: ${jsonEncode(<String, String>{
-            'email': emailController.text,
-            'password': passwordController.text,
-          })}');
-    }
-
     final response = await http.post(
       Uri.parse(loginSeekersUrl),
       headers: <String, String>{
@@ -37,6 +29,7 @@ Future<void> loginSeeker(
       var jsonResponse = jsonDecode(response.body);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', jsonResponse['token']);
+      await prefs.setString('seekerId', jsonResponse['seeker']['_id']);
       await prefs.setString('firstName', jsonResponse['seeker']['firstName']);
       await prefs.setString('lastName', jsonResponse['seeker']['lastName']);
       await prefs.setString('email', jsonResponse['seeker']['email']);
