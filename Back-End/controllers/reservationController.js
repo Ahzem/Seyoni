@@ -34,9 +34,6 @@ exports.uploadImages = upload.array("images", 3);
 
 exports.createReservation = async (req, res) => {
   try {
-    console.log("Incoming request body:", req.body);
-    console.log("Incoming request files:", req.files);
-
     const reservationData = req.body;
     if (req.files) {
       reservationData.images = req.files.map((file) => file.location); // S3 URL
