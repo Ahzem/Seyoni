@@ -6,14 +6,14 @@ class ServiceProviderInfo extends StatelessWidget {
   final String name;
   final String profileImage;
   final double rating;
-  final String serviceType;
+  final String profession;
 
   const ServiceProviderInfo({
     super.key,
     required this.name,
     required this.profileImage,
     required this.rating,
-    required this.serviceType,
+    required this.profession,
   });
 
   @override
@@ -32,7 +32,7 @@ class ServiceProviderInfo extends StatelessWidget {
               name,
               style: kTitleTextStyle.copyWith(fontSize: 20),
             ),
-            Text(serviceType, style: kBodyTextStyle),
+            Text(profession, style: kBodyTextStyle),
             Row(
               children: List.generate(5, (index) {
                 return Icon(

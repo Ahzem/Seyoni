@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/pages/chat/chat_page.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission handler package
-import '../../pages/profiles/provider/seeker_view.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/customNavBar/custom_navbar.dart';
 import '../../widgets/background_widget.dart';
 import '../../constants/constants_font.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import '../category/category_page.dart';
 import '../menu/menupage.dart';
 
 class HomePage extends StatefulWidget {
@@ -38,7 +38,7 @@ class HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const Center(child: SeekerView()),
+    const Center(),
     const Center(child: ChatScreen()),
     const Center(
       child: Text(
@@ -46,12 +46,7 @@ class HomePageState extends State<HomePage> {
         style: kBodyTextStyle,
       ),
     ),
-    const Center(
-      child: Text(
-        'Category Page Content',
-        style: kBodyTextStyle,
-      ),
-    ),
+    const Center(child: CategoryPage()),
     const Center(child: MenuPage()),
   ];
 

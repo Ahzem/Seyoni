@@ -9,7 +9,7 @@ const reservationSchema = new mongoose.Schema({
   time: String,
   date: String,
   description: String,
-  images: [String], // Add this line
+  images: [String],
 });
 
 module.exports = mongoose.model("Reservation", reservationSchema);

@@ -13,7 +13,7 @@ class OrderView extends StatefulWidget {
   final String name;
   final String profileImage;
   final double rating;
-  final String serviceType;
+  final String profession;
   final String location;
   final String time;
   final String date;
@@ -24,7 +24,7 @@ class OrderView extends StatefulWidget {
     required this.name,
     required this.profileImage,
     required this.rating,
-    required this.serviceType,
+    required this.profession,
     required this.location,
     required this.time,
     required this.date,
@@ -104,7 +104,7 @@ class OrderViewState extends State<OrderView> {
                         name: widget.name,
                         profileImage: widget.profileImage,
                         rating: widget.rating,
-                        serviceType: widget.serviceType,
+                        profession: widget.profession,
                       ),
                       SizedBox(height: 20),
                       Container(
