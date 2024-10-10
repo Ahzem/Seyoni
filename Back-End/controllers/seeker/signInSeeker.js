@@ -9,7 +9,7 @@ exports.signInSeeker = async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
     const token = generateToken(seeker._id);
-    res.status(200).json({ token });
+    res.status(200).json({ token, seeker });
   } catch (error) {
     console.error("Error signing in:", error);
     res.status(500).json({ error: "Server error" });

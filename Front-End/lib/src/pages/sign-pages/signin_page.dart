@@ -29,11 +29,30 @@ class SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     super.initState();
-    initSharedPreferences();
+    _loadSharedPreferences();
   }
 
-  void initSharedPreferences() async {
+  Future<void> _loadSharedPreferences() async {
     prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<void> _signIn() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await loginSeeker(
+          context,
+          emailController,
+          passwordController,
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to sign in: $e'),
+            backgroundColor: kErrorColor,
+          ),
+        );
+      }
+    }
   }
 
   @override

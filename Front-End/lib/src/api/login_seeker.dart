@@ -37,6 +37,9 @@ Future<void> loginSeeker(
       var jsonResponse = jsonDecode(response.body);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', jsonResponse['token']);
+      await prefs.setString('firstName', jsonResponse['seeker']['firstName']);
+      await prefs.setString('lastName', jsonResponse['seeker']['lastName']);
+      await prefs.setString('email', jsonResponse['seeker']['email']);
 
       // Check if the widget is still mounted before using the context
       if (!context.mounted) return;
