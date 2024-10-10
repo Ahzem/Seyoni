@@ -22,13 +22,14 @@ exports.getAllProviders = async (req, res) => {
 
 exports.getProviderDetails = async (req, res) => {
   try {
-    const providerId = mongoose.Types.ObjectId(req.params.id); // Convert string ID to ObjectId
+    const providerId = new mongoose.Types.ObjectId(req.params.id); // Correct usage of ObjectId
     const provider = await Provider.findById(providerId);
     if (!provider) {
       return res.status(404).json({ message: "Provider not found" });
     }
     res.status(200).json(provider);
   } catch (error) {
+    console.error("Error retrieving provider details:", error);
     res
       .status(400)
       .json({ message: "Error retrieving provider details", error });

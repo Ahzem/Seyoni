@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/pages/chat/chat_page.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission handler package
-import '../../pages/profiles/provider/seeker_view.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/customNavBar/custom_navbar.dart';
 import '../../widgets/background_widget.dart';

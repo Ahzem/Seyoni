@@ -25,15 +25,19 @@ class _SeekerViewState extends State<SeekerView> {
   late String name;
   late String profileImage;
   late double rating;
-  late String serviceType;
+  late String profession;
+  late String completedWorksString;
 
   @override
   void initState() {
     super.initState();
-    name = widget.providerDetails['name'];
-    profileImage = widget.providerDetails['profileImage'];
-    rating = widget.providerDetails['rating'];
-    serviceType = widget.providerDetails['serviceType'];
+    name = widget.providerDetails['name'] ?? 'Unknown';
+    profileImage =
+        widget.providerDetails['imageUrl'] ?? 'assets/images/profile-1.png';
+    rating = widget.providerDetails['rating']?.toDouble() ?? 0.0;
+    profession = widget.providerDetails['profession'] ?? 'Unknown';
+    completedWorksString =
+        widget.providerDetails['completedWorks']?.toString() ?? '0';
   }
 
   @override
@@ -58,190 +62,196 @@ class _SeekerViewState extends State<SeekerView> {
             ),
           ),
           body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Top profile section
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 20,
-                          horizontal: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          border: const Border(
-                            bottom: BorderSide(
-                              color: Color.fromARGB(150, 255, 255, 255),
-                              width: 1,
-                            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top profile section
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 10,
                           ),
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white.withOpacity(0.05),
-                        ),
-                        child: Column(
-                          children: [
-                            ProfileAvatar(
-                              imagePath: profileImage, // Profile image
-                              isOnline: true, // Online status
+                          decoration: BoxDecoration(
+                            border: const Border(
+                              bottom: BorderSide(
+                                color: Color.fromARGB(150, 255, 255, 255),
+                                width: 1,
+                              ),
                             ),
-                            const SizedBox(height: 10),
-                            Text(
-                              name,
-                              style: kTitleTextStyleBold,
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              "Service Type - $serviceType",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            const SizedBox(height: 5),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.star, color: kPrimaryColor),
-                                Icon(Icons.star, color: kPrimaryColor),
-                                Icon(Icons.star, color: kPrimaryColor),
-                                Icon(Icons.star, color: kPrimaryColor),
-                                Icon(Icons.star_border, color: kPrimaryColor),
-                              ],
-                            ),
-                            const SizedBox(height: 2),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  rating.toString(),
-                                  style: const TextStyle(
-                                      color: kParagraphTextColor),
-                                ),
-                                const SizedBox(width: 15),
-                                const Text(
-                                  "(85 Reviews)",
-                                  style: TextStyle(color: kParagraphTextColor),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            PrimaryFilledButtonTwo(
-                                text: "Hire",
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => HiringForm(
-                                        name: name,
-                                        profileImage: profileImage,
-                                        rating: rating,
-                                        serviceType: serviceType,
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white.withOpacity(0.05),
+                          ),
+                          child: Column(
+                            children: [
+                              ProfileAvatar(
+                                imagePath: profileImage, // Profile image
+                                isOnline: true, // Online status
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                name,
+                                style: kTitleTextStyleBold,
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                "Category - $profession",
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              const SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.star, color: kPrimaryColor),
+                                  Icon(Icons.star, color: kPrimaryColor),
+                                  Icon(Icons.star, color: kPrimaryColor),
+                                  Icon(Icons.star, color: kPrimaryColor),
+                                  Icon(Icons.star_border, color: kPrimaryColor),
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    rating.toString(),
+                                    style: const TextStyle(
+                                        color: kParagraphTextColor),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  const Text(
+                                    "(85 Reviews)",
+                                    style:
+                                        TextStyle(color: kParagraphTextColor),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              PrimaryFilledButtonTwo(
+                                  text: "Hire",
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HiringForm(
+                                          name: name,
+                                          profileImage: profileImage,
+                                          rating: rating,
+                                          profession: profession,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                }),
-                            const SizedBox(height: 10),
-                            // Icons section
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CustomIconButton(
-                                  icon: Icons.phone,
-                                  onPressed: () {},
-                                ),
-                                const SizedBox(width: 20),
-                                CustomIconButton(
-                                  icon: Icons.chat,
-                                  onPressed: () {},
-                                ),
-                                const SizedBox(width: 20),
-                                CustomIconButton(
-                                  icon: Icons.bookmark_added_sharp,
-                                  onPressed: () {},
-                                ),
-                              ],
-                            ),
-                          ],
+                                    );
+                                  }),
+                              const SizedBox(height: 10),
+                              // Icons section
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CustomIconButton(
+                                    icon: Icons.phone,
+                                    onPressed: () {},
+                                  ),
+                                  const SizedBox(width: 20),
+                                  CustomIconButton(
+                                    icon: Icons.chat,
+                                    onPressed: () {},
+                                  ),
+                                  const SizedBox(width: 20),
+                                  CustomIconButton(
+                                    icon: Icons.bookmark_added_sharp,
+                                    onPressed: () {},
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // Badges Section
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                      child: Container(
+                    // Badges Section
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(10),
+                            border: const Border(
+                              bottom: BorderSide(
+                                color: Color.fromARGB(150, 255, 255, 255),
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              BadgeWidget(icon: Icons.star, label: "Hero"),
+                              BadgeWidget(
+                                  icon: Icons.flash_on, label: "Superman"),
+                              BadgeWidget(icon: Icons.speed, label: "Quicker"),
+                              BadgeWidget(
+                                  icon: Icons.verified, label: "Trustabler"),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // Stats Section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        StatWidget(
+                            label: 'Completed Works',
+                            value: completedWorksString),
+                        StatWidget(label: 'Customer Reviews', value: '85+'),
+                      ],
+                    ),
+
+                    // Gallery Section
+                    Container(
+                      margin: const EdgeInsets.all(20),
+                      child: Padding(
                         padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(10),
-                          border: const Border(
-                            bottom: BorderSide(
-                              color: Color.fromARGB(150, 255, 255, 255),
-                              width: 1,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Gallery',
+                              style: kTitleTextStyle,
                             ),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            BadgeWidget(icon: Icons.star, label: "Hero"),
-                            BadgeWidget(
-                                icon: Icons.flash_on, label: "Superman"),
-                            BadgeWidget(icon: Icons.speed, label: "Quicker"),
-                            BadgeWidget(
-                                icon: Icons.verified, label: "Trustabler"),
+                            const SizedBox(height: 10),
+                            GridView.count(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              children:
+                                  List.generate(imagePaths.length, (index) {
+                                return FullScreenImage(
+                                  imagePath: imagePaths[index],
+                                );
+                              }),
+                            ),
                           ],
                         ),
                       ),
                     ),
-                  ),
-
-                  // Stats Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      StatWidget(label: 'Completed Works', value: '240+'),
-                      StatWidget(label: 'Customer Reviews', value: '85+'),
-                    ],
-                  ),
-
-                  // Gallery Section
-                  Container(
-                    margin: const EdgeInsets.all(20),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Gallery',
-                            style: kTitleTextStyle,
-                          ),
-                          const SizedBox(height: 10),
-                          GridView.count(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            children: List.generate(imagePaths.length, (index) {
-                              return FullScreenImage(
-                                imagePath: imagePaths[index],
-                              );
-                            }),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

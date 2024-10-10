@@ -71,7 +71,7 @@ class ProviderCard extends StatelessWidget {
             name: providerDetails['name'],
             profileImage: providerDetails['imageUrl'],
             rating: providerDetails['rating'],
-            serviceType: providerDetails['category'],
+            profession: providerDetails['profession'],
           ),
         ),
       );

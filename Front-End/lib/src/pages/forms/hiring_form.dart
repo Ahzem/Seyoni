@@ -26,14 +26,14 @@ class HiringForm extends StatefulWidget {
   final String name;
   final String profileImage;
   final double rating;
-  final String serviceType;
+  final String profession;
 
   const HiringForm({
     super.key,
     required this.name,
     required this.profileImage,
     required this.rating,
-    required this.serviceType,
+    required this.profession,
   });
 
   @override
@@ -70,7 +70,7 @@ class HiringFormState extends State<HiringForm> {
       'name': widget.name,
       'profileImage': widget.profileImage,
       'rating': widget.rating,
-      'serviceType': widget.serviceType,
+      'profession': widget.profession,
       'location': _selectedLocation?.toString() ?? _enteredAddress!,
       'time': _selectedTime.toString(),
       'date': _selectedDate.toString(),
@@ -104,7 +104,7 @@ class HiringFormState extends State<HiringForm> {
             name: widget.name,
             profileImage: widget.profileImage,
             rating: widget.rating,
-            serviceType: widget.serviceType,
+            profession: widget.profession,
             location: _selectedLocation?.toString() ?? _enteredAddress!,
             time: _selectedTime.toString(),
             date: _selectedDate.toString(),
@@ -241,7 +241,7 @@ class HiringFormState extends State<HiringForm> {
                         name: widget.name,
                         profileImage: widget.profileImage,
                         rating: widget.rating,
-                        serviceType: widget.serviceType,
+                        profession: widget.profession,
                       ),
                       SizedBox(height: 20),
                       GoogleMapWidget(

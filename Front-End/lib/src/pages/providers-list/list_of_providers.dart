@@ -105,7 +105,7 @@ class ListOfProvidersState extends State<ListOfProviders> {
                           itemBuilder: (context, index) {
                             final provider = filteredProviders[index];
                             return ProviderCard(
-                              providerId: provider['_id'],
+                              providerId: provider['_id'].toString(),
                               name: provider['name'],
                               imageUrl: provider['imageUrl'],
                               rating: provider['rating'].toDouble(),
