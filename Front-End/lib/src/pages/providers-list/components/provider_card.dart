@@ -7,7 +7,7 @@ import '../../profiles/provider/seeker_view.dart';
 import '../../forms/hiring_form.dart';
 import '../../../config/url.dart';
 
-class ProviderCard extends StatelessWidget {
+class ProviderCard extends StatefulWidget {
   final String providerId;
   final String name;
   final String imageUrl;
@@ -27,6 +27,11 @@ class ProviderCard extends StatelessWidget {
     required this.isAvailable,
   });
 
+  @override
+  ProviderCardState createState() => ProviderCardState();
+}
+
+class ProviderCardState extends State<ProviderCard> {
   Future<Map<String, dynamic>> fetchProviderDetails(String providerId) async {
     final response =
         await http.get(Uri.parse('$url/api/providers/$providerId'));
@@ -34,16 +39,14 @@ class ProviderCard extends StatelessWidget {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      print('Failed to load provider details: ${response.statusCode}');
-      print('Response: ${response.body}');
       throw Exception('Failed to load provider details');
     }
   }
 
   void _navigateToSeekerView(BuildContext context, String providerId) async {
-    print('Navigating to seeker view for provider: $providerId');
     try {
       final providerDetails = await fetchProviderDetails(providerId);
+      if (!mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -51,6 +54,7 @@ class ProviderCard extends StatelessWidget {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to load provider details: $e'),
@@ -61,9 +65,9 @@ class ProviderCard extends StatelessWidget {
   }
 
   void _navigateToHiringForm(BuildContext context, String providerId) async {
-    print('Navigating to hiring form for provider: $providerId');
     try {
       final providerDetails = await fetchProviderDetails(providerId);
+      if (!mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -76,6 +80,7 @@ class ProviderCard extends StatelessWidget {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to load provider details: $e'),
@@ -106,8 +111,8 @@ class ProviderCard extends StatelessWidget {
                 Stack(
                   children: [
                     CircleAvatar(
-                      backgroundImage: imageUrl.isNotEmpty
-                          ? AssetImage(imageUrl)
+                      backgroundImage: widget.imageUrl.isNotEmpty
+                          ? AssetImage(widget.imageUrl)
                           : AssetImage(
                               'assets/images/profile-3.jpg'), // Fallback image
                       radius: 35,
@@ -119,7 +124,7 @@ class ProviderCard extends StatelessWidget {
                         width: 12,
                         height: 12,
                         decoration: BoxDecoration(
-                          color: isAvailable
+                          color: widget.isAvailable
                               ? Colors.green
                               : Colors.red, // Availability color
                           shape: BoxShape.circle,
@@ -135,7 +140,7 @@ class ProviderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        name,
+                        widget.name,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -152,7 +157,7 @@ class ProviderCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 3),
                           Text(
-                            'Rating: $rating',
+                            'Rating: ${widget.rating}',
                             style: const TextStyle(
                                 color: Colors.white70, fontSize: 12),
                           ),
@@ -167,7 +172,7 @@ class ProviderCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 3),
                           Text(
-                            'Completed Works: $completedWorks',
+                            'Completed Works: ${widget.completedWorks}',
                             style: const TextStyle(
                                 color: Colors.white70, fontSize: 12),
                           ),
@@ -184,7 +189,7 @@ class ProviderCard extends StatelessWidget {
                             width: 3,
                           ),
                           Text(
-                            profession,
+                            widget.profession,
                             style: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 12,
@@ -205,7 +210,7 @@ class ProviderCard extends StatelessWidget {
                       ),
                       child: TextButton(
                         onPressed: () =>
-                            _navigateToSeekerView(context, providerId),
+                            _navigateToSeekerView(context, widget.providerId),
                         child: Text(
                           'View',
                           style: TextStyle(color: kPrimaryColor),
@@ -221,7 +226,7 @@ class ProviderCard extends StatelessWidget {
                       ),
                       child: TextButton(
                         onPressed: () =>
-                            _navigateToHiringForm(context, providerId),
+                            _navigateToHiringForm(context, widget.providerId),
                         child: Text(
                           'Hire',
                           style: TextStyle(color: Colors.white),

@@ -38,11 +38,9 @@ class ListOfProvidersState extends State<ListOfProviders> {
         final providers = json.decode(response.body);
         _filterProviders(providers);
       } else {
-        print('Failed to load providers: ${response.statusCode}');
         throw Exception('Failed to load providers');
       }
     } catch (e) {
-      print('Error: $e');
       setState(() {
         errorMessage = 'Failed to load providers';
         isLoading = false;
