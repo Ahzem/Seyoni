@@ -9,14 +9,14 @@ class GoogleMapWidget extends StatefulWidget {
   final LatLng? initialLocation;
   final Function(LatLng) onLocationPicked;
   final Function() onClearLocation;
-  final Function(String) onAddressEntered; // Add this line
+  final Function(String) onAddressEntered;
 
   const GoogleMapWidget({
     super.key,
     this.initialLocation,
     required this.onLocationPicked,
     required this.onClearLocation,
-    required this.onAddressEntered, // Add this line
+    required this.onAddressEntered,
   });
 
   @override
@@ -39,10 +39,6 @@ class GoogleMapWidgetState extends State<GoogleMapWidget> {
     PermissionStatus permissionStatus = await location.hasPermission();
     if (permissionStatus == PermissionStatus.denied) {
       permissionStatus = await location.requestPermission();
-      if (permissionStatus != PermissionStatus.granted) {
-        // Handle permission denied
-        return;
-      }
     }
 
     final currentLocation = await location.getLocation();
@@ -71,6 +67,7 @@ class GoogleMapWidgetState extends State<GoogleMapWidget> {
       _pickedLocation = null;
       _addressController.clear();
     });
+    widget.onClearLocation();
   }
 
   @override
@@ -158,7 +155,7 @@ class GoogleMapWidgetState extends State<GoogleMapWidget> {
                     ),
                     style: kInputTextStyle,
                     onChanged: (value) {
-                      widget.onAddressEntered(value); // Add this line
+                      widget.onAddressEntered(value);
                     },
                   ),
                 ),

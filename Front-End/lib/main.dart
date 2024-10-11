@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'src/pages/auth/forgot-password/new_password.page.dart';
 import 'src/pages/auth/forgot-password/verify_code_page.dart';
 import 'src/pages/main/mainpage.dart';
@@ -15,6 +16,7 @@ import 'src/pages/notifications/internal/notification_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
   bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
