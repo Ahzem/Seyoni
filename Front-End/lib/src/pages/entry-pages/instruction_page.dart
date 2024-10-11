@@ -180,7 +180,10 @@ class InstructionPageState extends State<InstructionPage> {
                                 style: kBodyTextStyle,
                               ),
                               RegisterFlatButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.providerSignUp);
+                                },
                               ),
                             ],
                           )

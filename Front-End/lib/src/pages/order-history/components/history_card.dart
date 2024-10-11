@@ -11,7 +11,7 @@ class HistoryCard extends StatelessWidget {
   final String profession;
   final String date;
   final String time;
-  final String status;
+  final String status; // accepted, rejected, pending
   final VoidCallback onTrack;
   final VoidCallback onView;
   final VoidCallback onDelete;
@@ -49,7 +49,6 @@ class HistoryCard extends StatelessWidget {
   }
 
   String _formatTime(String time) {
-    // Extract the time from the TimeOfDay string format
     final timeString = time.replaceAll(RegExp(r'[^\d:]'), '');
     final TimeOfDay parsedTime = TimeOfDay(
       hour: int.parse(timeString.split(":")[0]),
@@ -65,6 +64,62 @@ class HistoryCard extends StatelessWidget {
     );
     final DateFormat formatter = DateFormat('HH:mm');
     return formatter.format(formattedTime);
+  }
+
+  // Method to return the correct status icon
+  IconData _getStatusIcon(String status) {
+    switch (status) {
+      case 'accepted':
+        return Icons.check_circle;
+      case 'rejected':
+        return Icons.cancel;
+      case 'pending':
+        return Icons.hourglass_empty;
+      default:
+        return Icons.help;
+    }
+  }
+
+  // Method to return the correct status color
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'accepted':
+        return Colors.green.withOpacity(0.6);
+      case 'rejected':
+        return Colors.red.withOpacity(0.6);
+      case 'pending':
+        return Colors.orange.withOpacity(0.6);
+      default:
+        return Colors.grey.withOpacity(0.6);
+    }
+  }
+
+  // Method to return the correct status text
+  String _getStatusText(String status) {
+    switch (status) {
+      case 'accepted':
+        return 'Accepted';
+      case 'rejected':
+        return 'Rejected';
+      case 'pending':
+        return 'Pending';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  // Method to return the correct status icon color
+  Color _getStatusIconColor(String status) {
+    switch (status) {
+      case 'accepted':
+        return Colors.green;
+      case 'rejected':
+        return Colors.red;
+      case 'pending':
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
   }
 
   @override
@@ -86,9 +141,45 @@ class HistoryCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                CircleAvatar(
-                  backgroundImage: getImageProvider(profileImage),
-                  radius: 35,
+                Stack(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: getImageProvider(profileImage),
+                      radius: 35,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 3, horizontal: 3),
+                        decoration: BoxDecoration(
+                          color: _getStatusColor(status),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              _getStatusIcon(status),
+                              color: _getStatusIconColor(status),
+                              size: 14,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              _getStatusText(status),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -121,7 +212,7 @@ class HistoryCard extends StatelessWidget {
                     if (status == 'accepted')
                       Row(
                         children: [
-                          PrimaryFilledButton(
+                          PrimaryFilledButtonThree(
                             text: 'Track',
                             onPressed: onTrack,
                           ),
@@ -130,7 +221,7 @@ class HistoryCard extends StatelessWidget {
                     else if (status == 'rejected')
                       Row(
                         children: [
-                          PrimaryFilledButton(
+                          PrimaryFilledButtonThree(
                             text: 'Delete',
                             onPressed: onDelete,
                           ),
@@ -146,7 +237,7 @@ class HistoryCard extends StatelessWidget {
                         ],
                       ),
                     const SizedBox(width: 5),
-                    PrimaryFilledButtonThree(
+                    PrimaryOutlinedButtonTwo(
                       text: 'View',
                       onPressed: onView,
                     ),

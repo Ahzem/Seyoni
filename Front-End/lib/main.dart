@@ -5,6 +5,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'src/pages/auth/forgot-password/new_password.page.dart';
 import 'src/pages/auth/forgot-password/verify_code_page.dart';
 import 'src/pages/main/mainpage.dart';
+import 'src/pages/provider/home/provider_home_page.dart';
+import 'src/pages/provider/login/provider_signin_page.dart';
+import 'src/pages/provider/registration/provider_registration_page.dart';
 import 'src/pages/sign-pages/signup_page.dart';
 import 'src/pages/entry-pages/instruction_page.dart';
 import './src/pages/entry-pages/launch_screen.dart';
@@ -47,6 +50,9 @@ class MyApp extends StatelessWidget {
         AppRoutes.forgotpassword: (context) => const ForgotPasswordPage(),
         AppRoutes.resetPassword: (context) => const ResetPasswordPage(),
         AppRoutes.notification: (context) => const NotificationPage(),
+        AppRoutes.providerSignIn: (context) => const ProviderSignInPage(),
+        AppRoutes.providerSignUp: (context) => const ProviderRegistrationPage(),
+        AppRoutes.providerHomePage: (context) => const ProviderHomePage(),
       },
     );
   }
