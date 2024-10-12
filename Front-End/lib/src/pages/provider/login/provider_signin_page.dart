@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
-import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
+import '../components/custom_text_field.dart';
+import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/config/route.dart';
 
 class ProviderSignInPage extends StatefulWidget {
@@ -27,59 +28,84 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Provider Sign In', style: kAppBarTitleTextStyle),
-        backgroundColor: kPrimaryColor,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
+      backgroundColor: kTransparentColor,
+      body: BackgroundWidget(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: height * 0.1), // Adjust top spacing
+              Image.asset(
+                'assets/images/logo-icon.png',
+                height: height * 0.15,
+                fit: BoxFit.contain,
               ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
+              Image.asset(
+                'assets/images/logo-name.png',
+                height: height * 0.12,
+                fit: BoxFit.contain,
               ),
-              PrimaryFilledButton(
-                text: 'Sign In',
-                onPressed: _signIn,
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Don\'t have an account?',
+              Container(
+                margin: const EdgeInsets.all(30),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      CustomTextField(
+                        controller: _emailController,
+                        labelText: 'Email',
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      CustomTextField(
+                        controller: _passwordController,
+                        labelText: 'Password',
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      PrimaryFilledButton(
+                        text: 'Sign In',
+                        onPressed: _signIn,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Don\'t have an account?',
+                            style: TextStyle(
+                              color: kParagraphTextColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.providerSignUp);
+                            },
+                            child: const Text('Register Now',
+                                style: TextStyle(color: kPrimaryColor)),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.providerSignUp);
-                    },
-                    child: const Text('Register Now'),
-                  ),
-                ],
+                ),
               ),
             ],
           ),

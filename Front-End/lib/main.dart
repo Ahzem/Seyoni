@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'src/pages/auth/forgot-password/new_password.page.dart';
-import 'src/pages/auth/forgot-password/verify_code_page.dart';
-import 'src/pages/main/mainpage.dart';
+import 'src/pages/seeker/forgot-password/new_password.page.dart';
+import 'src/pages/seeker/forgot-password/verify_code_page.dart';
+import 'src/pages/seeker/main/mainpage.dart';
 import 'src/pages/provider/home/provider_home_page.dart';
 import 'src/pages/provider/login/provider_signin_page.dart';
 import 'src/pages/provider/registration/provider_registration_page.dart';
-import 'src/pages/sign-pages/signup_page.dart';
+import 'src/pages/seeker/order-history/order_history_page.dart';
+import 'src/pages/seeker/sign-pages/signup_page.dart';
 import 'src/pages/entry-pages/instruction_page.dart';
 import './src/pages/entry-pages/launch_screen.dart';
-import './src/pages/sign-pages/signin_page.dart';
+import 'src/pages/seeker/sign-pages/signin_page.dart';
 import './src/config/route.dart';
-import 'src/pages/auth/otp/otp_screen.dart';
-import 'src/pages/auth/forgot-password/forgot_password_page.dart';
-import 'src/pages/notifications/internal/notification_page.dart';
+import 'src/pages/seeker/sign-pages/otp/otp_screen.dart';
+import 'src/pages/seeker/forgot-password/forgot_password_page.dart';
+import 'src/pages/seeker/notifications/internal/notification_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.providerSignIn: (context) => const ProviderSignInPage(),
         AppRoutes.providerSignUp: (context) => const ProviderRegistrationPage(),
         AppRoutes.providerHomePage: (context) => const ProviderHomePage(),
+        AppRoutes.orderHistoryPage: (context) => const OrderHistoryPage(),
       },
     );
   }
