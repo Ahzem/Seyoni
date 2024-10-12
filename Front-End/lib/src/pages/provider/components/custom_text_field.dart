@@ -81,15 +81,18 @@ class CustomTextField extends StatelessWidget {
         return Icons.email_outlined;
       case 'phone number':
         return Icons.phone_outlined;
-      case 'nic or driving licence':
-        return Icons.badge_outlined;
       case 'new password':
+        return Icons.lock_open_outlined;
       case 'confirm password':
         return Icons.lock_outline_rounded;
-      case 'otp':
+      case 'enter otp':
         return Icons.security_outlined;
-      default:
+      case 'first name':
         return Icons.person_outline;
+      case 'last name':
+        return Icons.person_outline;
+      default:
+        return Icons.text_fields;
     }
   }
 }

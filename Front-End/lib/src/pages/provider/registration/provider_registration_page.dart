@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
@@ -33,12 +36,25 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
   String? _selectedCategory;
   List<String> _selectedSubCategories = [];
   String? _selectedSubCategoryValue;
+  XFile? _profileImage;
+  XFile? _nicImageFront;
+  XFile? _nicImageBack;
+
+  final ImagePicker _picker = ImagePicker();
 
   void _nextStep() {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _currentStep++;
-      });
+      if (_selectedSubCategories.isEmpty && _currentStep == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select at least one sub category'),
+          ),
+        );
+      } else {
+        setState(() {
+          _currentStep++;
+        });
+      }
     }
   }
 
@@ -53,6 +69,29 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
     }
   }
 
+  Future<void> _pickImage(String imageType) async {
+    try {
+      ImageSource source = ImageSource.camera;
+      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        // Fallback to gallery on unsupported platforms
+        source = ImageSource.gallery;
+      }
+
+      final XFile? image = await _picker.pickImage(source: source);
+      setState(() {
+        if (imageType == 'profile') {
+          _profileImage = image;
+        } else if (imageType == 'nicFront') {
+          _nicImageFront = image;
+        } else if (imageType == 'nicBack') {
+          _nicImageBack = image;
+        }
+      });
+    } catch (e) {
+      print('Error picking image: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -64,7 +103,6 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: height * 0.1), // Adjust top spacing
               Image.asset(
                 'assets/images/logo-icon.png',
                 height: height * 0.15,
@@ -221,12 +259,6 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                               }
                             });
                           },
-                          validator: (value) {
-                            if (_selectedSubCategories.isEmpty) {
-                              return 'Please select at least one sub category';
-                            }
-                            return null;
-                          },
                         ),
                         const SizedBox(height: 10),
                         Wrap(
@@ -308,60 +340,155 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                           style: kSubtitleTextStyle,
                         ),
                         const SizedBox(height: 10),
-                        IconButton(
-                          icon: const Icon(Icons.camera_alt,
-                              size: 50, color: kPrimaryColor),
-                          onPressed: () {
-                            // Handle selfie capture logic
-                            _nextStep();
-                          },
-                        ),
+                        _profileImage == null
+                            ? IconButton(
+                                icon: const Icon(Icons.person_add_alt_1,
+                                    size: 100),
+                                onPressed: () => _pickImage('profile'),
+                              )
+                            : CircleAvatar(
+                                radius: 100,
+                                backgroundImage:
+                                    FileImage(File(_profileImage!.path)),
+                              ),
                         const SizedBox(height: 10),
-                        PrimaryOutlinedButton(
-                            text: "Back",
-                            onPressed: () {
-                              setState(() {
-                                _currentStep--;
-                              });
-                            }),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            PrimaryFilledButtonTwo(
+                              text: _profileImage == null ? 'Take' : 'Retake',
+                              onPressed: () => _pickImage('profile'),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                PrimaryOutlinedButton(
+                                  text: 'Back',
+                                  onPressed: () {
+                                    setState(() {
+                                      _currentStep--;
+                                    });
+                                  },
+                                ),
+                                const SizedBox(width: 10),
+                                PrimaryFilledButton(
+                                  text: 'Next',
+                                  onPressed: _nextStep,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ] else if (_currentStep == 3) ...[
                         // NIC/Driving License Capture Step
-                        const Text(
-                          'Capture NIC/Driving License Front',
-                          style: kSubtitleTextStyle,
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            'Capture NIC/Driving License FrontSide',
+                            style: kSubtitleTextStyle,
+                          ),
                         ),
                         const SizedBox(height: 10),
-                        IconButton(
-                          icon: const Icon(Icons.camera_alt,
-                              size: 50, color: kPrimaryColor),
-                          onPressed: () {
-                            // Handle front image capture logic
-                            _nextStep();
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Capture NIC/Driving License Back',
-                          style: kSubtitleTextStyle,
-                        ),
+                        _nicImageFront == null
+                            ? IconButton(
+                                icon: const Icon(Icons.add_a_photo, size: 100),
+                                onPressed: () => _pickImage('nicFront'),
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.file(
+                                  File(_nicImageFront!.path),
+                                  width: 240,
+                                  height: 160,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                         const SizedBox(height: 10),
-                        IconButton(
-                          icon: const Icon(Icons.camera_alt,
-                              size: 50, color: kPrimaryColor),
-                          onPressed: () {
-                            // Handle back image capture logic
-                            _nextStep();
-                          },
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            PrimaryFilledButtonTwo(
+                              text: _nicImageFront == null ? 'Take' : 'Retake',
+                              onPressed: () => _pickImage('nicFront'),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                PrimaryOutlinedButton(
+                                  text: 'Back',
+                                  onPressed: () {
+                                    setState(() {
+                                      _currentStep--;
+                                    });
+                                  },
+                                ),
+                                const SizedBox(width: 10),
+                                PrimaryFilledButton(
+                                  text: 'Next',
+                                  onPressed: _nextStep,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 10),
-                        PrimaryOutlinedButton(
-                            text: "Back",
-                            onPressed: () {
-                              setState(() {
-                                _currentStep--;
-                              });
-                            }),
                       ] else if (_currentStep == 4) ...[
+                        // NIC/Driving License Capture Step
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            'Capture NIC/Driving License BackSide',
+                            style: kSubtitleTextStyle,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        _nicImageBack == null
+                            ? IconButton(
+                                icon: const Icon(Icons.add_a_photo, size: 100),
+                                onPressed: () => _pickImage('nicBack'),
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.file(
+                                  File(_nicImageBack!.path),
+                                  width: 240,
+                                  height: 160,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                        const SizedBox(height: 10),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            PrimaryFilledButtonTwo(
+                              text: _nicImageBack == null ? 'Take' : 'Retake',
+                              onPressed: () => _pickImage('nicBack'),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                PrimaryOutlinedButton(
+                                  text: 'Back',
+                                  onPressed: () {
+                                    setState(() {
+                                      _currentStep--;
+                                    });
+                                  },
+                                ),
+                                const SizedBox(width: 10),
+                                PrimaryFilledButton(
+                                  text: 'Next',
+                                  onPressed: _nextStep,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ] else if (_currentStep == 5) ...[
                         CustomTextField(
                           controller: _passwordController,
                           labelText: 'New Password',
