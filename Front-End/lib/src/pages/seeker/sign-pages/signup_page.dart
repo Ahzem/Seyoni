@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../config/route.dart';
+import '../../provider/components/register_button.dart';
 import 'components/buttons/sign_in.dart';
 import '../../../constants/constants_color.dart';
 import '../../../widgets/alertbox/alredy_exist.dart';
@@ -48,7 +49,8 @@ class SignUpPage extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
               Container(
-                margin: const EdgeInsets.all(30),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -166,6 +168,24 @@ class SignUpPage extends StatelessWidget {
                           FlatenSignInButton(
                             onPressed: () {
                               Navigator.pushNamed(context, AppRoutes.signIn);
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            'Become a Service Provider?',
+                            style: TextStyle(
+                              color: kParagraphTextColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                          RegisterFlatButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.providerEntryPage);
                             },
                           ),
                         ],

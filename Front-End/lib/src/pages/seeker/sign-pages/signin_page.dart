@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seyoni/src/pages/entry-pages/components/register_button.dart';
 import 'package:seyoni/src/pages/seeker/sign-pages/components/fields/email.dart';
 import '../../../config/route.dart';
 import 'components/buttons/sign_up.dart';
@@ -106,7 +107,7 @@ class SignInPageState extends State<SignInPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
                       SignInButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
@@ -131,6 +132,24 @@ class SignInPageState extends State<SignInPage> {
                           FlatenSignUpButton(
                             onPressed: () {
                               Navigator.pushNamed(context, AppRoutes.signUp);
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            'Become a service provider? ',
+                            style: TextStyle(
+                              color: kParagraphTextColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                          RegisterFlatButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.providerEntryPage);
                             },
                           ),
                         ],

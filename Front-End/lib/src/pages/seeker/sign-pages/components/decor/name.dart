@@ -13,8 +13,8 @@ const kFNameFieldDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kErrorColor),
   ),
-  hintText: 'First Name',
-  hintStyle: kBodyTextStyle,
+  labelText: 'First Name',
+  labelStyle: kBodyTextStyle,
   contentPadding: EdgeInsets.symmetric(
     vertical: height,
     horizontal: width / 2,
@@ -41,8 +41,8 @@ const kLNameFieldDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kErrorColor),
   ),
-  hintText: 'Last Name',
-  hintStyle: kBodyTextStyle,
+  labelText: 'Last Name',
+  labelStyle: kBodyTextStyle,
   contentPadding: EdgeInsets.symmetric(
     vertical: height,
     horizontal: width / 2,

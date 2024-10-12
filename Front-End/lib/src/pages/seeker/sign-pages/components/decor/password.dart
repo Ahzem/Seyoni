@@ -13,8 +13,8 @@ const kPasswordFieldDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kErrorColor),
   ),
-  hintText: 'Enter your password',
-  hintStyle: kBodyTextStyle,
+  labelText: 'Enter your password',
+  labelStyle: kBodyTextStyle,
   prefixIcon: Icon(
     size: 25,
     Icons.lock_outline_rounded,

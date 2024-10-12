@@ -98,6 +98,25 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
                               Navigator.pushNamed(
                                   context, AppRoutes.providerSignUp);
                             },
+                            child: const Text('Sign Up',
+                                style: TextStyle(color: kPrimaryColor)),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Register as a service seeker',
+                            style: TextStyle(
+                              color: kParagraphTextColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, AppRoutes.signUp);
+                            },
                             child: const Text('Register Now',
                                 style: TextStyle(color: kPrimaryColor)),
                           ),

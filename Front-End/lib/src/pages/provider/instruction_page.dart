@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/background_widget.dart';
 import '../../constants/constants_color.dart';
-import 'components/instructions_data.dart';
 import '../../config/route.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../constants/constants_font.dart';
@@ -34,32 +33,14 @@ class InstructionPage extends StatefulWidget {
 class InstructionPageState extends State<InstructionPage> {
   int _currentPage = 0;
   final PageController _pageController = PageController();
-  final List<String> _images = [
-    'assets/svg/technicians-1.svg',
-    'assets/svg/technicians-2.svg',
-    'assets/svg/technicians-3.svg',
-  ];
+  final List<String> _images = ['assets/svg/technicians-1.svg'];
   final List<Widget> _titles = [
-    instructionTitle1,
-    instructionTitle2,
-    instructionTitle3,
+    Text('Become a Service Provider'),
   ];
   final List<Widget> _bodies = [
-    instructionBody1,
-    instructionBody2,
-    instructionBody3,
+    const Text(
+        'Join our platform as a service provider and start earning money by providing services to customers.'),
   ];
-
-  void _nextPage() {
-    if (_currentPage < _images.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      Navigator.pushNamed(context, AppRoutes.signIn);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,18 +117,6 @@ class InstructionPageState extends State<InstructionPage> {
                     ? Column(
                         children: [
                           const SizedBox(height: 20),
-                          SizedBox(
-                            width: 60,
-                            height: 60,
-                            child: FloatingActionButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              onPressed: _nextPage,
-                              backgroundColor: kPrimaryColor,
-                              child: const Icon(Icons.arrow_forward),
-                            ),
-                          ),
                         ],
                       )
                     : Column(
@@ -159,7 +128,7 @@ class InstructionPageState extends State<InstructionPage> {
                                 text: 'Sign In',
                                 onPressed: () {
                                   Navigator.pushNamed(
-                                      context, AppRoutes.signIn);
+                                      context, AppRoutes.providerSignIn);
                                 },
                               ),
                               Container(width: 15),
@@ -167,7 +136,7 @@ class InstructionPageState extends State<InstructionPage> {
                                 text: 'Sign Up',
                                 onPressed: () {
                                   Navigator.pushNamed(
-                                      context, AppRoutes.signUp);
+                                      context, AppRoutes.providerSignUp);
                                 },
                               ),
                             ],
@@ -176,13 +145,13 @@ class InstructionPageState extends State<InstructionPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
-                                'Become a Service Provider?',
+                                'Register as a service seeker',
                                 style: kBodyTextStyle,
                               ),
                               RegisterFlatButton(
                                 onPressed: () {
                                   Navigator.pushNamed(
-                                      context, AppRoutes.providerEntryPage);
+                                      context, AppRoutes.signUp);
                                 },
                               ),
                             ],
