@@ -19,6 +19,12 @@ const kSubtitleTextStyle = TextStyle(
   fontWeight: FontWeight.w600,
 );
 
+const kSubtitleTextStyle2 = TextStyle(
+  fontSize: 18,
+  color: Colors.white,
+  fontWeight: FontWeight.w500,
+);
+
 const kBodyTextStyle = TextStyle(
   fontSize: 14,
   color: kParagraphTextColor,
@@ -77,5 +83,17 @@ const kAppBarTitleTextStyle = TextStyle(
 const kReservationsTitleTextStyle = TextStyle(
   fontSize: 16,
   color: Colors.white,
+  fontWeight: FontWeight.w400,
+);
+
+const kCardTitleTextStyle = TextStyle(
+  fontSize: 16,
+  color: Colors.white,
+  fontWeight: FontWeight.w700,
+);
+
+const kCardTextStyle = TextStyle(
+  fontSize: 12,
+  color: kParagraphTextColor,
   fontWeight: FontWeight.w400,
 );

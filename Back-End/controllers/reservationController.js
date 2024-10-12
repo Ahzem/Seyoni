@@ -57,9 +57,14 @@ exports.createReservation = async (req, res) => {
 
 exports.getReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find();
+    const seekerId = req.headers["seeker-id"];
+    if (!seekerId) {
+      return res.status(400).send({ error: "Seeker ID is required" });
+    }
+    const reservations = await Reservation.find({ "seeker.id": seekerId });
     res.status(200).send(reservations);
   } catch (error) {
-    res.status(400).send(error);
+    console.error("Error fetching reservations:", error);
+    res.status(400).send({ error: "Failed to fetch reservations" });
   }
 };

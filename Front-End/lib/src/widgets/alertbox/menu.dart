@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/pages/sign-pages/signin_page.dart';
+import 'package:seyoni/src/pages/seeker/sign-pages/signin_page.dart';
 import 'dart:ui';
 import '../../services/auth.dart';
-import '../../pages/menu/components/menu_item.dart';
+import '../../pages/seeker/menu/components/menu_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuSignOut extends StatelessWidget {

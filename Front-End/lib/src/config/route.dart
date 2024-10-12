@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import '../pages/auth/forgot-password/verify_code_page.dart';
-import '../pages/sign-pages/signup_page.dart';
-import '../pages/auth/otp/otp_screen.dart';
-import '../pages/sign-pages/signin_page.dart';
-import '../pages/main/mainpage.dart';
+import '../pages/seeker/forgot-password/verify_code_page.dart';
+import '../pages/provider/home/provider_home_page.dart';
+import '../pages/provider/login/provider_signin_page.dart';
+import '../pages/provider/registration/provider_registration_page.dart';
+import '../pages/seeker/order-history/order_history_page.dart';
+import '../pages/seeker/sign-pages/signup_page.dart';
+import '../pages/seeker/sign-pages/otp/otp_screen.dart';
+import '../pages/seeker/sign-pages/signin_page.dart';
+import '../pages/seeker/main/mainpage.dart';
 import '../pages/entry-pages/launch_screen.dart';
 import '../pages/entry-pages/instruction_page.dart';
-import '../pages/auth/forgot-password/forgot_password_page.dart';
-import '../pages/auth/forgot-password/new_password.page.dart';
-import '../pages/notifications/internal/notification_page.dart';
+import '../pages/seeker/forgot-password/forgot_password_page.dart';
+import '../pages/seeker/forgot-password/new_password.page.dart';
+import '../pages/seeker/notifications/internal/notification_page.dart';
 import '../widgets/alertbox/menu.dart';
 
 class AppRoutes {
@@ -24,6 +28,10 @@ class AppRoutes {
   static const String resetPassword = '/reset-password';
   static const String notification = '/notification';
   static const String alertMenu = '/alertMenu';
+  static const String providerSignUp = '/provider-signup';
+  static const String providerSignIn = '/provider-signin';
+  static const String providerHomePage = '/provider-home';
+  static const String orderHistoryPage = '/order-history';
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -56,6 +64,15 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const NotificationPage());
     case AppRoutes.alertMenu:
       return MaterialPageRoute(builder: (_) => const MenuSignOut());
+    case AppRoutes.providerSignUp:
+      return MaterialPageRoute(
+          builder: (_) => const ProviderRegistrationPage());
+    case AppRoutes.providerSignIn:
+      return MaterialPageRoute(builder: (_) => const ProviderSignInPage());
+    case AppRoutes.providerHomePage:
+      return MaterialPageRoute(builder: (_) => const ProviderHomePage());
+    case AppRoutes.orderHistoryPage:
+      return MaterialPageRoute(builder: (_) => const OrderHistoryPage());
     default:
       return MaterialPageRoute(
         builder: (_) => Scaffold(
