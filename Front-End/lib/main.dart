@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'src/pages/provider/provider_entry_page.dart';
 import 'src/pages/seeker/forgot-password/new_password.page.dart';
 import 'src/pages/seeker/forgot-password/verify_code_page.dart';
 import 'src/pages/seeker/main/mainpage.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.providerSignUp: (context) => const ProviderRegistrationPage(),
         AppRoutes.providerHomePage: (context) => const ProviderHomePage(),
         AppRoutes.orderHistoryPage: (context) => const OrderHistoryPage(),
+        AppRoutes.providerEntryPage: (context) => const ProviderEntryPage(),
       },
     );
   }

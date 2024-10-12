@@ -48,8 +48,8 @@ class PhoneNumberFieldState extends State<PhoneNumberField> {
           borderRadius: BorderRadius.all(Radius.circular(50.0)),
           borderSide: BorderSide(color: kErrorColor),
         ),
-        hintText: 'Enter your phone number',
-        hintStyle: kBodyTextStyle,
+        labelText: 'Enter your phone number',
+        labelStyle: kBodyTextStyle,
         contentPadding: const EdgeInsets.symmetric(
           vertical: height,
           horizontal: width,

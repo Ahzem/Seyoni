@@ -13,8 +13,8 @@ const kTextFieldDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(50.0)),
     borderSide: BorderSide(color: kErrorColor),
   ),
-  hintText: 'Enter your email',
-  hintStyle: kBodyTextStyle,
+  labelText: 'Enter your email',
+  labelStyle: kBodyTextStyle,
   prefixIcon: Icon(
     size: 25,
     Icons.email_sharp,

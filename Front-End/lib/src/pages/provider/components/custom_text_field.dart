@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
 
+import '../../seeker/sign-pages/components/constants.dart';
+
 const double height = 10;
 const double width = 30.0;
 
@@ -25,6 +27,7 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      style: kTextFieldStyle,
       decoration: InputDecoration(
         filled: false,
         fillColor: kContainerColor,
@@ -33,8 +36,8 @@ class CustomTextField extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(50.0)),
           borderSide: BorderSide(color: kErrorColor),
         ),
-        hintText: labelText,
-        hintStyle: kBodyTextStyle,
+        labelText: labelText,
+        labelStyle: kBodyTextStyle,
         prefixIcon: Icon(
           _getPrefixIcon(labelText),
           size: 25,

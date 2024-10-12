@@ -34,7 +34,6 @@ class HistoryCard extends StatelessWidget {
       try {
         return AssetImage(imageUrl);
       } catch (e) {
-        print('Error loading image: $e');
         return AssetImage('assets/images/profile-3.jpg'); // Fallback image
       }
     } else {

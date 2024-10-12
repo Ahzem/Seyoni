@@ -459,6 +459,7 @@ class HiringFormState extends State<HiringForm> {
         firstName == null ||
         lastName == null ||
         email == null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to retrieve seeker details.',
@@ -507,6 +508,7 @@ class HiringFormState extends State<HiringForm> {
     var response = await request.send();
 
     if (response.statusCode == 201) {
+      if (!mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -523,6 +525,7 @@ class HiringFormState extends State<HiringForm> {
         ),
       );
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to save reservation.',
