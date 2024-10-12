@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_webservice/directions.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import 'package:seyoni/src/utils/validators.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import '../components/custom_text_field.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
@@ -59,24 +61,14 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
                         controller: _emailController,
                         labelText: 'Email',
                         keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
-                          }
-                          return null;
-                        },
+                        validator: Validators.validateEmail,
                       ),
                       const SizedBox(height: 10),
                       CustomTextField(
                         controller: _passwordController,
                         labelText: 'Password',
                         obscureText: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          return null;
-                        },
+                        validator: Validators.validatePassword,
                       ),
                       const SizedBox(height: 20),
                       PrimaryFilledButton(

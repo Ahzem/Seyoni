@@ -7,6 +7,7 @@ import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/config/route.dart';
 import '../../../constants/constants_font.dart';
+import '../../../utils/validators.dart';
 import '../../seeker/category/components/categories.dart';
 import '../../seeker/category/components/subcategories.dart';
 import '../../seeker/sign-pages/components/constants.dart';
@@ -44,17 +45,38 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
 
   void _nextStep() {
     if (_formKey.currentState!.validate()) {
-      if (_selectedSubCategories.isEmpty && _currentStep == 0) {
+      if (_currentStep == 2 && _profileImage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Please select at least one sub category'),
+            backgroundColor: kErrorColor,
+            content: Text('Please add a profile picture'),
           ),
         );
-      } else {
-        setState(() {
-          _currentStep++;
-        });
+        return;
       }
+      if (_currentStep == 3 && _nicImageFront == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: kErrorColor,
+            content:
+                Text('Please add the front side of your NIC/Driving License'),
+          ),
+        );
+        return;
+      }
+      if (_currentStep == 4 && _nicImageBack == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: kErrorColor,
+            content:
+                Text('Please add the back side of your NIC/Driving License'),
+          ),
+        );
+        return;
+      }
+      setState(() {
+        _currentStep++;
+      });
     }
   }
 
@@ -152,24 +174,14 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                           controller: _emailController,
                           labelText: 'Email',
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            return null;
-                          },
+                          validator: Validators.validateEmail,
                         ),
                         const SizedBox(height: 10),
                         CustomTextField(
                           controller: _phoneController,
                           labelText: 'Phone Number',
                           keyboardType: TextInputType.phone,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your phone number';
-                            }
-                            return null;
-                          },
+                          validator: Validators.validatePhoneNumber,
                         ),
                         const SizedBox(height: 10),
                         DropdownButtonFormField<String>(
@@ -347,9 +359,19 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                                 onPressed: () => _pickImage('profile'),
                               )
                             : CircleAvatar(
+                                backgroundColor: Colors.transparent,
                                 radius: 100,
                                 backgroundImage:
                                     FileImage(File(_profileImage!.path)),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: kPrimaryColor,
+                                      width: 4,
+                                    ),
+                                  ),
+                                ),
                               ),
                         const SizedBox(height: 10),
                         Column(
@@ -493,24 +515,16 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                           controller: _passwordController,
                           labelText: 'New Password',
                           obscureText: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a password';
-                            }
-                            return null;
-                          },
+                          validator: Validators.validatePassword,
                         ),
                         const SizedBox(height: 10),
                         CustomTextField(
                           controller: _confirmPasswordController,
                           labelText: 'Confirm Password',
                           obscureText: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please confirm your password';
-                            }
-                            return null;
-                          },
+                          validator: (value) =>
+                              Validators.validateConfirmPassword(
+                                  value, _passwordController.text),
                         ),
                         const SizedBox(height: 10),
                         Row(
