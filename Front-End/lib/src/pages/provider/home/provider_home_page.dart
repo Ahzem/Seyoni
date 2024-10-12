@@ -3,8 +3,10 @@ import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart'; // Add this import
 
 import '../../../config/url.dart';
+import '../../../config/route.dart'; // Add this import
 
 class ProviderHomePage extends StatefulWidget {
   const ProviderHomePage({super.key});
@@ -46,6 +48,13 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     }
   }
 
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token'); // Remove the token from shared preferences
+    Navigator.pushReplacementNamed(
+        context, AppRoutes.providerSignIn); // Navigate to the sign-in page
+  }
+
   void _acceptReservation(String reservationId) {
     // Handle accept reservation logic
   }
@@ -68,6 +77,12 @@ class ProviderHomePageState extends State<ProviderHomePage> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: _logout, // Call the logout function
+              ),
+            ],
           ),
           body: isLoading
               ? const Center(child: CircularProgressIndicator())

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,7 +13,9 @@ import '../../seeker/category/components/categories.dart';
 import '../../seeker/category/components/subcategories.dart';
 import '../../seeker/sign-pages/components/constants.dart';
 import '../components/custom_text_field.dart';
+import '../components/location_field.dart';
 import '../components/short_custom_text.dart';
+import 'package:http/http.dart' as http;
 
 class ProviderRegistrationPage extends StatefulWidget {
   const ProviderRegistrationPage({super.key});
@@ -32,6 +35,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
 
   int _currentStep = 0;
   String? _selectedCategory;
@@ -40,54 +44,133 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
   XFile? _profileImage;
   XFile? _nicImageFront;
   XFile? _nicImageBack;
+  String? _selectedLocation;
 
   final ImagePicker _picker = ImagePicker();
 
-  void _nextStep() {
+  void _nextStep() async {
     if (_formKey.currentState!.validate()) {
-      if (_currentStep == 2 && _profileImage == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: kErrorColor,
-            content: Text('Please add a profile picture'),
-          ),
+      if (_currentStep == 0) {
+        // Send OTP
+        final response = await http.post(
+          Uri.parse('http://localhost:3000/api/provider/register/step1'),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'email': _emailController.text,
+            'phone': _phoneController.text,
+          }),
         );
-        return;
-      }
-      if (_currentStep == 3 && _nicImageFront == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: kErrorColor,
-            content:
-                Text('Please add the front side of your NIC/Driving License'),
-          ),
-        );
-        return;
-      }
-      if (_currentStep == 4 && _nicImageBack == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: kErrorColor,
-            content:
-                Text('Please add the back side of your NIC/Driving License'),
-          ),
-        );
-        return;
-      }
-      setState(() {
-        _currentStep++;
-      });
-    }
-  }
 
-  void _sendOtp() {
-    // Handle sending OTP logic
-  }
+        if (response.statusCode == 200) {
+          setState(() {
+            _currentStep++;
+          });
+        } else {
+          // Handle error
+        }
+      } else if (_currentStep == 1) {
+        // Verify OTP
+        final response = await http.post(
+          Uri.parse('http://localhost:3000/api/provider/register/step2'),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'phone': _phoneController.text,
+            'otp': _otpController.text,
+          }),
+        );
 
-  void _register() {
-    if (_formKey.currentState!.validate()) {
-      // Handle registration logic
-      Navigator.pushNamed(context, AppRoutes.providerHomePage);
+        if (response.statusCode == 200) {
+          setState(() {
+            _currentStep++;
+          });
+        } else {
+          // Handle error
+        }
+      } else if (_currentStep == 2) {
+        // Upload profile image
+        if (_profileImage != null) {
+          final request = http.MultipartRequest(
+            'POST',
+            Uri.parse('http://localhost:3000/api/provider/register/step3'),
+          );
+          request.fields['phone'] = _phoneController.text;
+          request.files.add(await http.MultipartFile.fromPath(
+              'profileImage', _profileImage!.path));
+
+          final response = await request.send();
+          if (response.statusCode == 200) {
+            setState(() {
+              _currentStep++;
+            });
+          } else {
+            // Handle error
+          }
+        }
+      } else if (_currentStep == 3) {
+        // Upload Front NIC images
+        if (_nicImageFront != null) {
+          final request = http.MultipartRequest(
+            'POST',
+            Uri.parse('http://localhost:3000/api/provider/register/step41'),
+          );
+          request.fields['phone'] = _phoneController.text;
+          request.files.add(await http.MultipartFile.fromPath(
+              'nicFront', _nicImageFront!.path));
+
+          final response = await request.send();
+          if (response.statusCode == 200) {
+            setState(() {
+              _currentStep++;
+            });
+          } else {
+            // Handle error
+          }
+        }
+      } else if (_currentStep == 4) {
+        // Upload Back NIC image
+        if (_nicImageBack != null) {
+          final request = http.MultipartRequest(
+            'POST',
+            Uri.parse('http://localhost:3000/api/provider/register/step42'),
+          );
+          request.fields['phone'] = _phoneController.text;
+          request.files.add(await http.MultipartFile.fromPath(
+              'nicBack', _nicImageBack!.path));
+
+          final response = await request.send();
+          if (response.statusCode == 200) {
+            setState(() {
+              _currentStep++;
+            });
+          } else {
+            // Handle error
+          }
+        }
+      } else if (_currentStep == 5) {
+        // Set password and complete registration
+        final response = await http.post(
+          Uri.parse('http://localhost:3000/api/provider/register/step5'),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'phone': _phoneController.text,
+            'firstName': _firstNameController.text,
+            'lastName': _lastNameController.text,
+            'email': _emailController.text,
+            'location': _locationController.text,
+            'category': _selectedCategory,
+            'subCategories': _selectedSubCategories,
+            'password': _passwordController.text,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          setState(() {
+            _currentStep++;
+          });
+        } else {
+          // Handle error
+        }
+      }
     }
   }
 
@@ -182,6 +265,15 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                           labelText: 'Phone Number',
                           keyboardType: TextInputType.phone,
                           validator: Validators.validatePhoneNumber,
+                        ),
+                        const SizedBox(height: 10),
+                        LocationField(
+                          controller: _locationController,
+                          onSuggestionSelected: (suggestion) {
+                            setState(() {
+                              _selectedLocation = suggestion;
+                            });
+                          },
                         ),
                         const SizedBox(height: 10),
                         DropdownButtonFormField<String>(
@@ -539,9 +631,12 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                                 }),
                             const SizedBox(width: 10),
                             PrimaryFilledButton(
-                              text: 'Register',
-                              onPressed: _register,
-                            ),
+                                text: 'Register',
+                                onPressed: () {
+                                  _nextStep();
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.providerHomePage);
+                                }),
                           ],
                         ),
                       ],

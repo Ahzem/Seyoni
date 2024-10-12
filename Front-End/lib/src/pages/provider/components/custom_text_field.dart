@@ -83,6 +83,8 @@ class CustomTextField extends StatelessWidget {
         return Icons.phone_outlined;
       case 'new password':
         return Icons.lock_open_outlined;
+      case 'password':
+        return Icons.lock_outline_rounded;
       case 'confirm password':
         return Icons.lock_outline_rounded;
       case 'enter otp':

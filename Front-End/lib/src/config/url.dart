@@ -8,3 +8,5 @@ const checkSeekerExistsUrl = '$url/api/seeker/check';
 
 const sendReservationsUrl = '$url/api/reservations';
 const getReservationsUrl = '$url/api/reservations';
+
+const getProvidersUrl = '$url/api/provider/providers';

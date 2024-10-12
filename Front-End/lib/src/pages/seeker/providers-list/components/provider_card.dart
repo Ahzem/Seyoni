@@ -93,11 +93,7 @@ class ProviderCardState extends State<ProviderCard> {
 
   ImageProvider _getImageProvider(String imageUrl) {
     if (imageUrl.isNotEmpty) {
-      try {
-        return AssetImage(imageUrl);
-      } catch (e) {
-        return AssetImage('assets/images/profile-3.jpg'); // Fallback image
-      }
+      return NetworkImage(imageUrl);
     } else {
       return AssetImage('assets/images/profile-3.jpg'); // Fallback image
     }

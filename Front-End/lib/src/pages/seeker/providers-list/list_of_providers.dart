@@ -33,7 +33,7 @@ class ListOfProvidersState extends State<ListOfProviders> {
 
   Future<void> _fetchProviders() async {
     try {
-      final response = await http.get(Uri.parse('$url/api/providers'));
+      final response = await http.get(Uri.parse(getProvidersUrl));
       if (response.statusCode == 200) {
         final providers = json.decode(response.body);
         _filterProviders(providers);
@@ -57,8 +57,10 @@ class ListOfProvidersState extends State<ListOfProviders> {
   void _filterProviders(List<dynamic> providers) {
     setState(() {
       filteredProviders = providers.where((provider) {
-        return provider['location'].contains(widget.selectedLocation) &&
-            provider['subCategories'].any((subCategory) =>
+        final location = provider['location'] ?? '';
+        final subCategories = provider['subCategories'] ?? [];
+        return location.contains(widget.selectedLocation) &&
+            subCategories.any((subCategory) =>
                 widget.selectedSubCategories.contains(subCategory));
       }).toList();
       isLoading = false;
@@ -103,13 +105,14 @@ class ListOfProvidersState extends State<ListOfProviders> {
                           itemBuilder: (context, index) {
                             final provider = filteredProviders[index];
                             return ProviderCard(
-                              providerId: provider['_id'].toString(),
-                              name: provider['name'],
-                              imageUrl: provider['imageUrl'],
-                              rating: provider['rating'].toDouble(),
-                              profession: provider['profession'],
-                              completedWorks: provider['completedWorks'],
-                              isAvailable: provider['isAvailable'],
+                              providerId: provider['_id']?.toString() ?? '',
+                              name:
+                                  '${provider['firstName'] ?? 'Unknown'} ${provider['lastName'] ?? ''}',
+                              imageUrl: provider['profileImageUrl'] ?? '',
+                              rating: (provider['rating'] ?? 0).toDouble(),
+                              profession: provider['profession'] ?? 'Unknown',
+                              completedWorks: provider['completedWorks'] ?? 0,
+                              isAvailable: provider['isAvailable'] ?? false,
                             );
                           },
                         )

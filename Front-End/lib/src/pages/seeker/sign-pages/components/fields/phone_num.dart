@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
+import '../../../../../utils/validators.dart';
 import '../constants.dart';
 import '../../../../../constants/constants_color.dart';
 import '../../../../../constants/constants_font.dart';
@@ -118,14 +119,7 @@ class PhoneNumberFieldState extends State<PhoneNumberField> {
       keyboardType: TextInputType.phone,
       textInputAction: TextInputAction.next,
       onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-      validator: (value) {
-        if (value!.isEmpty) {
-          return widget.errorText;
-        } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-          return 'Invalid phone number';
-        }
-        return null;
-      },
+      validator: Validators.validatePhoneNumber,
     );
   }
 }

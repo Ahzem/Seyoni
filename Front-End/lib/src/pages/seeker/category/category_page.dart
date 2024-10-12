@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 import '../../../constants/constants_color.dart';
 import 'components/categories.dart';
 import 'subcategory_page.dart';
+import 'package:seyoni/src/services/location_service.dart'; // Import LocationService
 
 class CategoryPage extends StatefulWidget {
   const CategoryPage({super.key});
@@ -19,32 +16,6 @@ class CategoryPageState extends State<CategoryPage> {
   String? _selectedCity;
   final TextEditingController _typeAheadController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  Future<List<String>> _fetchLocationSuggestions(String input) async {
-    final String? apiKey =
-        dotenv.env['GOOGLE_PLACES_API_KEY']; // Get the API key from .env
-    if (apiKey == null) {
-      throw Exception('API key not found');
-    }
-
-    final Uri url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&types=(cities)&key=$apiKey');
-
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data['status'] == 'OK') {
-        return (data['predictions'] as List)
-            .map((prediction) => prediction['description'] as String)
-            .toList();
-      } else {
-        return [];
-      }
-    } else {
-      throw Exception('Failed to load suggestions');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +58,8 @@ class CategoryPageState extends State<CategoryPage> {
                   if (pattern.isEmpty) {
                     return [];
                   }
-                  return await _fetchLocationSuggestions(pattern);
+                  return await LocationService.fetchLocationSuggestions(
+                      pattern);
                 },
                 itemBuilder: (context, suggestion) {
                   return ListTile(
