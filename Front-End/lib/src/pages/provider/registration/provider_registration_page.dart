@@ -342,7 +342,8 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                         const SizedBox(height: 10),
                         _profileImage == null
                             ? IconButton(
-                                icon: const Icon(Icons.camera_alt, size: 100),
+                                icon: const Icon(Icons.person_add_alt_1,
+                                    size: 100),
                                 onPressed: () => _pickImage('profile'),
                               )
                             : CircleAvatar(
@@ -392,7 +393,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                         const SizedBox(height: 10),
                         _nicImageFront == null
                             ? IconButton(
-                                icon: const Icon(Icons.camera_alt),
+                                icon: const Icon(Icons.add_a_photo, size: 100),
                                 onPressed: () => _pickImage('nicFront'),
                               )
                             : ClipRRect(
@@ -446,7 +447,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                         const SizedBox(height: 10),
                         _nicImageBack == null
                             ? IconButton(
-                                icon: const Icon(Icons.camera_alt),
+                                icon: const Icon(Icons.add_a_photo, size: 100),
                                 onPressed: () => _pickImage('nicBack'),
                               )
                             : ClipRRect(
