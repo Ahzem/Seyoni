@@ -251,9 +251,12 @@ exports.registerStep5 = async (req, res) => {
     const token = jwt.sign({ id: provider._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    res
-      .status(201)
-      .json({ message: "Provider registered successfully", token });
+    const data = {
+      providerId: provider._id,
+      token: token,
+    };
+    // console.log("Provider registered successfullyyyy");
+    res.status(200).json({ message: "Provider registered successfully", data });
   } catch (error) {
     console.error("Error in registerStep5:", error);
     res.status(500).json({ error: "Server error" });

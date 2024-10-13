@@ -146,6 +146,7 @@ class HiringFormState extends State<HiringForm> {
             time: _selectedTime!.format(context), // Format the time correctly
             date: _selectedDate.toString(),
             description: _descriptionController.text,
+            status: 'pending',
           ),
         ),
       );

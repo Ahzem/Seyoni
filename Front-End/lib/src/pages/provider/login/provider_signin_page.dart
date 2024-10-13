@@ -56,16 +56,63 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
           await prefs.setString('token', token);
           await prefs.setString('providerId', providerId);
 
-          Navigator.pushReplacementNamed(context, AppRoutes.providerHomePage);
+          // Show success AlertDialog
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Success'),
+                content: const Text('Sign-in successful!'),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacementNamed(
+                          context, AppRoutes.providerHomePage);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Invalid response from server')),
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Error'),
+                content: const Text('Invalid response from server'),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
           );
         }
       } else {
         final error = jsonDecode(response.body)['error'];
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $error')),
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: Text('Error: $error'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
         );
       }
     }
@@ -82,7 +129,6 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: height * 0.1), // Adjust top spacing
               Image.asset(
                 'assets/images/logo-icon.png',
                 height: height * 0.15,

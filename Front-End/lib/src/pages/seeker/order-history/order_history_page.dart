@@ -113,12 +113,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                   Column(
                     children: reservations.map((reservation) {
                       return HistoryCard(
-                        providerName: reservation['name'] ?? '',
-                        profileImage: reservation['profileImage'] ?? '',
-                        profession: reservation['profession'] ?? '',
-                        date: reservation['date'] ?? '',
-                        time: reservation['time'] ?? '',
-                        status: reservation['status'] ?? 'pending',
+                        reservation: reservation,
                         onTrack: () {
                           // Implement track logic
                         },
@@ -136,6 +131,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                 time: reservation['time'] ?? '',
                                 date: reservation['date'] ?? '',
                                 description: reservation['description'] ?? '',
+                                status: reservation['status'] ?? '',
                               ),
                             ),
                           );

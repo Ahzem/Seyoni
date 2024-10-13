@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/constants/constants_font.dart';
-import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../config/url.dart';
-import '../../../config/route.dart';
+import 'reservation_detail_page.dart';
+import 'package:seyoni/src/widgets/custom_button.dart';
 
 class ProviderHomePage extends StatefulWidget {
   const ProviderHomePage({super.key});
@@ -30,6 +28,8 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? providerId = prefs.getString('providerId');
+      print('Retrieved providerId: $providerId');
+
       if (providerId == null || providerId.isEmpty) {
         setState(() {
           errorMessage = 'User not logged in';
@@ -38,17 +38,12 @@ class ProviderHomePageState extends State<ProviderHomePage> {
         return;
       }
 
-      print("Provider ID: $providerId"); // Debug statement
-
       final response = await http.get(
         Uri.parse(getReservationsUrl),
         headers: {
           'provider-id': providerId,
         },
       );
-
-      print("Response Status Code: ${response.statusCode}"); // Debug statement
-      print("Response Body: ${response.body}"); // Debug statement
 
       if (response.statusCode == 200) {
         List<dynamic> allReservations = json.decode(response.body);
@@ -72,20 +67,32 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     }
   }
 
-  Future<void> _logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
-    await prefs.remove('providerId');
-    Navigator.pushReplacementNamed(context, AppRoutes.providerSignIn);
+  void _viewReservation(Map<String, dynamic> reservation) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReservationDetailPage(reservation: reservation),
+      ),
+    );
   }
 
   Future<void> _updateReservationStatus(
       String reservationId, String status) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? providerId = prefs.getString('providerId');
+      if (providerId == null || providerId.isEmpty) {
+        setState(() {
+          errorMessage = 'User not logged in';
+        });
+        return;
+      }
+
       final response = await http.patch(
         Uri.parse('$url/api/reservations/$reservationId/$status'),
         headers: {
           'Content-Type': 'application/json',
+          'provider-id': providerId,
         },
       );
       if (response.statusCode == 200) {
@@ -109,80 +116,34 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     }
   }
 
-  void _acceptReservation(String reservationId) {
-    _updateReservationStatus(reservationId, 'accept');
-  }
-
-  void _rejectReservation(String reservationId) {
-    _updateReservationStatus(reservationId, 'reject');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        const Positioned.fill(
-          child: BackgroundWidget(child: SizedBox.expand()),
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            title: const Text('Provider Home', style: kAppBarTitleTextStyle),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
-            actions: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: IconButton(
-                  icon: const Icon(Icons.logout, color: Colors.white),
-                  onPressed: _logout,
-                ),
-              ),
-            ],
-          ),
-          body: isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : errorMessage.isNotEmpty
-                  ? Center(
-                      child: Text(
-                        errorMessage,
-                        style: const TextStyle(color: Colors.red, fontSize: 18),
-                        textAlign: TextAlign.center,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Provider Home Page'),
+      ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : errorMessage.isNotEmpty
+              ? Center(child: Text(errorMessage))
+              : ListView.builder(
+                  itemCount: reservations.length,
+                  itemBuilder: (context, index) {
+                    final reservation = reservations[index];
+                    return Card(
+                      child: ListTile(
+                        title: Text(reservation['serviceType']),
+                        subtitle: Text(
+                          '${reservation['description'].toString().split(' ').take(12).join(' ')}...',
+                        ),
+                        trailing: PrimaryFilledButtonThree(
+                          text: 'View Request',
+                          onPressed: () => _viewReservation(reservation),
+                        ),
                       ),
-                    )
-                  : ListView.builder(
-                      itemCount: reservations.length,
-                      itemBuilder: (context, index) {
-                        final reservation = reservations[index];
-                        return Card(
-                          margin: const EdgeInsets.all(8.0),
-                          child: ListTile(
-                            title: Text(reservation['serviceType']),
-                            subtitle: Text(reservation['description']),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.check,
-                                      color: Colors.green),
-                                  onPressed: () =>
-                                      _acceptReservation(reservation['_id']),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.close,
-                                      color: Colors.red),
-                                  onPressed: () =>
-                                      _rejectReservation(reservation['_id']),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-        ),
-      ],
+                    );
+                  },
+                ),
     );
   }
 }

@@ -6,38 +6,29 @@ import '../../../../constants/constants_color.dart';
 import '../../../../widgets/custom_button.dart';
 
 class HistoryCard extends StatelessWidget {
-  final String providerName;
-  final String profileImage;
-  final String profession;
-  final String date;
-  final String time;
-  final String status; // accepted, rejected, pending
+  final Map<String, dynamic> reservation;
   final VoidCallback onTrack;
   final VoidCallback onView;
   final VoidCallback onDelete;
 
   const HistoryCard({
     super.key,
-    required this.providerName,
-    required this.profileImage,
-    required this.profession,
-    required this.date,
-    required this.time,
-    required this.status,
+    required this.reservation,
     required this.onTrack,
     required this.onView,
     required this.onDelete,
   });
 
-  ImageProvider getImageProvider(String imageUrl) {
-    if (imageUrl.isNotEmpty) {
+  ImageProvider getImageProvider(String? imageUrl) {
+    if (imageUrl != null && imageUrl.isNotEmpty) {
       try {
         return NetworkImage(imageUrl);
       } catch (e) {
-        return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+        return const AssetImage(
+            'assets/images/profile-3.jpg'); // Fallback image
       }
     } else {
-      return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+      return const AssetImage('assets/images/profile-3.jpg'); // Fallback image
     }
   }
 
@@ -65,7 +56,6 @@ class HistoryCard extends StatelessWidget {
     return formatter.format(formattedTime);
   }
 
-  // Method to return the correct status icon
   IconData _getStatusIcon(String status) {
     switch (status) {
       case 'accepted':
@@ -79,7 +69,6 @@ class HistoryCard extends StatelessWidget {
     }
   }
 
-  // Method to return the correct status color
   Color _getStatusColor(String status) {
     switch (status) {
       case 'accepted':
@@ -93,7 +82,6 @@ class HistoryCard extends StatelessWidget {
     }
   }
 
-  // Method to return the correct status text
   String _getStatusText(String status) {
     switch (status) {
       case 'accepted':
@@ -107,7 +95,6 @@ class HistoryCard extends StatelessWidget {
     }
   }
 
-  // Method to return the correct status icon color
   Color _getStatusIconColor(String status) {
     switch (status) {
       case 'accepted':
@@ -143,7 +130,8 @@ class HistoryCard extends StatelessWidget {
                 Stack(
                   children: [
                     CircleAvatar(
-                      backgroundImage: getImageProvider(profileImage),
+                      backgroundImage:
+                          getImageProvider(reservation['profileImage']),
                       radius: 35,
                     ),
                     Positioned(
@@ -154,20 +142,20 @@ class HistoryCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             vertical: 3, horizontal: 3),
                         decoration: BoxDecoration(
-                          color: _getStatusColor(status),
+                          color: _getStatusColor(reservation['status']),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              _getStatusIcon(status),
-                              color: _getStatusIconColor(status),
+                              _getStatusIcon(reservation['status']),
+                              color: _getStatusIconColor(reservation['status']),
                               size: 14,
                             ),
                             const SizedBox(width: 2),
                             Text(
-                              _getStatusText(status),
+                              _getStatusText(reservation['status']),
                               style: const TextStyle(
                                 fontSize: 10,
                                 color: Colors.white,
@@ -185,14 +173,17 @@ class HistoryCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(providerName, style: kCardTitleTextStyle),
-                      Text(profession, style: kCardTextStyle),
+                      Text(reservation['name'] ?? '',
+                          style: kCardTitleTextStyle),
+                      Text(reservation['profession'] ?? '',
+                          style: kCardTextStyle),
                       Row(
                         children: [
                           const Icon(Icons.calendar_today,
                               size: 14, color: kParagraphTextColor),
                           const SizedBox(width: 4),
-                          Text(_formatDate(date), style: kCardTextStyle),
+                          Text(_formatDate(reservation['date'] ?? ''),
+                              style: kCardTextStyle),
                         ],
                       ),
                       Row(
@@ -200,7 +191,8 @@ class HistoryCard extends StatelessWidget {
                           const Icon(Icons.access_time,
                               size: 14, color: kParagraphTextColor),
                           const SizedBox(width: 4),
-                          Text(_formatTime(time), style: kCardTextStyle),
+                          Text(_formatTime(reservation['time'] ?? ''),
+                              style: kCardTextStyle),
                         ],
                       ),
                     ],
@@ -208,7 +200,7 @@ class HistoryCard extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    if (status == 'accepted')
+                    if (reservation['status'] == 'accepted')
                       Row(
                         children: [
                           PrimaryFilledButtonThree(
@@ -217,7 +209,7 @@ class HistoryCard extends StatelessWidget {
                           ),
                         ],
                       )
-                    else if (status == 'rejected')
+                    else if (reservation['status'] == 'rejected')
                       Row(
                         children: [
                           PrimaryFilledButtonThree(
@@ -226,7 +218,7 @@ class HistoryCard extends StatelessWidget {
                           ),
                         ],
                       )
-                    else if (status == 'pending')
+                    else if (reservation['status'] == 'pending')
                       Row(
                         children: [
                           PrimaryFilledInactiveButtonThree(
