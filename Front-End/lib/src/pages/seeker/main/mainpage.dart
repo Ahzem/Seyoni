@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/pages/seeker/chat/chat_page.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission handler package
 import 'package:seyoni/src/pages/seeker/order-history/order_history_page.dart';
 import '../../../widgets/custom_appbar.dart';
@@ -8,6 +7,7 @@ import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_font.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import '../category/category_page.dart';
+import '../chat/chat_page.dart';
 import '../menu/menupage.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   late Map<String, dynamic> _decodedToken;
+  int _currentIndex = 2; // Initialize _currentIndex to a valid index
 
   @override
   void initState() {
@@ -30,25 +31,22 @@ class HomePageState extends State<HomePage> {
     } else {
       _decodedToken = {}; // Handle the case where token is null
     }
-    _currentIndex = 2;
 
     // Call the function to check permissions
     _checkPermissions();
   }
 
-  int _currentIndex = 0;
-
   final List<Widget> _pages = [
-    const Center(child: OrderHistoryPage()),
-    const Center(child: ChatScreen()),
+    const OrderHistoryPage(),
+    const ChatScreen(),
     const Center(
       child: Text(
         'Home Page Content',
         style: kBodyTextStyle,
       ),
     ),
-    const Center(child: CategoryPage()),
-    const Center(child: MenuPage()),
+    const CategoryPage(),
+    const MenuPage(),
   ];
 
   // Function to check and request necessary permissions
@@ -120,7 +118,8 @@ class HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (_decodedToken.isNotEmpty) _pages[_currentIndex],
+                  _pages[
+                      _currentIndex], // Display the page based on _currentIndex
                 ],
               ),
             ),

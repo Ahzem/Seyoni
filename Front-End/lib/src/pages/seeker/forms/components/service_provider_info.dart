@@ -22,7 +22,7 @@ class ServiceProviderInfo extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 35,
-          backgroundImage: AssetImage(profileImage),
+          backgroundImage: NetworkImage(profileImage),
         ),
         SizedBox(width: 16),
         Column(

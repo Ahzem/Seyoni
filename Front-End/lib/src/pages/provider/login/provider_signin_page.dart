@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_webservice/directions.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/utils/validators.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../config/url.dart';
 import '../components/custom_text_field.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/config/route.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ProviderSignInPage extends StatefulWidget {
   const ProviderSignInPage({super.key});
@@ -18,13 +21,44 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool isLoading = false;
 
-  void _signIn() {
+  void _signIn() async {
     if (_formKey.currentState!.validate()) {
-      // Implement sign in logic here
+      setState(() {
+        isLoading = true;
+      });
 
-      // Navigate to the provider home page
-      Navigator.pushNamed(context, AppRoutes.providerHomePage);
+      final response = await http.post(
+        Uri.parse(loginProvidersUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'email': _emailController.text,
+          'password': _passwordController.text,
+        }),
+      );
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final token = responseData['token'];
+
+        // Save the token in SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+
+        Navigator.pushReplacementNamed(context, AppRoutes.providerHomePage);
+      } else {
+        final error = jsonDecode(response.body)['error'];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $error')),
+        );
+      }
     }
   }
 

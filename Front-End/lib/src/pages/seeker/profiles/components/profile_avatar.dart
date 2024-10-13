@@ -4,9 +4,13 @@ import 'package:seyoni/src/constants/constants_color.dart';
 class ProfileAvatar extends StatelessWidget {
   final String imagePath;
   final bool isOnline;
+  final ImageProvider imageProvider;
 
   const ProfileAvatar(
-      {super.key, required this.imagePath, required this.isOnline});
+      {super.key,
+      required this.imagePath,
+      required this.isOnline,
+      required this.imageProvider});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,7 @@ class ProfileAvatar extends StatelessWidget {
           ),
           child: CircleAvatar(
             radius: 50,
-            backgroundImage: AssetImage(imagePath), // Profile image
+            backgroundImage: imageProvider, // Profile image
           ),
         ),
         Positioned(

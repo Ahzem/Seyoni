@@ -32,7 +32,7 @@ class HistoryCard extends StatelessWidget {
   ImageProvider getImageProvider(String imageUrl) {
     if (imageUrl.isNotEmpty) {
       try {
-        return AssetImage(imageUrl);
+        return NetworkImage(imageUrl);
       } catch (e) {
         return AssetImage('assets/images/profile-3.jpg'); // Fallback image
       }
