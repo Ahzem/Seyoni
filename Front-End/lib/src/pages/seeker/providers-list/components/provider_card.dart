@@ -82,6 +82,7 @@ class ProviderCardState extends State<ProviderCard> {
             rating: providerDetails['rating'].toDouble(),
             profession: providerDetails['profession'],
             serviceType: widget.serviceType,
+            providerId: providerId,
           ),
         ),
       );

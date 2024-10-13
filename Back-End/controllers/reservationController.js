@@ -60,7 +60,7 @@ exports.createReservation = async (req, res) => {
     await reservation.save();
     res.status(201).send(reservation);
   } catch (error) {
-    // console.error("Error creating reservation:", error);  Log error
+    console.error("Error creating reservation:", error);
     res
       .status(400)
       .send({ error: "Failed to create reservation", details: error.message });

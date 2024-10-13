@@ -5,7 +5,7 @@ const authMiddleware = require("../middleware/authMiddleware"); // Ensure this m
 
 // POST route to create a reservation
 router.post(
-  "/",
+  "/createReservation",
   authMiddleware,
   reservationController.uploadImages,
   reservationController.createReservation

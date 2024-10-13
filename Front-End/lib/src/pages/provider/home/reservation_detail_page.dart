@@ -9,14 +9,13 @@ import '../../../config/url.dart';
 class ReservationDetailPage extends StatefulWidget {
   final Map<String, dynamic> reservation;
 
-  const ReservationDetailPage({Key? key, required this.reservation})
-      : super(key: key);
+  const ReservationDetailPage({super.key, required this.reservation});
 
   @override
-  _ReservationDetailPageState createState() => _ReservationDetailPageState();
+  ReservationDetailPageState createState() => ReservationDetailPageState();
 }
 
-class _ReservationDetailPageState extends State<ReservationDetailPage> {
+class ReservationDetailPageState extends State<ReservationDetailPage> {
   late Map<String, dynamic> reservation;
 
   @override
@@ -75,74 +74,80 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('Reservation Details'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Name: ${reservation['seeker']['firstName']} ${reservation['seeker']['lastName']}',
-              style: kTitleTextStyle,
-            ),
-            Text(
-              'Service: ${reservation['serviceType']}',
-              style: kSubtitleTextStyle,
-            ),
-            Text(
-              'Description: ${reservation['description']}',
-              style: kBodyTextStyle,
-            ),
-            Text(
-              'Time: ${reservation['time']}',
-              style: kBodyTextStyle,
-            ),
-            Text(
-              'Date: ${reservation['date']}',
-              style: kBodyTextStyle,
-            ),
-            Text(
-              'Location: ${reservation['location']}',
-              style: kBodyTextStyle,
-            ),
-            if (reservation['images'] != null &&
-                reservation['images'].isNotEmpty)
-              Column(
-                children: reservation['images'].map<Widget>((image) {
-                  return Image.network(image);
-                }).toList(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Name: ${reservation['seeker']['firstName']} ${reservation['seeker']['lastName']}',
+                style: kTitleTextStyle,
               ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                PrimaryFilledButtonTwo(
-                  text:
-                      reservation['status'] == 'accepted' ? 'Track' : 'Accept',
-                  onPressed: () {
-                    if (reservation['status'] == 'accepted') {
-                      // Navigate to tracking page
-                    } else {
-                      _updateReservationStatus('accept');
-                    }
-                  },
+              Text(
+                'Service: ${reservation['serviceType']}',
+                style: kSubtitleTextStyle,
+              ),
+              Text(
+                'Description: ${reservation['description']}',
+                style: kBodyTextStyle,
+              ),
+              Text(
+                'Time: ${reservation['time']}',
+                style: kBodyTextStyle,
+              ),
+              Text(
+                'Date: ${reservation['date']}',
+                style: kBodyTextStyle,
+              ),
+              Text(
+                'Location: ${reservation['location']}',
+                style: kBodyTextStyle,
+              ),
+              if (reservation['images'] != null &&
+                  reservation['images'].isNotEmpty)
+                Column(
+                  children: reservation['images'].map<Widget>((image) {
+                    return Image.network(image);
+                  }).toList(),
                 ),
-                PrimaryFilledButtonTwo(
-                  text:
-                      reservation['status'] == 'rejected' ? 'Cancel' : 'Reject',
-                  onPressed: () {
-                    if (reservation['status'] == 'rejected') {
-                      // Handle cancel action
-                    } else {
-                      _updateReservationStatus('reject');
-                    }
-                  },
-                ),
-              ],
-            ),
-          ],
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  PrimaryFilledButtonTwo(
+                    text: reservation['status'] == 'accepted'
+                        ? 'Track'
+                        : 'Accept',
+                    onPressed: () {
+                      if (reservation['status'] == 'accepted') {
+                        // Navigate to tracking page
+                      } else {
+                        _updateReservationStatus('accept');
+                      }
+                    },
+                  ),
+                  PrimaryFilledButtonTwo(
+                    text: reservation['status'] == 'rejected'
+                        ? 'Delete'
+                        : 'Reject',
+                    onPressed: () {
+                      if (reservation['status'] == 'rejected') {
+                        // Handle delete action
+                        Navigator.pop(context);
+                      } else {
+                        _updateReservationStatus('reject');
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

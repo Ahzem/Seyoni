@@ -61,8 +61,8 @@ class _SeekerViewState extends State<SeekerView> {
           profileImage: profileImage,
           rating: rating,
           profession: profession,
-          serviceType:
-              widget.providerDetails['category'] ?? '', // Pass serviceType
+          serviceType: widget.providerDetails['category'] ?? '',
+          providerId: widget.providerDetails['_id'],
         ),
       ),
     );

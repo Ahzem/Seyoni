@@ -147,6 +147,7 @@ class GoogleMapWidgetState extends State<GoogleMapWidget> {
                 SizedBox(width: 5),
                 Expanded(
                   child: TextFormField(
+                    cursorColor: kPrimaryColor,
                     controller: _addressController,
                     decoration: InputDecoration(
                       hintText: "Enter Address or Pick Location",

@@ -6,7 +6,7 @@ const resendOtpUrl = '$url/api/seeker/resendSignUpOtp';
 const signOutUrl = '$url/api/seeker/signout';
 const checkSeekerExistsUrl = '$url/api/seeker/check';
 
-const sendReservationsUrl = '$url/api/reservations';
+const sendReservationsUrl = '$url/api/reservations/createReservation';
 const getReservationsUrl = '$url/api/reservations';
 
 const getProvidersUrl = '$url/api/providers';
