@@ -23,7 +23,7 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool isLoading = false;
 
-  void _signIn() async {
+  Future<void> _signIn() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         isLoading = true;
@@ -47,12 +47,21 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         final token = responseData['token'];
+        final providerId =
+            responseData['providerId']; // Assuming providerId is returned
 
-        // Save the token in SharedPreferences
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', token);
+        if (token != null && providerId != null) {
+          // Save the token and providerId in SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token);
+          await prefs.setString('providerId', providerId);
 
-        Navigator.pushReplacementNamed(context, AppRoutes.providerHomePage);
+          Navigator.pushReplacementNamed(context, AppRoutes.providerHomePage);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Invalid response from server')),
+          );
+        }
       } else {
         final error = jsonDecode(response.body)['error'];
         ScaffoldMessenger.of(context).showSnackBar(

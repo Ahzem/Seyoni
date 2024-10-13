@@ -229,13 +229,13 @@ class HistoryCard extends StatelessWidget {
                     else if (status == 'pending')
                       Row(
                         children: [
-                          PrimaryFilledInactiveButton(
+                          PrimaryFilledInactiveButtonThree(
                             text: 'Track',
                             onPressed: () {},
                           ),
                         ],
                       ),
-                    const SizedBox(width: 5),
+                    const SizedBox(height: 5),
                     PrimaryOutlinedButtonTwo(
                       text: 'View',
                       onPressed: onView,

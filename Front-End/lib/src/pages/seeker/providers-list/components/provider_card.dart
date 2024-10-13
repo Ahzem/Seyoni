@@ -14,6 +14,7 @@ class ProviderCard extends StatefulWidget {
   final String imageUrl;
   final double rating;
   final String profession;
+  final String serviceType;
   final int completedWorks;
   final bool isAvailable;
 
@@ -24,6 +25,7 @@ class ProviderCard extends StatefulWidget {
     required this.imageUrl,
     required this.rating,
     required this.profession,
+    required this.serviceType,
     required this.completedWorks,
     required this.isAvailable,
   });
@@ -79,6 +81,7 @@ class ProviderCardState extends State<ProviderCard> {
             profileImage: providerDetails['profileImageUrl'],
             rating: providerDetails['rating'].toDouble(),
             profession: providerDetails['profession'],
+            serviceType: widget.serviceType,
           ),
         ),
       );

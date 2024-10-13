@@ -28,6 +28,7 @@ class HiringForm extends StatefulWidget {
   final String profileImage;
   final double rating;
   final String profession;
+  final String serviceType;
 
   const HiringForm({
     super.key,
@@ -35,6 +36,7 @@ class HiringForm extends StatefulWidget {
     required this.profileImage,
     required this.rating,
     required this.profession,
+    required this.serviceType,
   });
 
   @override
@@ -71,14 +73,15 @@ class HiringFormState extends State<HiringForm> {
     String? firstName = prefs.getString('firstName');
     String? lastName = prefs.getString('lastName');
     String? email = prefs.getString('email');
+    String? providerId = prefs.getString('providerId');
 
     if (seekerId == null ||
         firstName == null ||
         lastName == null ||
-        email == null) {
-      if (!mounted) return;
+        email == null ||
+        providerId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Failed to retrieve seeker details.',
               style: TextStyle(color: Colors.black)),
           backgroundColor: kPrimaryColor,
@@ -92,6 +95,7 @@ class HiringFormState extends State<HiringForm> {
       'profileImage': widget.profileImage,
       'rating': widget.rating,
       'profession': widget.profession,
+      'serviceType': widget.serviceType,
       'location': _selectedLocation?.toString() ?? _enteredAddress!,
       'time': _selectedTime!.format(context), // Format the time correctly
       'date': _selectedDate.toString(),
@@ -102,10 +106,14 @@ class HiringFormState extends State<HiringForm> {
         'lastName': lastName,
         'email': email,
       },
+      'providerId': providerId,
     };
+
+    print("sending reservation data: $reservationData");
 
     var request = http.MultipartRequest('POST', Uri.parse(sendReservationsUrl));
     request.headers['seeker-id'] = seekerId; // Add seeker ID to headers
+    request.headers['provider-id'] = providerId; // Add provider ID to headers
 
     request.fields.addAll(
         reservationData.map((key, value) => MapEntry(key, value.toString())));

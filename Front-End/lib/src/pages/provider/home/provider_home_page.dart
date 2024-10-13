@@ -3,10 +3,10 @@ import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart'; // Add this import
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../config/url.dart';
-import '../../../config/route.dart'; // Add this import
+import '../../../config/route.dart';
 
 class ProviderHomePage extends StatefulWidget {
   const ProviderHomePage({super.key});
@@ -28,10 +28,34 @@ class ProviderHomePageState extends State<ProviderHomePage> {
 
   Future<void> _fetchReservations() async {
     try {
-      final response = await http.get(Uri.parse(getReservationsUrl));
-      if (response.statusCode == 200) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? providerId = prefs.getString('providerId');
+      if (providerId == null || providerId.isEmpty) {
         setState(() {
-          reservations = json.decode(response.body);
+          errorMessage = 'User not logged in';
+          isLoading = false;
+        });
+        return;
+      }
+
+      print("Provider ID: $providerId"); // Debug statement
+
+      final response = await http.get(
+        Uri.parse(getReservationsUrl),
+        headers: {
+          'provider-id': providerId,
+        },
+      );
+
+      print("Response Status Code: ${response.statusCode}"); // Debug statement
+      print("Response Body: ${response.body}"); // Debug statement
+
+      if (response.statusCode == 200) {
+        List<dynamic> allReservations = json.decode(response.body);
+        setState(() {
+          reservations = allReservations.where((reservation) {
+            return reservation['providerId'] == providerId;
+          }).toList();
           isLoading = false;
         });
       } else {
@@ -50,17 +74,47 @@ class ProviderHomePageState extends State<ProviderHomePage> {
 
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token'); // Remove the token from shared preferences
-    Navigator.pushReplacementNamed(
-        context, AppRoutes.providerSignIn); // Navigate to the sign-in page
+    await prefs.remove('token');
+    await prefs.remove('providerId');
+    Navigator.pushReplacementNamed(context, AppRoutes.providerSignIn);
+  }
+
+  Future<void> _updateReservationStatus(
+      String reservationId, String status) async {
+    try {
+      final response = await http.patch(
+        Uri.parse('$url/api/reservations/$reservationId/$status'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        setState(() {
+          reservations = reservations.map((reservation) {
+            if (reservation['_id'] == reservationId) {
+              reservation['status'] = status;
+            }
+            return reservation;
+          }).toList();
+        });
+      } else {
+        setState(() {
+          errorMessage = 'Failed to update reservation: ${response.body}';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to update reservation: $e';
+      });
+    }
   }
 
   void _acceptReservation(String reservationId) {
-    // Handle accept reservation logic
+    _updateReservationStatus(reservationId, 'accept');
   }
 
   void _rejectReservation(String reservationId) {
-    // Handle reject reservation logic
+    _updateReservationStatus(reservationId, 'reject');
   }
 
   @override
@@ -82,7 +136,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: IconButton(
                   icon: const Icon(Icons.logout, color: Colors.white),
-                  onPressed: _logout, // Call the logout function
+                  onPressed: _logout,
                 ),
               ),
             ],

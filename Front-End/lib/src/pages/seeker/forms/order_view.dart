@@ -38,12 +38,7 @@ class OrderView extends StatefulWidget {
 
 class OrderViewState extends State<OrderView> {
   List<dynamic> _reservations = [];
-
-  String get requestStatus {
-    return _reservations.isEmpty
-        ? 'pending'
-        : 'accepted'; // Adjust the logic as needed
-  }
+  String _status = 'pending';
 
   @override
   void initState() {
@@ -72,6 +67,9 @@ class OrderViewState extends State<OrderView> {
       if (response.statusCode == 200) {
         setState(() {
           _reservations = json.decode(response.body);
+          if (_reservations.isNotEmpty) {
+            _status = _reservations[0]['status'];
+          }
         });
       } else {
         throw Exception('Failed to load reservations');
@@ -79,6 +77,10 @@ class OrderViewState extends State<OrderView> {
     } catch (e) {
       throw Exception('Failed to load reservations');
     }
+  }
+
+  String get requestStatus {
+    return _status;
   }
 
   @override

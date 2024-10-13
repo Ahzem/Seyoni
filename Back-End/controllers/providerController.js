@@ -280,7 +280,8 @@ exports.signInProvider = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.status(200).json({ message: "Sign-in successful", token });
+    // Return the token and providerId
+    res.status(200).json({ token, providerId: provider._id });
   } catch (error) {
     console.error("Error in signInProvider:", error);
     res.status(500).json({ error: "Server error" });

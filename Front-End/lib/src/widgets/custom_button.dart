@@ -201,6 +201,39 @@ class PrimaryFilledButtonThree extends StatelessWidget {
   }
 }
 
+class PrimaryFilledInactiveButtonThree extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+
+  const PrimaryFilledInactiveButtonThree({
+    super.key,
+    required this.text,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: kPrimaryColor.withOpacity(0.5),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 10,
+        ),
+        textStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.black),
+      ),
+    );
+  }
+}
+
 // PrimaryOutlinedButton for Back to Back to Sign In Button
 class PrimaryOutlinedButtonTwo extends StatelessWidget {
   final String text;

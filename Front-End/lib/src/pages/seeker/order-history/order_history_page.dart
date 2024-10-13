@@ -43,7 +43,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       final response = await http.get(
         Uri.parse(url),
         headers: {
-          'seeker-id': seekerId, // Send seekerId in headers
+          'seeker-id': seekerId,
         },
       );
 
@@ -63,6 +63,18 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         errorMessage = 'Failed to load reservations: $e';
         isLoading = false;
       });
+    }
+  }
+
+  String _getStatusMessage(String status) {
+    switch (status) {
+      case 'accepted':
+        return 'Request has been accepted';
+      case 'rejected':
+        return 'Request has been rejected';
+      case 'pending':
+      default:
+        return 'Request is pending';
     }
   }
 
@@ -106,7 +118,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                         profession: reservation['profession'] ?? '',
                         date: reservation['date'] ?? '',
                         time: reservation['time'] ?? '',
-                        status: reservation['status'] ?? '',
+                        status: reservation['status'] ?? 'pending',
                         onTrack: () {
                           // Implement track logic
                         },
