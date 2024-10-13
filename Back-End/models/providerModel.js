@@ -61,6 +61,10 @@ const providerSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  isApproved: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const Provider = mongoose.model("Provider", providerSchema);

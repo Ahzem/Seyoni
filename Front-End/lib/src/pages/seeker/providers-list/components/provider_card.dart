@@ -32,6 +32,7 @@ class ProviderCard extends StatefulWidget {
   ProviderCardState createState() => ProviderCardState();
 }
 
+@override
 class ProviderCardState extends State<ProviderCard> {
   Future<Map<String, dynamic>> fetchProviderDetails(String providerId) async {
     final response =
@@ -73,9 +74,11 @@ class ProviderCardState extends State<ProviderCard> {
         context,
         MaterialPageRoute(
           builder: (context) => HiringForm(
-            name: providerDetails['name'],
-            profileImage: providerDetails['imageUrl'],
-            rating: providerDetails['rating'],
+            name: providerDetails['firstName'] +
+                ' ' +
+                providerDetails['lastName'],
+            profileImage: providerDetails['profileImageUrl'],
+            rating: providerDetails['rating'].toDouble(),
             profession: providerDetails['profession'],
           ),
         ),
@@ -93,7 +96,12 @@ class ProviderCardState extends State<ProviderCard> {
 
   ImageProvider _getImageProvider(String imageUrl) {
     if (imageUrl.isNotEmpty) {
-      return NetworkImage(imageUrl);
+      try {
+        return NetworkImage(imageUrl);
+      } catch (e) {
+        print('Error loading image: $e');
+        return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+      }
     } else {
       return AssetImage('assets/images/profile-3.jpg'); // Fallback image
     }

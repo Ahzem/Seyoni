@@ -6,10 +6,10 @@ const providerController = require("../controllers/providerController");
 router.post("/providers", providerController.createProvider);
 
 // GET route to retrieve all providers
-router.get("/providers", providerController.getAllProviders);
+router.get("/", providerController.getAllProviders);
 
 // GET route to retrieve provider details by ID
-router.get("/providers/:id", providerController.getProviderDetails);
+router.get("/:id", providerController.getProviderDetails);
 
 // POST route to register a provider
 router.post("/register/step1", providerController.registerStep1);

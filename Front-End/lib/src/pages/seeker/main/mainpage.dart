@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/pages/seeker/chat/chat_page.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission handler package
 import 'package:seyoni/src/pages/seeker/order-history/order_history_page.dart';
 import '../../../widgets/custom_appbar.dart';
@@ -8,6 +7,7 @@ import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_font.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import '../category/category_page.dart';
+import '../chat/chat_page.dart';
 import '../menu/menupage.dart';
 
 class HomePage extends StatefulWidget {
@@ -38,7 +38,7 @@ class HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const OrderHistoryPage(),
-    const OrderHistoryPage(),
+    const ChatScreen(),
     const Center(
       child: Text(
         'Home Page Content',

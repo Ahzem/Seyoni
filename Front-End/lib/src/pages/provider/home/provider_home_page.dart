@@ -78,9 +78,12 @@ class ProviderHomePageState extends State<ProviderHomePage> {
             elevation: 0,
             centerTitle: true,
             actions: [
-              IconButton(
-                icon: const Icon(Icons.logout),
-                onPressed: _logout, // Call the logout function
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: IconButton(
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  onPressed: _logout, // Call the logout function
+                ),
               ),
             ],
           ),

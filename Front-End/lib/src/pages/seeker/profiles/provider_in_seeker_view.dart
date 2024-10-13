@@ -26,18 +26,30 @@ class _SeekerViewState extends State<SeekerView> {
   late String profileImage;
   late double rating;
   late String profession;
-  late String completedWorksString;
+  late int completedWorks;
 
   @override
   void initState() {
     super.initState();
-    name = widget.providerDetails['name'] ?? 'Unknown';
-    profileImage =
-        widget.providerDetails['imageUrl'] ?? 'assets/images/profile-1.png';
-    rating = widget.providerDetails['rating']?.toDouble() ?? 0.0;
+    name =
+        '${widget.providerDetails['firstName']} ${widget.providerDetails['lastName']}';
+    profileImage = widget.providerDetails['profileImageUrl'] ?? '';
+    rating = (widget.providerDetails['rating'] ?? 5).toDouble();
     profession = widget.providerDetails['profession'] ?? 'Unknown';
-    completedWorksString =
-        widget.providerDetails['completedWorks']?.toString() ?? '0';
+    completedWorks = widget.providerDetails['completedWorks'] ?? 100;
+  }
+
+  ImageProvider _getImageProvider(String imageUrl) {
+    if (imageUrl.isNotEmpty) {
+      try {
+        return NetworkImage(imageUrl);
+      } catch (e) {
+        print('Error loading image: $e');
+        return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+      }
+    } else {
+      return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+    }
   }
 
   @override
@@ -94,6 +106,7 @@ class _SeekerViewState extends State<SeekerView> {
                               ProfileAvatar(
                                 imagePath: profileImage, // Profile image
                                 isOnline: true, // Online status
+                                imageProvider: _getImageProvider(profileImage),
                               ),
                               const SizedBox(height: 10),
                               Text(
@@ -215,7 +228,7 @@ class _SeekerViewState extends State<SeekerView> {
                       children: [
                         StatWidget(
                             label: 'Completed Works',
-                            value: completedWorksString),
+                            value: completedWorks.toString()),
                         StatWidget(label: 'Customer Reviews', value: '85+'),
                       ],
                     ),

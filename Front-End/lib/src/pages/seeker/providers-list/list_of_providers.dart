@@ -57,10 +57,9 @@ class ListOfProvidersState extends State<ListOfProviders> {
   void _filterProviders(List<dynamic> providers) {
     setState(() {
       filteredProviders = providers.where((provider) {
-        final location = provider['location'] ?? '';
-        final subCategories = provider['subCategories'] ?? [];
-        return location.contains(widget.selectedLocation) &&
-            subCategories.any((subCategory) =>
+        return provider['isApproved'] == true &&
+            provider['location'].contains(widget.selectedLocation) &&
+            provider['subCategories'].any((subCategory) =>
                 widget.selectedSubCategories.contains(subCategory));
       }).toList();
       isLoading = false;
@@ -105,12 +104,12 @@ class ListOfProvidersState extends State<ListOfProviders> {
                           itemBuilder: (context, index) {
                             final provider = filteredProviders[index];
                             return ProviderCard(
-                              providerId: provider['_id']?.toString() ?? '',
+                              providerId: provider['_id'] ?? '',
                               name:
-                                  '${provider['firstName'] ?? 'Unknown'} ${provider['lastName'] ?? ''}',
+                                  '${provider['firstName']} ${provider['lastName']}',
                               imageUrl: provider['profileImageUrl'] ?? '',
                               rating: (provider['rating'] ?? 0).toDouble(),
-                              profession: provider['profession'] ?? 'Unknown',
+                              profession: provider['profession'] ?? '',
                               completedWorks: provider['completedWorks'] ?? 0,
                               isAvailable: provider['isAvailable'] ?? false,
                             );

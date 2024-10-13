@@ -7,6 +7,7 @@ import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/config/route.dart';
+import '../../../config/url.dart';
 import '../../../constants/constants_font.dart';
 import '../../../utils/validators.dart';
 import '../../seeker/category/components/categories.dart';
@@ -53,7 +54,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
       if (_currentStep == 0) {
         // Send OTP
         final response = await http.post(
-          Uri.parse('http://localhost:3000/api/provider/register/step1'),
+          Uri.parse(registerProvidersUrl_1),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'email': _emailController.text,
@@ -71,7 +72,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
       } else if (_currentStep == 1) {
         // Verify OTP
         final response = await http.post(
-          Uri.parse('http://localhost:3000/api/provider/register/step2'),
+          Uri.parse(registerProvidersUrl_2),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'phone': _phoneController.text,
@@ -91,7 +92,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
         if (_profileImage != null) {
           final request = http.MultipartRequest(
             'POST',
-            Uri.parse('http://localhost:3000/api/provider/register/step3'),
+            Uri.parse(registerProvidersUrl_3),
           );
           request.fields['phone'] = _phoneController.text;
           request.files.add(await http.MultipartFile.fromPath(
@@ -111,7 +112,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
         if (_nicImageFront != null) {
           final request = http.MultipartRequest(
             'POST',
-            Uri.parse('http://localhost:3000/api/provider/register/step41'),
+            Uri.parse(registerProvidersUrl_41),
           );
           request.fields['phone'] = _phoneController.text;
           request.files.add(await http.MultipartFile.fromPath(
@@ -131,7 +132,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
         if (_nicImageBack != null) {
           final request = http.MultipartRequest(
             'POST',
-            Uri.parse('http://localhost:3000/api/provider/register/step42'),
+            Uri.parse(registerProvidersUrl_42),
           );
           request.fields['phone'] = _phoneController.text;
           request.files.add(await http.MultipartFile.fromPath(
@@ -149,7 +150,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
       } else if (_currentStep == 5) {
         // Set password and complete registration
         final response = await http.post(
-          Uri.parse('http://localhost:3000/api/provider/register/step5'),
+          Uri.parse(registerProvidersUrl_5),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'phone': _phoneController.text,
@@ -168,7 +169,12 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
             _currentStep++;
           });
         } else {
-          // Handle error
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to register: ${response.body}'),
+              backgroundColor: kErrorColor,
+            ),
+          );
         }
       }
     }
