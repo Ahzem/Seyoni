@@ -153,7 +153,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
             children: [
               // Logo
               Image.asset(
-                'assets/images/logo-icon.png',
+                'assets/images/logo.png',
                 height: height * 0.1,
                 fit: BoxFit.contain,
               ),

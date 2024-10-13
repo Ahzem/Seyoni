@@ -290,3 +290,24 @@ exports.signInProvider = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+exports.updateProviderStatus = async (req, res) => {
+  const { id } = req.params;
+  const { isApproved } = req.body;
+
+  try {
+    const provider = await Provider.findByIdAndUpdate(
+      id,
+      { isApproved },
+      { new: true }
+    );
+
+    if (!provider) {
+      return res.status(404).json({ message: "Provider not found" });
+    }
+
+    res.status(200).json(provider);
+  } catch (error) {
+    res.status(400).json({ message: "Error updating provider status", error });
+  }
+};

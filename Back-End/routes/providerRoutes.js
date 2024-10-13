@@ -22,4 +22,7 @@ router.post("/register/step5", providerController.registerStep5);
 // POST route to sign in a provider
 router.post("/signin", providerController.signInProvider);
 
+// PATCH route to update provider status
+router.patch("/providers/:id/status", providerController.updateProviderStatus);
+
 module.exports = router;
