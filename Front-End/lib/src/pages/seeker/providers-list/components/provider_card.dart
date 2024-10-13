@@ -35,8 +35,7 @@ class ProviderCard extends StatefulWidget {
 @override
 class ProviderCardState extends State<ProviderCard> {
   Future<Map<String, dynamic>> fetchProviderDetails(String providerId) async {
-    final response =
-        await http.get(Uri.parse('$url/api/providers/$providerId'));
+    final response = await http.get(Uri.parse('$getProvidersUrl/$providerId'));
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
