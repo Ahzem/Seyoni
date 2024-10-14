@@ -20,5 +20,5 @@ const registerProvidersUrl_5 = '$url/api/providers/register/step5';
 
 const loginProvidersUrl = '$url/api/providers/signin';
 
-const fetchProvidersUrl = '$url/providers';
-const updateProviderStatusUrl = '$url/providers';
+const fetchProvidersUrl = '$url/api/providers';
+const updateProviderStatusUrl = '$url/api/providers';

@@ -70,7 +70,7 @@ class AdminHomePageState extends State<AdminHomePage> {
                     return Card(
                       color: kPrimaryColor,
                       child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
