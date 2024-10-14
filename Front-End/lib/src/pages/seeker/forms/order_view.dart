@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/route.dart';
-import '../../../config/url.dart';
 import '../../../constants/constants_font.dart';
 import '../../../widgets/background_widget.dart';
 import '../profiles/components/icon_button_widget.dart';
 import 'components/service_provider_info.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class OrderView extends StatefulWidget {
   final String name;
@@ -19,6 +15,7 @@ class OrderView extends StatefulWidget {
   final String time;
   final String date;
   final String description;
+  final String status;
 
   const OrderView({
     super.key,
@@ -30,6 +27,7 @@ class OrderView extends StatefulWidget {
     required this.time,
     required this.date,
     required this.description,
+    required this.status,
   });
 
   @override
@@ -37,50 +35,6 @@ class OrderView extends StatefulWidget {
 }
 
 class OrderViewState extends State<OrderView> {
-  List<dynamic> _reservations = [];
-
-  String get requestStatus {
-    return _reservations.isEmpty
-        ? 'pending'
-        : 'accepted'; // Adjust the logic as needed
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchReservations();
-  }
-
-  Future<void> _fetchReservations() async {
-    final url = Uri.parse(getReservationsUrl);
-
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? seekerId = prefs.getString('seekerId');
-
-      if (seekerId == null) {
-        throw Exception('Seeker ID is not available');
-      }
-
-      final response = await http.get(
-        url,
-        headers: {
-          'seeker-id': seekerId,
-        },
-      );
-
-      if (response.statusCode == 200) {
-        setState(() {
-          _reservations = json.decode(response.body);
-        });
-      } else {
-        throw Exception('Failed to load reservations');
-      }
-    } catch (e) {
-      throw Exception('Failed to load reservations');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -187,7 +141,7 @@ class OrderViewState extends State<OrderView> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      if (requestStatus == 'pending') ...[
+                                      if (widget.status == 'pending') ...[
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 15, vertical: 8),
@@ -209,7 +163,7 @@ class OrderViewState extends State<OrderView> {
                                             ],
                                           ),
                                         ),
-                                      ] else if (requestStatus ==
+                                      ] else if (widget.status ==
                                           'accepted') ...[
                                         Container(
                                           padding: const EdgeInsets.symmetric(
@@ -232,7 +186,7 @@ class OrderViewState extends State<OrderView> {
                                             ],
                                           ),
                                         ),
-                                      ] else if (requestStatus ==
+                                      ] else if (widget.status ==
                                           'rejected') ...[
                                         Container(
                                           padding: const EdgeInsets.symmetric(

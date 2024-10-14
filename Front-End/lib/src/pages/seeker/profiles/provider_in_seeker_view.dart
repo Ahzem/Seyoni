@@ -35,7 +35,7 @@ class _SeekerViewState extends State<SeekerView> {
         '${widget.providerDetails['firstName']} ${widget.providerDetails['lastName']}';
     profileImage = widget.providerDetails['profileImageUrl'] ?? '';
     rating = (widget.providerDetails['rating'] ?? 5).toDouble();
-    profession = widget.providerDetails['profession'] ?? 'Unknown';
+    profession = widget.providerDetails['profession'];
     completedWorks = widget.providerDetails['completedWorks'] ?? 100;
   }
 
@@ -50,6 +50,22 @@ class _SeekerViewState extends State<SeekerView> {
     } else {
       return AssetImage('assets/images/profile-3.jpg'); // Fallback image
     }
+  }
+
+  void _navigateToHiringForm(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HiringForm(
+          name: name,
+          profileImage: profileImage,
+          rating: rating,
+          profession: profession,
+          serviceType: widget.providerDetails['category'] ?? '',
+          providerId: widget.providerDetails['_id'],
+        ),
+      ),
+    );
   }
 
   @override
@@ -148,20 +164,9 @@ class _SeekerViewState extends State<SeekerView> {
                               ),
                               const SizedBox(height: 10),
                               PrimaryFilledButtonTwo(
-                                  text: "Hire",
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => HiringForm(
-                                          name: name,
-                                          profileImage: profileImage,
-                                          rating: rating,
-                                          profession: profession,
-                                        ),
-                                      ),
-                                    );
-                                  }),
+                                text: "Hire",
+                                onPressed: () => _navigateToHiringForm(context),
+                              ),
                               const SizedBox(height: 10),
                               // Icons section
                               Row(

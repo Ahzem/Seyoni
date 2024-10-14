@@ -6,6 +6,14 @@ plugins {
     id "com.google.gms.google-services"
 }
 
+project.ext.env = [
+    GOOGLE_PLACES_API_KEY: getEnvVar("GOOGLE_PLACES_API_KEY")
+]
+
+def getEnvVar(String key) {
+    return System.getenv()[key] ?: ""
+}
+
 android {
     namespace = "com.example.seyoni"
     compileSdk = flutter.compileSdkVersion
@@ -43,12 +51,4 @@ android {
 
 flutter {
     source = "../.."
-}
-
-project.ext.env = [
-    GOOGLE_PLACES_API_KEY: getEnvVar("GOOGLE_PLACES_API_KEY")
-]
-
-def getEnvVar(String key) {
-    return System.getenv()[key] ?: ""
 }

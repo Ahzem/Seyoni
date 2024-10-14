@@ -112,6 +112,7 @@ class ListOfProvidersState extends State<ListOfProviders> {
                               profession: provider['profession'] ?? '',
                               completedWorks: provider['completedWorks'] ?? 0,
                               isAvailable: provider['isAvailable'] ?? false,
+                              serviceType: provider['category'] ?? '',
                             );
                           },
                         )

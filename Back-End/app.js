@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 app.use("/api/seeker", SeekerRouter);
 app.use("/api/user", UserRouter);
-app.use("/api", ReservationRouter);
+app.use("/api/reservations", ReservationRouter);
 app.use("/api/providers", providerRoutes);
 app.use("/api/otp", otpRoutes);
 

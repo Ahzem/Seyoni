@@ -14,6 +14,7 @@ class ProviderCard extends StatefulWidget {
   final String imageUrl;
   final double rating;
   final String profession;
+  final String serviceType;
   final int completedWorks;
   final bool isAvailable;
 
@@ -24,6 +25,7 @@ class ProviderCard extends StatefulWidget {
     required this.imageUrl,
     required this.rating,
     required this.profession,
+    required this.serviceType,
     required this.completedWorks,
     required this.isAvailable,
   });
@@ -35,8 +37,7 @@ class ProviderCard extends StatefulWidget {
 @override
 class ProviderCardState extends State<ProviderCard> {
   Future<Map<String, dynamic>> fetchProviderDetails(String providerId) async {
-    final response =
-        await http.get(Uri.parse('$url/api/providers/$providerId'));
+    final response = await http.get(Uri.parse('$getProvidersUrl/$providerId'));
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
@@ -80,6 +81,8 @@ class ProviderCardState extends State<ProviderCard> {
             profileImage: providerDetails['profileImageUrl'],
             rating: providerDetails['rating'].toDouble(),
             profession: providerDetails['profession'],
+            serviceType: widget.serviceType,
+            providerId: providerId,
           ),
         ),
       );

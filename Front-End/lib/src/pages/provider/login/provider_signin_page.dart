@@ -23,20 +23,27 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool isLoading = false;
 
-  void _signIn() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        isLoading = true;
-      });
+  Future<void> _signIn() async {
+    setState(() {
+      isLoading = true;
+    });
 
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    if (email == 'seyoni@admin.com' && password == 'Seyoni@1234') {
+      // Navigate to admin home page
+      Navigator.pushReplacementNamed(context, AppRoutes.adminHomePage);
+    } else {
+      // Normal provider sign-in logic
       final response = await http.post(
         Uri.parse(loginProvidersUrl),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
-          'email': _emailController.text,
-          'password': _passwordController.text,
+          'email': email,
+          'password': password,
         }),
       );
 
@@ -47,19 +54,60 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         final token = responseData['token'];
+        final providerId = responseData['providerId'];
 
-        // Save the token in SharedPreferences
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', token);
+        if (token != null && providerId != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token);
+          await prefs.setString('providerId', providerId);
 
-        Navigator.pushReplacementNamed(context, AppRoutes.providerHomePage);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Success'),
+                content: const Text('Sign-in successful!'),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacementNamed(
+                          context, AppRoutes.providerHomePage);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          _showErrorDialog('Invalid response from server');
+        }
       } else {
         final error = jsonDecode(response.body)['error'];
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $error')),
-        );
+        _showErrorDialog('Error: $error');
       }
     }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -73,7 +121,6 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: height * 0.1), // Adjust top spacing
               Image.asset(
                 'assets/images/logo-icon.png',
                 height: height * 0.15,

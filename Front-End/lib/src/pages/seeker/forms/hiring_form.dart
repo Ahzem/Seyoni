@@ -20,7 +20,6 @@ import '../../../widgets/alertbox/reservation_confirmation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
-
 import 'order_view.dart';
 
 class HiringForm extends StatefulWidget {
@@ -28,6 +27,8 @@ class HiringForm extends StatefulWidget {
   final String profileImage;
   final double rating;
   final String profession;
+  final String serviceType;
+  final String providerId;
 
   const HiringForm({
     super.key,
@@ -35,6 +36,8 @@ class HiringForm extends StatefulWidget {
     required this.profileImage,
     required this.rating,
     required this.profession,
+    required this.serviceType,
+    required this.providerId,
   });
 
   @override
@@ -52,6 +55,12 @@ class HiringFormState extends State<HiringForm> {
       GlobalKey<GoogleMapWidgetState>();
 
   Future<void> _confirmReservation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? seekerId = prefs.getString('seekerId');
+    String? firstName = prefs.getString('firstName');
+    String? lastName = prefs.getString('lastName');
+    String? email = prefs.getString('email');
+
     if (_selectedDate == null ||
         _selectedTime == null ||
         _selectedLocation == null && _enteredAddress == null ||
@@ -65,20 +74,20 @@ class HiringFormState extends State<HiringForm> {
       ));
       return;
     }
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? seekerId = prefs.getString('seekerId');
-    String? firstName = prefs.getString('firstName');
-    String? lastName = prefs.getString('lastName');
-    String? email = prefs.getString('email');
+    print({
+      'seekerId': seekerId,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'providerId': widget.providerId,
+    });
 
     if (seekerId == null ||
         firstName == null ||
         lastName == null ||
         email == null) {
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Failed to retrieve seeker details.',
               style: TextStyle(color: Colors.black)),
           backgroundColor: kPrimaryColor,
@@ -92,6 +101,7 @@ class HiringFormState extends State<HiringForm> {
       'profileImage': widget.profileImage,
       'rating': widget.rating,
       'profession': widget.profession,
+      'serviceType': widget.serviceType,
       'location': _selectedLocation?.toString() ?? _enteredAddress!,
       'time': _selectedTime!.format(context), // Format the time correctly
       'date': _selectedDate.toString(),
@@ -102,10 +112,13 @@ class HiringFormState extends State<HiringForm> {
         'lastName': lastName,
         'email': email,
       },
+      'providerId': widget.providerId,
     };
 
     var request = http.MultipartRequest('POST', Uri.parse(sendReservationsUrl));
     request.headers['seeker-id'] = seekerId; // Add seeker ID to headers
+    request.headers['provider-id'] =
+        widget.providerId; // Add provider ID to headers
 
     request.fields.addAll(
         reservationData.map((key, value) => MapEntry(key, value.toString())));
@@ -138,6 +151,7 @@ class HiringFormState extends State<HiringForm> {
             time: _selectedTime!.format(context), // Format the time correctly
             date: _selectedDate.toString(),
             description: _descriptionController.text,
+            status: 'pending',
           ),
         ),
       );
@@ -225,6 +239,7 @@ class HiringFormState extends State<HiringForm> {
         },
         onConfirm: () {
           Navigator.of(ctx).pop();
+
           _confirmReservation();
         },
       ),

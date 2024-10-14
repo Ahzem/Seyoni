@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../pages/admin/admin_home_page.dart';
 import '../pages/provider/provider_entry_page.dart';
 import '../pages/seeker/forgot-password/verify_code_page.dart';
 import '../pages/provider/home/provider_home_page.dart';
@@ -34,6 +35,7 @@ class AppRoutes {
   static const String providerHomePage = '/provider-home';
   static const String orderHistoryPage = '/order-history';
   static const String providerEntryPage = '/provider-entry';
+  static const String adminHomePage = '/admin-home';
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -77,6 +79,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const OrderHistoryPage());
     case AppRoutes.providerEntryPage:
       return MaterialPageRoute(builder: (_) => const ProviderEntryPage());
+    case AppRoutes.adminHomePage:
+      return MaterialPageRoute(builder: (_) => const AdminHomePage());
     default:
       return MaterialPageRoute(
         builder: (_) => Scaffold(

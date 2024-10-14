@@ -5,17 +5,25 @@ const authMiddleware = require("../middleware/authMiddleware"); // Ensure this m
 
 // POST route to create a reservation
 router.post(
-  "/reservations",
+  "/createReservation",
   authMiddleware,
   reservationController.uploadImages,
   reservationController.createReservation
 );
 
 // GET route to retrieve reservations
-router.get(
-  "/reservations",
+router.get("/", authMiddleware, reservationController.getReservations);
+
+router.patch(
+  "/:reservationId/accept",
   authMiddleware,
-  reservationController.getReservations
+  reservationController.acceptReservation
+);
+
+router.patch(
+  "/:reservationId/reject",
+  authMiddleware,
+  reservationController.rejectReservation
 );
 
 module.exports = router;

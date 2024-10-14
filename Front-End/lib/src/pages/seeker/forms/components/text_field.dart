@@ -28,6 +28,7 @@ class CustomTextField extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             color: Colors.white.withOpacity(0.1),
             child: TextField(
+              cursorColor: kPrimaryColor,
               controller: controller,
               decoration: InputDecoration(
                 icon: Icon(Icons.message, color: kPrimaryColor),

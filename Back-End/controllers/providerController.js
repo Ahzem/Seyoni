@@ -251,9 +251,12 @@ exports.registerStep5 = async (req, res) => {
     const token = jwt.sign({ id: provider._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    res
-      .status(201)
-      .json({ message: "Provider registered successfully", token });
+    const data = {
+      providerId: provider._id,
+      token: token,
+    };
+    // console.log("Provider registered successfullyyyy");
+    res.status(200).json({ message: "Provider registered successfully", data });
   } catch (error) {
     console.error("Error in registerStep5:", error);
     res.status(500).json({ error: "Server error" });
@@ -280,9 +283,31 @@ exports.signInProvider = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.status(200).json({ message: "Sign-in successful", token });
+    // Return the token and providerId
+    res.status(200).json({ token, providerId: provider._id });
   } catch (error) {
     console.error("Error in signInProvider:", error);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+exports.updateProviderStatus = async (req, res) => {
+  const { id } = req.params;
+  const { isApproved } = req.body;
+
+  try {
+    const provider = await Provider.findByIdAndUpdate(
+      id,
+      { isApproved },
+      { new: true }
+    );
+
+    if (!provider) {
+      return res.status(404).json({ message: "Provider not found" });
+    }
+
+    res.status(200).json(provider);
+  } catch (error) {
+    res.status(400).json({ message: "Error updating provider status", error });
   }
 };

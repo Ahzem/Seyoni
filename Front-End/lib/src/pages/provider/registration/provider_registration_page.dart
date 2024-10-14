@@ -7,6 +7,7 @@ import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/config/route.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/url.dart';
 import '../../../constants/constants_font.dart';
 import '../../../utils/validators.dart';
@@ -165,15 +166,20 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
         );
 
         if (response.statusCode == 200) {
-          setState(() {
-            _currentStep++;
-          });
+          final responseData = jsonDecode(response.body);
+          final data = responseData['data'];
+          final token = data['token'];
+          final providerId = data['providerId'];
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('providerId', providerId);
+          await prefs.setString('token', token);
+
+          Navigator.pushNamed(context, AppRoutes.providerHomePage);
         } else {
+          final error = jsonDecode(response.body)['error'];
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to register: ${response.body}'),
-              backgroundColor: kErrorColor,
-            ),
+            SnackBar(content: Text('Failed to register: $error')),
           );
         }
       }
@@ -640,8 +646,6 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                                 text: 'Register',
                                 onPressed: () {
                                   _nextStep();
-                                  Navigator.pushNamed(
-                                      context, AppRoutes.providerHomePage);
                                 }),
                           ],
                         ),
