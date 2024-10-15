@@ -10,6 +10,7 @@ const sendReservationsUrl = '$url/api/reservations/createReservation';
 const getReservationsUrl = '$url/api/reservations';
 
 const getProvidersUrl = '$url/api/providers';
+const getSeekersUrl = '$url/api/seeker/all';
 
 const registerProvidersUrl_1 = '$url/api/providers/register/step1';
 const registerProvidersUrl_2 = '$url/api/providers/register/step2';

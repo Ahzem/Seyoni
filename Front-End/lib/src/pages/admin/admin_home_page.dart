@@ -51,8 +51,6 @@ class AdminHomePageState extends State<AdminHomePage> {
   }
 
   void _logout() {
-    // logout logic
-    // For example, clear user session and navigate to login page
     Navigator.pushReplacementNamed(context, AppRoutes.providerSignIn);
   }
 
@@ -62,7 +60,12 @@ class AdminHomePageState extends State<AdminHomePage> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: kPrimaryColor,
-        title: Text('Admin Home Page'),
+        title: Center(
+          child: Image.asset(
+            'assets/images/logo.png', // Replace with your logo path
+            height: 40,
+          ),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
@@ -76,54 +79,56 @@ class AdminHomePageState extends State<AdminHomePage> {
           child: Column(
             children: [
               Expanded(
-                child: ListView.builder(
-                  itemCount: providers.length,
-                  itemBuilder: (context, index) {
-                    final provider = providers[index];
-                    return Card(
-                      color: kPrimaryColor,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                'Name: ${provider['firstName']} ${provider['lastName']}',
-                                style: kSubtitleTextStyle),
-                            Text('Email: ${provider['email']}',
-                                style: kSubtitleTextStyle),
-                            Text('Phone: ${provider['phone']}',
-                                style: kSubtitleTextStyle),
-                            Text('Location: ${provider['location']}',
-                                style: kSubtitleTextStyle),
-                            Text('Category: ${provider['category']}',
-                                style: kSubtitleTextStyle),
-                            Text(
-                                'Subcategories: ${provider['subCategories'].join(', ')}',
-                                style: kSubtitleTextStyle),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                PrimaryFilledButtonTwo(
-                                  text: 'Approve',
-                                  onPressed: () => _updateProviderStatus(
-                                      provider['_id'], true),
-                                ),
-                                PrimaryFilledButtonTwo(
-                                  text: 'Reject',
-                                  onPressed: () => _updateProviderStatus(
-                                      provider['_id'], false),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                child: GridView.count(
+                  crossAxisCount: 1,
+                  children: [
+                    _buildBlurredContainer(
+                      context,
+                      'Manage Seekers',
+                      Icons.people,
+                      AppRoutes.listOfSeekers,
+                    ),
+                    _buildBlurredContainer(
+                      context,
+                      'Manage Providers',
+                      Icons.business,
+                      AppRoutes.listOfProviders,
+                    ),
+                    _buildBlurredContainer(
+                      context,
+                      'Provider Registration Request',
+                      Icons.app_registration,
+                      AppRoutes.listOfRegistrationRequests,
+                    ),
+                  ],
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBlurredContainer(
+      BuildContext context, String title, IconData icon, String route) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, route);
+      },
+      child: Container(
+        margin: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: kPrimaryColor.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 50, color: Colors.white),
+              const SizedBox(height: 10),
+              Text(title, style: kTitleTextStyle),
             ],
           ),
         ),

@@ -6,7 +6,6 @@ import '../../../widgets/custom_appbar.dart';
 import '../../../widgets/customNavBar/custom_navbar.dart';
 import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_font.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import '../category/category_page.dart';
 import '../chat/chat_page.dart';
 import '../menu/menupage.dart';
@@ -21,18 +20,11 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  late Map<String, dynamic> _decodedToken;
   int _currentIndex = 2; // Initialize _currentIndex to a valid index
 
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance().then((prefs) {
-      print({
-        'token': prefs.getString('token'),
-        'seekerId': prefs.getString('seekerId'),
-      });
-    });
 
     // Call the function to check permissions
     _checkPermissions();

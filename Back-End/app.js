@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const SeekerRouter = require("./routes/seekerRoutes");
-const UserRouter = require("./routes/userRoutes");
 const ReservationRouter = require("./routes/reservationRoutes");
 const providerRoutes = require("./routes/providerRoutes");
 const otpRoutes = require("./routes/otpRoutes");
@@ -11,7 +10,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 app.use("/api/seeker", SeekerRouter);
-app.use("/api/user", UserRouter);
 app.use("/api/reservations", ReservationRouter);
 app.use("/api/providers", providerRoutes);
 app.use("/api/otp", otpRoutes);
