@@ -23,6 +23,9 @@ router.post("/register/step5", providerController.registerStep5);
 router.post("/signin", providerController.signInProvider);
 
 // PATCH route to update provider status
-router.patch("/providers/:id/status", providerController.updateProviderStatus);
+router.post("/:id", providerController.updateProviderStatus);
+
+// DELETE route to delete a provider
+router.delete("/:id", providerController.deleteProvider);
 
 module.exports = router;

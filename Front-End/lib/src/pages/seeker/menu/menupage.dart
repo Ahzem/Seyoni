@@ -11,11 +11,12 @@ class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
 
   Future<Map<String, String>> _getUserDetails() async {
-    final prefs = await SharedPreferences.getInstance();
-    final firstName = prefs.getString('firstName') ?? '';
-    final lastName = prefs.getString('lastName') ?? '';
-    final email = prefs.getString('email') ?? '';
-    return {'firstName': firstName, 'lastName': lastName, 'email': email};
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return {
+      'firstName': prefs.getString('firstName') ?? '',
+      'lastName': prefs.getString('lastName') ?? '',
+      'email': prefs.getString('email') ?? '',
+    };
   }
 
   @override

@@ -67,14 +67,10 @@ Future<bool> registerSeekerToBackend(
 
     if (response.statusCode == 201) {
       var jsonResponse = jsonDecode(response.body);
+      // Check if the widget is still mounted before using the context
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', jsonResponse['token']);
-      await prefs.setString('firstName', jsonResponse['seeker']['firstName']);
-      await prefs.setString('lastName', jsonResponse['seeker']['lastName']);
-      await prefs.setString('email', jsonResponse['seeker']['email']);
-      await prefs.setString('seekerId', jsonResponse['seeker']['_id']);
 
-      // Check if the widget is still mounted before using the context
       if (!context.mounted) return false;
 
       Navigator.pushNamed(
@@ -123,6 +119,9 @@ Future<bool> verifyOtpAndRegisterSeeker(
     );
 
     if (response.statusCode == 201) {
+      var jsonResponse = jsonDecode(response.body);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('seekerId', jsonResponse['seekerId']);
       return true;
     } else {
       if (kDebugMode) {

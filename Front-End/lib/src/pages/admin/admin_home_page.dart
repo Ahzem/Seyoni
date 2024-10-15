@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:seyoni/src/config/route.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import '../../config/url.dart';
-import '../../widgets/custom_button.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -36,9 +35,9 @@ class AdminHomePageState extends State<AdminHomePage> {
   }
 
   Future<void> _updateProviderStatus(String id, bool isApproved) async {
-    final response = await http.patch(
+    final response = await http.post(
       Uri.parse('$updateProviderStatusUrl/$id'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({'isApproved': isApproved}),
     );
 
@@ -49,68 +48,87 @@ class AdminHomePageState extends State<AdminHomePage> {
     }
   }
 
+  void _logout() {
+    Navigator.pushReplacementNamed(context, AppRoutes.providerSignIn);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        automaticallyImplyLeading: false, // Remove the back button
+        backgroundColor: Colors.transparent,
+        title: Center(
+          child: Image.asset(
+            'assets/images/logo.png', // Replace with your logo path
+            height: 40,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout, color: kPrimaryColor),
+            onPressed: _logout,
+          ),
+        ],
+      ),
       body: BackgroundWidget(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Text(
-                'Admin Home Page',
-                style: kTitleTextStyle,
-              ),
-              const SizedBox(height: 20),
               Expanded(
-                child: ListView.builder(
-                  itemCount: providers.length,
-                  itemBuilder: (context, index) {
-                    final provider = providers[index];
-                    return Card(
-                      color: kPrimaryColor,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                'Name: ${provider['firstName']} ${provider['lastName']}',
-                                style: kSubtitleTextStyle),
-                            Text('Email: ${provider['email']}',
-                                style: kSubtitleTextStyle),
-                            Text('Phone: ${provider['phone']}',
-                                style: kSubtitleTextStyle),
-                            Text('Location: ${provider['location']}',
-                                style: kSubtitleTextStyle),
-                            Text('Category: ${provider['category']}',
-                                style: kSubtitleTextStyle),
-                            Text(
-                                'Subcategories: ${provider['subCategories'].join(', ')}',
-                                style: kSubtitleTextStyle),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                PrimaryFilledButtonTwo(
-                                  text: 'Approve',
-                                  onPressed: () => _updateProviderStatus(
-                                      provider['_id'], true),
-                                ),
-                                PrimaryFilledButtonTwo(
-                                  text: 'Reject',
-                                  onPressed: () => _updateProviderStatus(
-                                      provider['_id'], false),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  children: [
+                    _buildBlurredContainer(
+                      context,
+                      'Manage Seekers',
+                      Icons.people,
+                      AppRoutes.listOfSeekers,
+                    ),
+                    _buildBlurredContainer(
+                      context,
+                      'Manage Providers',
+                      Icons.business,
+                      AppRoutes.listOfProviders,
+                    ),
+                    _buildBlurredContainer(
+                      context,
+                      'Provider Registration Request',
+                      Icons.app_registration,
+                      AppRoutes.listOfRegistrationRequests,
+                    ),
+                  ],
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBlurredContainer(
+      BuildContext context, String title, IconData icon, String route) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, route);
+      },
+      child: Container(
+        margin: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: kPrimaryColor.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 50, color: Colors.white),
+              const SizedBox(height: 10),
+              Text(title,
+                  style: kSubtitleTextStyle, textAlign: TextAlign.center),
             ],
           ),
         ),

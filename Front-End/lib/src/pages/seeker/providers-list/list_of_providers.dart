@@ -38,11 +38,11 @@ class ListOfProvidersState extends State<ListOfProviders> {
         final providers = json.decode(response.body);
         _filterProviders(providers);
       } else {
-        throw Exception('Failed to load providers');
+        throw Exception('Failed to load providers ${response.statusCode}');
       }
     } catch (e) {
       setState(() {
-        errorMessage = 'Failed to load providers';
+        errorMessage = 'Failed to load providers: $e';
         isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
@@ -58,7 +58,8 @@ class ListOfProvidersState extends State<ListOfProviders> {
     setState(() {
       filteredProviders = providers.where((provider) {
         return provider['isApproved'] == true &&
-            provider['location'].contains(widget.selectedLocation) &&
+            (provider['location']?.contains(widget.selectedLocation) ??
+                false) &&
             provider['subCategories'].any((subCategory) =>
                 widget.selectedSubCategories.contains(subCategory));
       }).toList();

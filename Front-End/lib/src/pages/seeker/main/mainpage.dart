@@ -1,36 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission handler package
 import 'package:seyoni/src/pages/seeker/order-history/order_history_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/custom_appbar.dart';
 import '../../../widgets/customNavBar/custom_navbar.dart';
 import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_font.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import '../category/category_page.dart';
 import '../chat/chat_page.dart';
 import '../menu/menupage.dart';
 
 class HomePage extends StatefulWidget {
-  final String? token;
-  const HomePage({super.key, this.token});
+  const HomePage({
+    super.key,
+  });
 
   @override
   HomePageState createState() => HomePageState();
 }
 
 class HomePageState extends State<HomePage> {
-  late Map<String, dynamic> _decodedToken;
   int _currentIndex = 2; // Initialize _currentIndex to a valid index
 
   @override
   void initState() {
     super.initState();
-
-    if (widget.token != null) {
-      _decodedToken = JwtDecoder.decode(widget.token!);
-    } else {
-      _decodedToken = {}; // Handle the case where token is null
-    }
 
     // Call the function to check permissions
     _checkPermissions();
