@@ -5,9 +5,7 @@ import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import '../../config/url.dart';
-import '../../widgets/custom_button.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -59,7 +57,8 @@ class AdminHomePageState extends State<AdminHomePage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: kPrimaryColor,
+        automaticallyImplyLeading: false, // Remove the back button
+        backgroundColor: Colors.transparent,
         title: Center(
           child: Image.asset(
             'assets/images/logo.png', // Replace with your logo path
@@ -68,7 +67,7 @@ class AdminHomePageState extends State<AdminHomePage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: Icon(Icons.logout, color: kPrimaryColor),
             onPressed: _logout,
           ),
         ],
@@ -80,7 +79,7 @@ class AdminHomePageState extends State<AdminHomePage> {
             children: [
               Expanded(
                 child: GridView.count(
-                  crossAxisCount: 1,
+                  crossAxisCount: 2,
                   children: [
                     _buildBlurredContainer(
                       context,
@@ -119,7 +118,7 @@ class AdminHomePageState extends State<AdminHomePage> {
       child: Container(
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: kPrimaryColor.withOpacity(0.5),
+          color: kPrimaryColor.withOpacity(0.2),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
@@ -128,7 +127,8 @@ class AdminHomePageState extends State<AdminHomePage> {
             children: [
               Icon(icon, size: 50, color: Colors.white),
               const SizedBox(height: 10),
-              Text(title, style: kTitleTextStyle),
+              Text(title,
+                  style: kSubtitleTextStyle, textAlign: TextAlign.center),
             ],
           ),
         ),

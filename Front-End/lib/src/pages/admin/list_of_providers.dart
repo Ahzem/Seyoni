@@ -29,8 +29,11 @@ class ListOfProvidersState extends State<ListOfProviders> {
       final response = await http.get(Uri.parse(getProvidersUrl));
       if (response.statusCode == 200) {
         setState(() {
-          providers =
-              List<Map<String, dynamic>>.from(jsonDecode(response.body));
+          providers = List<Map<String, dynamic>>.from(jsonDecode(response.body))
+              .where((provider) =>
+                  provider['isApproved'] == true &&
+                  provider['email'] != 'seyoni@admin.com')
+              .toList();
           isLoading = false;
         });
       } else {
@@ -60,6 +63,12 @@ class ListOfProvidersState extends State<ListOfProviders> {
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
             title: const Text('List of Providers',
                 style: TextStyle(fontSize: 20, color: Colors.white)),
             backgroundColor: Colors.transparent,
@@ -87,24 +96,43 @@ class ListOfProvidersState extends State<ListOfProviders> {
                       itemCount: providers.length,
                       itemBuilder: (context, index) {
                         final provider = providers[index];
+                        final fullName =
+                            '${provider['firstName'] ?? 'N/A'} ${provider['lastName'] ?? 'N/A'}';
+                        final email = provider['email'] ?? 'N/A';
                         return Card(
-                          color: kPrimaryColor,
+                          color: Colors.white.withOpacity(0.2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(provider['profileImageUrl']),
+                                  backgroundImage: NetworkImage(
+                                    provider['profileImageUrl'] ??
+                                        'https://via.placeholder.com/150',
+                                  ),
                                   radius: 30,
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
-                                    'Name: ${provider['firstName']} ${provider['lastName']}',
-                                    style: kSubtitleTextStyle),
-                                Text('Email: ${provider['email']}',
-                                    style: kSubtitleTextStyle),
+                                  fullName,
+                                  style: kCardTitleTextStyle,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                Text(
+                                  email,
+                                  style: kBodyTextStyle,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
                                 const Spacer(),
                                 TextButton(
                                   onPressed: () {

@@ -59,6 +59,12 @@ class ListOfSeekersState extends State<ListOfSeekers> {
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
             title: const Text('List of Seekers',
                 style: TextStyle(fontSize: 20, color: Colors.white)),
             backgroundColor: Colors.transparent,
@@ -86,24 +92,36 @@ class ListOfSeekersState extends State<ListOfSeekers> {
                       itemCount: seekers.length,
                       itemBuilder: (context, index) {
                         final seeker = seekers[index];
+                        final fullName =
+                            '${seeker['firstName'] ?? 'N/A'} ${seeker['lastName'] ?? 'N/A'}';
+                        final email = seeker['email'] ?? 'N/A';
                         return Card(
-                          color: kPrimaryColor,
+                          color: const Color.fromARGB(255, 0, 0, 0),
                           child: Padding(
                             padding: const EdgeInsets.all(10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(seeker['profileImageUrl']),
+                                  backgroundImage: NetworkImage(
+                                    seeker['profileImageUrl'] ??
+                                        'https://via.placeholder.com/150',
+                                  ),
                                   radius: 30,
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
-                                    'Name: ${seeker['firstName']} ${seeker['lastName']}',
-                                    style: kSubtitleTextStyle),
-                                Text('Email: ${seeker['email']}',
-                                    style: kSubtitleTextStyle),
+                                  fullName,
+                                  style: kCardTitleTextStyle,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                Text(
+                                  email,
+                                  style: kBodyTextStyle,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
                                 const Spacer(),
                                 TextButton(
                                   onPressed: () {

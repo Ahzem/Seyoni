@@ -294,8 +294,6 @@ exports.signInProvider = async (req, res) => {
 exports.updateProviderStatus = async (req, res) => {
   const { id } = req.params;
   const { isApproved } = req.body;
-  console.log("isApproved:", isApproved);
-  console.log("id:", id);
 
   try {
     const provider = await Provider.findByIdAndUpdate(
@@ -311,5 +309,39 @@ exports.updateProviderStatus = async (req, res) => {
     res.status(200).json(provider);
   } catch (error) {
     res.status(400).json({ message: "Error updating provider status", error });
+  }
+};
+
+// delete the provider details when click the reject button
+
+// Future<void> _rejectProvider() async {
+//   try {
+//     final response = await http
+//         .delete(Uri.parse('$updateProviderStatusUrl/${widget.providerId}'));
+//     if (response.statusCode == 200) {
+//       Navigator.pop(context, true);
+//     } else {
+//       throw Exception('Failed to reject provider ${response.statusCode}');
+//     }
+//   } catch (e) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(
+//         content: Text('Failed to reject provider: $e'),
+//         backgroundColor: Colors.red,
+//       ),
+//     );
+//   }
+// }
+
+exports.deleteProvider = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const provider = await Provider.findByIdAndDelete(id);
+    if (!provider) {
+      return res.status(404).json({ message: "Provider not found" });
+    }
+    res.status(200).json({ message: "Provider deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ message: "Error deleting provider", error });
   }
 };

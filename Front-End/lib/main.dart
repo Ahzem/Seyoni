@@ -4,6 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'src/pages/admin/admin_home_page.dart';
+import 'src/pages/admin/list_of_providers.dart';
+import 'src/pages/admin/list_of_reg_requests.dart';
+import 'src/pages/admin/list_of_seekers.dart';
 import 'src/pages/provider/provider_entry_page.dart';
 import 'src/pages/seeker/forgot-password/new_password.page.dart';
 import 'src/pages/seeker/forgot-password/verify_code_page.dart';
@@ -69,6 +72,10 @@ class MyApp extends StatelessWidget {
         AppRoutes.orderHistoryPage: (context) => const OrderHistoryPage(),
         AppRoutes.providerEntryPage: (context) => const ProviderEntryPage(),
         AppRoutes.adminHomePage: (context) => const AdminHomePage(),
+        AppRoutes.listOfRegistrationRequests: (context) =>
+            const ListOfRegistrationRequests(),
+        AppRoutes.listOfSeekers: (context) => const ListOfSeekers(),
+        AppRoutes.listOfProviders: (context) => const ListOfProviders(),
       },
     );
   }
