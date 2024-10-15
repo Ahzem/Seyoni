@@ -13,6 +13,7 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
+  final bool? enabled;
 
   const CustomTextField({
     required this.controller,
@@ -20,6 +21,7 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.enabled,
     super.key,
   });
 
@@ -93,6 +95,10 @@ class CustomTextField extends StatelessWidget {
         return Icons.person_outline;
       case 'last name':
         return Icons.person_outline;
+      case 'location':
+        return Icons.location_on_outlined;
+      case 'address':
+        return Icons.location_on_outlined;
       default:
         return Icons.text_fields;
     }

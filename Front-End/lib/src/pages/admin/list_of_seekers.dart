@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../constants/constants_color.dart';
 import '../../constants/constants_font.dart';
 import '../../widgets/background_widget.dart';
 import '../../config/url.dart';

@@ -33,6 +33,10 @@ Future<void> loginSeeker(
       await prefs.setString('lastName', jsonResponse['seeker']['lastName']);
       await prefs.setString('email', jsonResponse['seeker']['email']);
       await prefs.setString('seekerId', jsonResponse['seeker']['_id']);
+      await prefs.setString('phone', jsonResponse['seeker']['phone']);
+      await prefs.setString(
+          'profileImageUrl', jsonResponse['seeker']['profileImageUrl']);
+      await prefs.setString('address', jsonResponse['seeker']['address']);
 
       // Check if the widget is still mounted before using the context
       if (!context.mounted) return;

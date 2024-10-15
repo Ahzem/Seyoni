@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -7,15 +8,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constants/constants_font.dart';
 import 'components/menu_item.dart';
 
-class MenuPage extends StatelessWidget {
+class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
+  @override
+  MenuPageState createState() => MenuPageState();
+}
+
+class MenuPageState extends State<MenuPage> {
   Future<Map<String, String>> _getUserDetails() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return {
+      'id': prefs.getString('seekerId') ?? '',
       'firstName': prefs.getString('firstName') ?? '',
       'lastName': prefs.getString('lastName') ?? '',
       'email': prefs.getString('email') ?? '',
+      'profileImageUrl': prefs.getString('profileImageUrl') ?? '',
     };
   }
 
@@ -64,11 +72,25 @@ class MenuPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Image.asset(
-                              'assets/icons/forms/Profile.png',
-                              height: 80,
-                              width: 80,
-                              fit: BoxFit.cover,
+                            CircleAvatar(
+                              radius: 40,
+                              backgroundImage: userDetails['profileImageUrl']!
+                                      .startsWith('http')
+                                  ? NetworkImage(
+                                      userDetails['profileImageUrl']!)
+                                  : FileImage(
+                                          File(userDetails['profileImageUrl']!))
+                                      as ImageProvider,
+                              backgroundColor: Colors.transparent,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: kPrimaryColor,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,8 +105,13 @@ class MenuPage extends StatelessWidget {
                               ],
                             ),
                             IconButton(
-                              onPressed: () {
-                                // Add your onPressed logic here
+                              onPressed: () async {
+                                final result = await Navigator.pushNamed(
+                                    context, AppRoutes.editProfile);
+                                if (result == true) {
+                                  // Refresh the user details
+                                  setState(() {});
+                                }
                               },
                               icon: Image.asset(
                                 'assets/icons/forms/Edit.png',

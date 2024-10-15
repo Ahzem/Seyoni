@@ -9,6 +9,7 @@ import '../pages/provider/home/provider_home_page.dart';
 import '../pages/provider/login/provider_signin_page.dart';
 import '../pages/provider/registration/provider_registration_page.dart';
 import '../pages/seeker/order-history/order_history_page.dart';
+import '../pages/seeker/profile_edit/profile_edit.dart';
 import '../pages/seeker/sign-pages/signup_page.dart';
 import '../pages/seeker/sign-pages/otp/otp_screen.dart';
 import '../pages/seeker/sign-pages/signin_page.dart';
@@ -43,6 +44,7 @@ class AppRoutes {
       '/list-of-registration-requests';
   static const String listOfSeekers = '/list-of-seekers';
   static const String listOfProviders = '/list-of-providers';
+  static const String editProfile = '/edit-profile';
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -95,6 +97,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const ListOfSeekers());
     case AppRoutes.listOfProviders:
       return MaterialPageRoute(builder: (_) => const ListOfProviders());
+    case AppRoutes.editProfile:
+      return MaterialPageRoute(builder: (_) => const ProfileEditPage());
 
     default:
       return MaterialPageRoute(
