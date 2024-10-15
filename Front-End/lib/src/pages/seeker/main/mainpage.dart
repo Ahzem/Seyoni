@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission handler package
 import 'package:seyoni/src/pages/seeker/order-history/order_history_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/custom_appbar.dart';
 import '../../../widgets/customNavBar/custom_navbar.dart';
 import '../../../widgets/background_widget.dart';
@@ -11,8 +12,9 @@ import '../chat/chat_page.dart';
 import '../menu/menupage.dart';
 
 class HomePage extends StatefulWidget {
-  final String? token;
-  const HomePage({super.key, this.token});
+  const HomePage({
+    super.key,
+  });
 
   @override
   HomePageState createState() => HomePageState();
@@ -25,12 +27,12 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    if (widget.token != null) {
-      _decodedToken = JwtDecoder.decode(widget.token!);
-    } else {
-      _decodedToken = {}; // Handle the case where token is null
-    }
+    SharedPreferences.getInstance().then((prefs) {
+      print({
+        'token': prefs.getString('token'),
+        'seekerId': prefs.getString('seekerId'),
+      });
+    });
 
     // Call the function to check permissions
     _checkPermissions();

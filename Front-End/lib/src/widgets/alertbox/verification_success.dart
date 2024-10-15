@@ -62,7 +62,7 @@ class VerificationSuccess extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     PrimaryFilledButton(
-                      text: 'Continue',
+                      text: 'Sign In',
                       onPressed: onPressed,
                     ),
                   ],

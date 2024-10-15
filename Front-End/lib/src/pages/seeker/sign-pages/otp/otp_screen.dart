@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../api/register_seeker.dart';
 import '../../../../constants/constants_font.dart';
 import '../../../../config/route.dart';
@@ -93,11 +95,23 @@ class OtpScreenState extends State<OtpScreen> {
         _controller6.text;
 
     final userData =
-        ModalRoute.of(context)?.settings.arguments as Map<String, String>;
+        ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+    if (userData == null) {
+      setState(() {
+        _errorMessage = 'User data is missing. Please try again.';
+        _isErrorVisible = true;
+      });
+      return;
+    }
+
     final success = await verifyOtpAndRegisterSeeker(userData, otp, context);
     if (!mounted) return;
 
     if (success) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('firstName', userData['firstName'].toString());
+      await prefs.setString('lastName', userData['lastName'].toString());
+      await prefs.setString('email', userData['email'].toString());
       showDialog(
         context: context,
         builder: (context) {
@@ -105,7 +119,7 @@ class OtpScreenState extends State<OtpScreen> {
             onPressed: () {
               Navigator.pushNamedAndRemoveUntil(
                 context,
-                AppRoutes.home,
+                AppRoutes.signIn,
                 (route) => false,
               );
             },

@@ -110,9 +110,14 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
               ),
               if (reservation['images'] != null &&
                   reservation['images'].isNotEmpty)
-                Column(
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
                   children: reservation['images'].map<Widget>((image) {
-                    return Image.network(image);
+                    return Image.network(
+                      image,
+                      width: MediaQuery.of(context).size.width / 2 - 24,
+                    );
                   }).toList(),
                 ),
               const SizedBox(height: 20),

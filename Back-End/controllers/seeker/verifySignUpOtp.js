@@ -22,7 +22,9 @@ exports.verifySignUpOtp = async (req, res) => {
     const seeker = new Seeker(tempUserData);
     await seeker.save();
     deleteTempUser(phone);
-    res.status(201).json({ message: "User registered successfully" });
+    res
+      .status(201)
+      .json({ message: "User registered successfully", seekerId: seeker._id });
   } catch (error) {
     console.error("Error verifying OTP:", error);
     res.status(500).json({ error: "Server error" });

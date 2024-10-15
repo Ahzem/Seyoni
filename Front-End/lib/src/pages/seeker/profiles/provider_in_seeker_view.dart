@@ -92,7 +92,7 @@ class _SeekerViewState extends State<SeekerView> {
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -102,7 +102,7 @@ class _SeekerViewState extends State<SeekerView> {
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
                           padding: const EdgeInsets.symmetric(
                             vertical: 20,
                             horizontal: 10,
@@ -200,8 +200,9 @@ class _SeekerViewState extends State<SeekerView> {
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
                         child: Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 10),
+                          margin: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(10),
@@ -240,7 +241,7 @@ class _SeekerViewState extends State<SeekerView> {
 
                     // Gallery Section
                     Container(
-                      margin: const EdgeInsets.all(20),
+                      margin: const EdgeInsets.all(16),
                       child: Padding(
                         padding: const EdgeInsets.all(10),
                         child: Column(

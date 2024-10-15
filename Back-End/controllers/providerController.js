@@ -294,6 +294,8 @@ exports.signInProvider = async (req, res) => {
 exports.updateProviderStatus = async (req, res) => {
   const { id } = req.params;
   const { isApproved } = req.body;
+  console.log("isApproved:", isApproved);
+  console.log("id:", id);
 
   try {
     const provider = await Provider.findByIdAndUpdate(

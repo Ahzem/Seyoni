@@ -23,7 +23,7 @@ import 'src/pages/seeker/notifications/internal/notification_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
+  await dotenv.load(fileName: ".env");
   await _requestPermissions();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.instruction: (context) => const InstructionPage(),
         AppRoutes.signIn: (context) => const SignInPage(),
         AppRoutes.signUp: (context) => SignUpPage(),
-        AppRoutes.home: (context) => HomePage(token: token),
+        AppRoutes.home: (context) => HomePage(),
         AppRoutes.otppage: (context) => const OtpScreen(),
         AppRoutes.otppagefornewpassword: (context) =>
             const OtpScreenForNewPassword(),
@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
     if (!hasSeenLaunchScreen) {
       return LaunchScreen(onLaunchScreenComplete: _onLaunchScreenComplete);
     } else if (token != null && !JwtDecoder.isExpired(token!)) {
-      return HomePage(token: token);
+      return HomePage();
     } else {
       return const SignInPage();
     }

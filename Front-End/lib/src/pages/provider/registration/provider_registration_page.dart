@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
@@ -46,7 +45,6 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
   XFile? _profileImage;
   XFile? _nicImageFront;
   XFile? _nicImageBack;
-  String? _selectedLocation;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -282,9 +280,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                         LocationField(
                           controller: _locationController,
                           onSuggestionSelected: (suggestion) {
-                            setState(() {
-                              _selectedLocation = suggestion;
-                            });
+                            setState(() {});
                           },
                         ),
                         const SizedBox(height: 10),

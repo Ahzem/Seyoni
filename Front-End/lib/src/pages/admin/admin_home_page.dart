@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seyoni/src/config/route.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
@@ -36,9 +37,9 @@ class AdminHomePageState extends State<AdminHomePage> {
   }
 
   Future<void> _updateProviderStatus(String id, bool isApproved) async {
-    final response = await http.patch(
+    final response = await http.post(
       Uri.parse('$updateProviderStatusUrl/$id'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({'isApproved': isApproved}),
     );
 
@@ -49,19 +50,31 @@ class AdminHomePageState extends State<AdminHomePage> {
     }
   }
 
+  void _logout() {
+    // logout logic
+    // For example, clear user session and navigate to login page
+    Navigator.pushReplacementNamed(context, AppRoutes.providerSignIn);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: kPrimaryColor,
+        title: Text('Admin Home Page'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: _logout,
+          ),
+        ],
+      ),
       body: BackgroundWidget(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Text(
-                'Admin Home Page',
-                style: kTitleTextStyle,
-              ),
-              const SizedBox(height: 20),
               Expanded(
                 child: ListView.builder(
                   itemCount: providers.length,
