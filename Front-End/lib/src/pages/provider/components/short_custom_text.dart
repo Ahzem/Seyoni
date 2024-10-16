@@ -24,7 +24,7 @@ class ShortCustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
-      width: width * 0.4,
+      width: width * 0.42,
       child: TextFormField(
         controller: controller,
         style: kTextFieldStyle,

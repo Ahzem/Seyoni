@@ -1,4 +1,6 @@
 const Seeker = require("../models/seekerModel");
+const { PutObjectCommand, S3Client } = require("@aws-sdk/client-s3");
+const s3 = new S3Client({ region: process.env.AWS_REGION });
 const {
   generateOtp,
   saveTempUser,
@@ -7,6 +9,7 @@ const {
   verifyOtp,
 } = require("../services/otpService");
 const generateToken = require("../utils/generateToken");
+const bcrypt = require("bcrypt");
 
 // Sign Up Seeker
 exports.signUpSeeker = async (req, res) => {
@@ -125,5 +128,66 @@ exports.getAllSeekers = async (req, res) => {
     res.status(200).json(seekers);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch seekers", error });
+  }
+};
+
+// Fetch user details
+exports.getSeekerDetails = async (req, res) => {
+  try {
+    const seeker = await Seeker.findById(req.user.id);
+    if (!seeker) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json(seeker);
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Update user details
+exports.updateSeekerDetails = async (req, res) => {
+  try {
+    const { seekerId, firstName, lastName, phone, email, address, password } =
+      req.body;
+
+    if (!seekerId) {
+      return res.status(400).json({ error: "Seeker ID is required" });
+    }
+
+    const seeker = await Seeker.findById(seekerId);
+
+    if (!seeker) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const isPasswordValid = await seeker.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: "Invalid password" });
+    }
+
+    if (req.file) {
+      const file = req.file;
+      const uploadParams = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: `profile-images/${seeker._id}-${file.originalname}`,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      };
+      const command = new PutObjectCommand(uploadParams);
+      await s3.send(command);
+      seeker.profileImageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${uploadParams.Key}`;
+    }
+
+    seeker.firstName = firstName;
+    seeker.lastName = lastName;
+    seeker.phone = phone;
+    seeker.email = email;
+    seeker.address = address;
+
+    await seeker.save();
+    res.status(200).json({ message: "User details updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
   }
 };

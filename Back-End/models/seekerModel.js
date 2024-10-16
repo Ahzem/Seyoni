@@ -12,6 +12,8 @@ const seekerSchema = new mongoose.Schema(
       unique: true,
       match: [/.+\@.+\..+/, "Please fill a valid email address"],
     },
+    address: { type: String, default: "N/A" },
+    profileImageUrl: { type: String, default: "N/A" },
     password: { type: String, required: true },
   },
   { timestamps: true }
