@@ -25,7 +25,6 @@ class GoogleMapWidget extends StatefulWidget {
 
 class GoogleMapWidgetState extends State<GoogleMapWidget> {
   LatLng? _pickedLocation;
-  LocationData? _currentLocation;
   final TextEditingController _addressController = TextEditingController();
 
   @override
@@ -43,7 +42,6 @@ class GoogleMapWidgetState extends State<GoogleMapWidget> {
 
     final currentLocation = await location.getLocation();
     setState(() {
-      _currentLocation = currentLocation;
       _pickedLocation = widget.initialLocation ??
           LatLng(currentLocation.latitude!, currentLocation.longitude!);
     });

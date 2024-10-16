@@ -16,29 +16,7 @@ class LocationField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TypeAheadFormField(
-      textFieldConfiguration: TextFieldConfiguration(
-        controller: controller,
-        decoration: InputDecoration(
-          label: const Text('Select Nearest City', style: kBodyTextStyle),
-          filled: true,
-          helperStyle: const TextStyle(color: kPrimaryColor),
-          fillColor: Colors.transparent,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: const BorderSide(color: kPrimaryColor, width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: const BorderSide(color: kPrimaryColor, width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: const BorderSide(color: kPrimaryColor, width: 1),
-          ),
-        ),
-        style: const TextStyle(color: Colors.white),
-      ),
+    return TypeAheadField(
       suggestionsCallback: (pattern) async {
         if (pattern.isEmpty) {
           return [];
@@ -50,19 +28,34 @@ class LocationField extends StatelessWidget {
           title: Text(suggestion),
         );
       },
-      onSuggestionSelected: (suggestion) {
+      onSelected: (suggestion) {
         controller.text = suggestion;
         onSuggestionSelected(suggestion);
       },
-      noItemsFoundBuilder: (context) => const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text('No locations found'),
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please select a location';
-        }
-        return null;
+      builder: (context, controller, focusNode) {
+        return TextField(
+          controller: controller,
+          focusNode: focusNode,
+          decoration: InputDecoration(
+            label: const Text('Select Nearest City', style: kBodyTextStyle),
+            filled: true,
+            helperStyle: const TextStyle(color: kPrimaryColor),
+            fillColor: Colors.transparent,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(color: kPrimaryColor, width: 1),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(color: kPrimaryColor, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(color: kPrimaryColor, width: 1),
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+        );
       },
     );
   }

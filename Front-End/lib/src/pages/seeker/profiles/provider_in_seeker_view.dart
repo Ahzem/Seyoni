@@ -44,7 +44,6 @@ class _SeekerViewState extends State<SeekerView> {
       try {
         return NetworkImage(imageUrl);
       } catch (e) {
-        print('Error loading image: $e');
         return AssetImage('assets/images/profile-3.jpg'); // Fallback image
       }
     } else {

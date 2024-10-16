@@ -32,7 +32,6 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? providerId = prefs.getString('providerId');
-      print('Retrieved providerId: $providerId');
 
       if (providerId == null || providerId.isEmpty) {
         setState(() {
