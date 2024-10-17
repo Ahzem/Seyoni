@@ -79,7 +79,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     );
   }
 
-  Future<void> _updateReservationStatus(
+  Future<void> updateReservationStatus(
       String reservationId, String status) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
