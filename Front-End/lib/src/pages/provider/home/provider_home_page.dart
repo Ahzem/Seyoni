@@ -124,7 +124,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     await prefs.clear();
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => ProviderSignInPage()),
+      MaterialPageRoute(builder: (context) => const ProviderSignInPage()),
     );
   }
 
@@ -140,7 +140,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
           title: const Text('Provider Home Page', style: kAppBarTitleTextStyle),
           actions: [
             IconButton(
-              icon: Icon(Icons.logout, color: kPrimaryColor),
+              icon: const Icon(Icons.logout, color: kPrimaryColor),
               onPressed: _logout,
             ),
           ],
@@ -165,7 +165,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Total Reservations',
                         style: kTitleTextStyle,
                       ),
@@ -200,7 +200,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
               // Reservations List
               Expanded(
                 child: isLoading
-                    ? Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator())
                     : errorMessage.isNotEmpty
                         ? Center(child: Text(errorMessage))
                         : ListView.builder(

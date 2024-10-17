@@ -182,7 +182,7 @@ class _ProviderDetailsState extends State<ProviderDetails> {
                                               const SizedBox(width: 5),
                                               Row(
                                                 children: [
-                                                  Icon(
+                                                  const Icon(
                                                     Icons.email,
                                                     color: Colors.white,
                                                     size: 16,
@@ -197,7 +197,7 @@ class _ProviderDetailsState extends State<ProviderDetails> {
                                               const SizedBox(height: 5),
                                               Row(
                                                 children: [
-                                                  Icon(
+                                                  const Icon(
                                                     Icons.phone,
                                                     color: Colors.white,
                                                     size: 16,
@@ -212,7 +212,7 @@ class _ProviderDetailsState extends State<ProviderDetails> {
                                               const SizedBox(height: 5),
                                               Row(
                                                 children: [
-                                                  Icon(
+                                                  const Icon(
                                                     Icons.location_on,
                                                     color: Colors.white,
                                                     size: 16,
@@ -227,7 +227,7 @@ class _ProviderDetailsState extends State<ProviderDetails> {
                                               const SizedBox(height: 5),
                                               Row(
                                                 children: [
-                                                  Icon(Icons.category,
+                                                  const Icon(Icons.category,
                                                       color: Colors.white,
                                                       size: 16),
                                                   const SizedBox(width: 5),
@@ -240,7 +240,7 @@ class _ProviderDetailsState extends State<ProviderDetails> {
                                               const SizedBox(height: 5),
                                               Row(
                                                 children: [
-                                                  Icon(
+                                                  const Icon(
                                                     Icons.work,
                                                     color: Colors.white,
                                                     size: 16,
@@ -266,7 +266,7 @@ class _ProviderDetailsState extends State<ProviderDetails> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 10),
-                                Text(
+                                const Text(
                                   'NIC Front and Back',
                                   style: kSubtitleTextStyle2,
                                 ),

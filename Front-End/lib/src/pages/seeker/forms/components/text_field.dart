@@ -25,15 +25,15 @@ class CustomTextField extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             color: Colors.white.withOpacity(0.1),
             child: TextField(
               cursorColor: kPrimaryColor,
               controller: controller,
               decoration: InputDecoration(
-                icon: Icon(Icons.message, color: kPrimaryColor),
-                hintText: "Enter your message",
-                hintStyle: kBodyTextStyle,
+                icon: const Icon(Icons.message, color: kPrimaryColor),
+                labelText: "Enter your message",
+                labelStyle: kBodyTextStyle,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide(
@@ -48,7 +48,7 @@ class CustomTextField extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: kPrimaryColor,
                   ),
                 ),

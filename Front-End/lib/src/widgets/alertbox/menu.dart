@@ -16,7 +16,7 @@ class MenuSignOut extends StatelessWidget {
     await prefs.clear();
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SignInPage()),
+      MaterialPageRoute(builder: (context) => const SignInPage()),
     );
   }
 

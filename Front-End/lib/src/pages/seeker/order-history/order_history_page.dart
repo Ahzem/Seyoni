@@ -38,7 +38,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         return;
       }
 
-      final url = getReservationsUrl;
+      const url = getReservationsUrl;
 
       final response = await http.get(
         Uri.parse(url),
@@ -66,7 +66,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     }
   }
 
-  String _getStatusMessage(String status) {
+  String getStatusMessage(String status) {
     switch (status) {
       case 'accepted':
         return 'Request has been accepted';
@@ -104,7 +104,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
+                    child: const Text(
                       'Order History',
                       style: kAlertTitleTextStyle,
                     ),

@@ -280,7 +280,9 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                         LocationField(
                           controller: _locationController,
                           onSuggestionSelected: (suggestion) {
-                            setState(() {});
+                            setState(() {
+                              _locationController.text = suggestion;
+                            });
                           },
                         ),
                         const SizedBox(height: 10),
@@ -504,7 +506,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                         ),
                       ] else if (_currentStep == 3) ...[
                         // NIC/Driving License Capture Step
-                        Align(
+                        const Align(
                           alignment: Alignment.center,
                           child: Text(
                             textAlign: TextAlign.center,
@@ -558,7 +560,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                         ),
                       ] else if (_currentStep == 4) ...[
                         // NIC/Driving License Capture Step
-                        Align(
+                        const Align(
                           alignment: Alignment.center,
                           child: Text(
                             textAlign: TextAlign.center,

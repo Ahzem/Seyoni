@@ -35,7 +35,7 @@ class LocationField extends StatelessWidget {
       builder: (context, controller, focusNode) {
         return TextField(
           controller: controller,
-          focusNode: focusNode,
+          focusNode: FocusNode(),
           decoration: InputDecoration(
             label: const Text('Select Nearest City', style: kBodyTextStyle),
             filled: true,

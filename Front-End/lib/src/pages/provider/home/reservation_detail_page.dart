@@ -30,7 +30,7 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
       String? providerId = prefs.getString('providerId');
       if (providerId == null || providerId.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('User not logged in'),
             backgroundColor: kErrorColor,
           ),

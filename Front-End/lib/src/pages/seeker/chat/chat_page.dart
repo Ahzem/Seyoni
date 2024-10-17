@@ -50,7 +50,7 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     setState(() {});
   }
 

@@ -26,15 +26,15 @@ class RecordField extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             color: Colors.white.withOpacity(0.1),
             child: Column(
               children: [
-                Icon(Icons.mic, size: 24, color: kPrimaryColor),
-                SizedBox(width: 10),
+                const Icon(Icons.mic, size: 24, color: kPrimaryColor),
+                const SizedBox(width: 10),
                 TextButton(
                   onPressed: onRecord,
-                  child: Text(
+                  child: const Text(
                     "Record",
                     style: kBodyTextStyle,
                   ),

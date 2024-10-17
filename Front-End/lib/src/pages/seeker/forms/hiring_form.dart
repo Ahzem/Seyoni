@@ -51,8 +51,7 @@ class HiringFormState extends State<HiringForm> {
   LatLng? _selectedLocation;
   String? _enteredAddress;
   final TextEditingController _descriptionController = TextEditingController();
-  final GlobalKey<GoogleMapWidgetState> _googleMapKey =
-      GlobalKey<GoogleMapWidgetState>();
+  final TextEditingController _locationController = TextEditingController();
 
   Future<void> _confirmReservation() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -65,7 +64,7 @@ class HiringFormState extends State<HiringForm> {
         _selectedTime == null ||
         _selectedLocation == null && _enteredAddress == null ||
         _descriptionController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
             'Please fill all the required fields'
             ' before confirming the reservation.',
@@ -74,13 +73,6 @@ class HiringFormState extends State<HiringForm> {
       ));
       return;
     }
-    print({
-      'seekerId': seekerId,
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-      'providerId': widget.providerId,
-    });
 
     if (seekerId == null ||
         firstName == null ||
@@ -158,7 +150,7 @@ class HiringFormState extends State<HiringForm> {
     } else {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Failed to save reservation.',
               style: TextStyle(color: Colors.black)),
           backgroundColor: kPrimaryColor,
@@ -167,7 +159,7 @@ class HiringFormState extends State<HiringForm> {
     }
   }
 
-  void _pickLocation(LatLng location) {
+  void pickLocation(LatLng location) {
     setState(() {
       _selectedLocation = location;
     });
@@ -209,7 +201,7 @@ class HiringFormState extends State<HiringForm> {
     }
   }
 
-  void _enterAddress(String address) {
+  void enterAddress(String address) {
     setState(() {
       _enteredAddress = address;
     });
@@ -288,16 +280,26 @@ class HiringFormState extends State<HiringForm> {
                         rating: widget.rating,
                         profession: widget.profession,
                       ),
-                      SizedBox(height: 20),
-                      GoogleMapWidget(
-                        key: _googleMapKey,
-                        initialLocation: _selectedLocation,
-                        onLocationPicked: _pickLocation,
-                        onClearLocation: () =>
-                            _googleMapKey.currentState?.clearLocation(),
-                        onAddressEntered: _enterAddress,
+                      const SizedBox(height: 20),
+                      CustomLocationField(
+                        controller: _locationController,
+                        labelText: 'Location',
+                        onTap: () async {
+                          final result = await showModalBottomSheet<String>(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.85,
+                              child: const GoogleMapsBottomSheet(),
+                            ),
+                          );
+                          if (result != null) {
+                            _locationController.text = result;
+                          }
+                        },
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -305,26 +307,26 @@ class HiringFormState extends State<HiringForm> {
                             selectedDate: _selectedDate,
                             onPickDate: _pickDate,
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           TimePicker(
                             selectedTime: _selectedTime,
                             onPickTime: _pickTime,
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Row(
                         children: [
                           ImagePickerWidget(
                             onPickImage: _pickImage,
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           SelectedImagesWidget(selectedImages: _selectedImages),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       CustomTextField(controller: _descriptionController),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -339,7 +341,7 @@ class HiringFormState extends State<HiringForm> {
                                 _descriptionController.clear();
                               });
                             },
-                            child: Row(
+                            child: const Row(
                               children: [
                                 Text('Clear Form',
                                     style: kBodyTextStyle,
@@ -351,7 +353,7 @@ class HiringFormState extends State<HiringForm> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -359,19 +361,19 @@ class HiringFormState extends State<HiringForm> {
                             icon: Icons.phone,
                             onPressed: () {},
                           ),
-                          SizedBox(width: 30),
+                          const SizedBox(width: 30),
                           CustomIconButton(
                             icon: Icons.chat,
                             onPressed: () {},
                           ),
-                          SizedBox(width: 30),
+                          const SizedBox(width: 30),
                           CustomIconButton(
                             icon: Icons.bookmark_added_sharp,
                             onPressed: () {},
                           ),
                         ],
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -380,7 +382,7 @@ class HiringFormState extends State<HiringForm> {
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 }),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             PrimaryFilledButton(
                                 text: "Reserve",
                                 onPressed: showReservationConfirmationDialog),

@@ -133,7 +133,7 @@ class ProfileEditPageState extends State<ProfileEditPage> {
 
         // Show success Snackbar
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Changes saved successfully!'),
             backgroundColor: kPrimaryColor,
           ),
@@ -141,7 +141,7 @@ class ProfileEditPageState extends State<ProfileEditPage> {
       } else {
         // Handle error
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Failed to save changes. Please try again.'),
             backgroundColor: Colors.red,
           ),
@@ -182,7 +182,7 @@ class ProfileEditPageState extends State<ProfileEditPage> {
                             : FileImage(File(_profileImage!))) as ImageProvider?
                         : null,
                     child: _profileImage == null
-                        ? Icon(Icons.camera_alt, size: 50)
+                        ? const Icon(Icons.camera_alt, size: 50)
                         : null,
                   ),
                 ),
@@ -217,7 +217,7 @@ class ProfileEditPageState extends State<ProfileEditPage> {
                 ),
                 const SizedBox(height: 26),
                 // add a cuation message for confirm the details and enter password to save the changes
-                Text(
+                const Text(
                   'Please confirm the details and enter your password to save the changes.',
                   style: kBodyTextStyle,
                   textAlign: TextAlign.center,

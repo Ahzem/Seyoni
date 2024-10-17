@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../config/route.dart';
+// import '../config/route.dart';
 import './alertbox/menu.dart';
 import 'dart:ui';
 import '../constants/constants_color.dart';
@@ -41,7 +41,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       onPressed: () {
                         // Add notification page
-                        Navigator.pushNamed(context, AppRoutes.notification);
+                        // Navigator.pushNamed(context, AppRoutes.notification);
                       },
                     ),
                     const Image(
@@ -60,7 +60,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return MenuSignOut();
+                            return const MenuSignOut();
                           },
                         );
                       },

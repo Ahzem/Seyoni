@@ -90,12 +90,12 @@ class ListOfProvidersState extends State<ListOfProviders> {
             ),
           ),
           body: isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : errorMessage.isNotEmpty
                   ? Center(
                       child: Text(
                         errorMessage,
-                        style: TextStyle(color: Colors.red, fontSize: 18),
+                        style: const TextStyle(color: Colors.red, fontSize: 18),
                         textAlign: TextAlign.center,
                       ),
                     )
