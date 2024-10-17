@@ -27,7 +27,7 @@ class ProfileAvatar extends StatelessWidget {
                 color: kPrimaryColor.withOpacity(0.8),
                 spreadRadius: 1,
                 blurRadius: 20,
-                offset: Offset(0, 3), // changes position of shadow
+                offset: const Offset(0, 3), // changes position of shadow
               ),
             ],
           ),

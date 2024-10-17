@@ -73,7 +73,7 @@ class OrderViewState extends State<OrderView> {
                         rating: widget.rating,
                         profession: widget.profession,
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -84,41 +84,41 @@ class OrderViewState extends State<OrderView> {
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.location_on,
+                                const Icon(Icons.location_on,
                                     size: 22, color: kPrimaryColor),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Text(
                                   widget.location,
                                   style: kReservationsTitleTextStyle,
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(
                               children: [
-                                Icon(Icons.access_time,
+                                const Icon(Icons.access_time,
                                     size: 22, color: kPrimaryColor),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Text(
                                   widget.time,
                                   style: kReservationsTitleTextStyle,
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(
                               children: [
-                                Icon(Icons.date_range,
+                                const Icon(Icons.date_range,
                                     size: 22, color: kPrimaryColor),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Text(
                                   widget.date,
                                   style: kReservationsTitleTextStyle,
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
-                            Row(
+                            const SizedBox(height: 10),
+                            const Row(
                               children: [
                                 Icon(Icons.description,
                                     size: 22, color: kPrimaryColor),
@@ -129,12 +129,12 @@ class OrderViewState extends State<OrderView> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Text(
                               widget.description,
                               style: kBodyTextStyle,
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(
                               children: [
                                 Expanded(
@@ -151,7 +151,7 @@ class OrderViewState extends State<OrderView> {
                                             borderRadius:
                                                 BorderRadius.circular(50),
                                           ),
-                                          child: Row(
+                                          child: const Row(
                                             children: [
                                               Text('Request is pending',
                                                   style:
@@ -174,7 +174,7 @@ class OrderViewState extends State<OrderView> {
                                             borderRadius:
                                                 BorderRadius.circular(50),
                                           ),
-                                          child: Row(
+                                          child: const Row(
                                             children: [
                                               Text('Request has been accepted',
                                                   style:
@@ -196,7 +196,7 @@ class OrderViewState extends State<OrderView> {
                                             borderRadius:
                                                 BorderRadius.circular(50),
                                           ),
-                                          child: Row(
+                                          child: const Row(
                                             children: [
                                               Text('Request has been rejected',
                                                   style:
@@ -213,7 +213,7 @@ class OrderViewState extends State<OrderView> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -221,12 +221,12 @@ class OrderViewState extends State<OrderView> {
                                   icon: Icons.phone,
                                   onPressed: () {},
                                 ),
-                                SizedBox(width: 30),
+                                const SizedBox(width: 30),
                                 CustomIconButton(
                                   icon: Icons.chat,
                                   onPressed: () {},
                                 ),
-                                SizedBox(width: 30),
+                                const SizedBox(width: 30),
                                 CustomIconButton(
                                   icon: Icons.bookmark_added_sharp,
                                   onPressed: () {},

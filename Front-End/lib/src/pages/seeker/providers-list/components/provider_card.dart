@@ -102,11 +102,11 @@ class ProviderCardState extends State<ProviderCard> {
       try {
         return NetworkImage(imageUrl);
       } catch (e) {
-        print('Error loading image: $e');
-        return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+        return const AssetImage(
+            'assets/images/profile-3.jpg'); // Fallback image
       }
     } else {
-      return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+      return const AssetImage('assets/images/profile-3.jpg'); // Fallback image
     }
   }
 
@@ -163,7 +163,7 @@ class ProviderCardState extends State<ProviderCard> {
                       const SizedBox(height: 2),
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.star,
                             color: kPrimaryColor,
                             size: 12,
@@ -177,7 +177,7 @@ class ProviderCardState extends State<ProviderCard> {
                       ),
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.work,
                             color: kPrimaryColor,
                             size: 12,
@@ -191,12 +191,12 @@ class ProviderCardState extends State<ProviderCard> {
                       ),
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.person,
                             color: kPrimaryColor,
                             size: 12,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 3,
                           ),
                           Text(
@@ -219,7 +219,7 @@ class ProviderCardState extends State<ProviderCard> {
                       child: TextButton(
                         onPressed: () =>
                             _navigateToSeekerView(context, widget.providerId),
-                        child: Text(
+                        child: const Text(
                           'View',
                           style: TextStyle(color: kPrimaryColor),
                         ),
@@ -235,7 +235,7 @@ class ProviderCardState extends State<ProviderCard> {
                       child: TextButton(
                         onPressed: () =>
                             _navigateToHiringForm(context, widget.providerId),
-                        child: Text(
+                        child: const Text(
                           'Hire',
                           style: TextStyle(color: Colors.white),
                         ),

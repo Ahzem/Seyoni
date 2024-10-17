@@ -100,7 +100,7 @@ class MenuPageState extends State<MenuPage> {
                                     style: kAppBarTitleTextStyle),
                                 Text('${userDetails['email']}',
                                     style: kBodyTextStyle),
-                                Text('Profile Complete: 67%',
+                                const Text('Profile Complete: 67%',
                                     style: kBodyTextStyle),
                               ],
                             ),
@@ -161,7 +161,7 @@ class MenuPageState extends State<MenuPage> {
                                                 height: 30,
                                                 width: 30,
                                                 fit: BoxFit.cover)),
-                                        Text('Emergency',
+                                        const Text('Emergency',
                                             style: kBodyTextStyle2),
                                       ],
                                     ),
@@ -176,7 +176,7 @@ class MenuPageState extends State<MenuPage> {
                                                 height: 35,
                                                 width: 35,
                                                 fit: BoxFit.cover)),
-                                        Text('Bookmark',
+                                        const Text('Bookmark',
                                             style: kBodyTextStyle2),
                                       ],
                                     ),
@@ -191,7 +191,8 @@ class MenuPageState extends State<MenuPage> {
                                                 height: 30,
                                                 width: 30,
                                                 fit: BoxFit.cover)),
-                                        Text('Invite', style: kBodyTextStyle2),
+                                        const Text('Invite',
+                                            style: kBodyTextStyle2),
                                       ],
                                     ),
                                   ],
@@ -209,7 +210,8 @@ class MenuPageState extends State<MenuPage> {
                 Container(
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.only(left: 10, bottom: 10),
-                  child: Text('General Settings', style: kAppBarTitleTextStyle),
+                  child: const Text('General Settings',
+                      style: kAppBarTitleTextStyle),
                 ),
                 MenuItem(
                   iconPath: 'assets/icons/menu/Settings.png',
@@ -248,8 +250,8 @@ class MenuPageState extends State<MenuPage> {
                 Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
-                    child:
-                        Text('Account Settings', style: kAppBarTitleTextStyle)),
+                    child: const Text('Account Settings',
+                        style: kAppBarTitleTextStyle)),
                 MenuItem(
                   iconPath: 'assets/icons/menu/Settings.png',
                   text: 'Personal Details',
@@ -302,7 +304,7 @@ class MenuPageState extends State<MenuPage> {
                 Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
-                    child: Text('Payment', style: kAppBarTitleTextStyle)),
+                    child: const Text('Payment', style: kAppBarTitleTextStyle)),
                 const SizedBox(height: 10),
                 MenuItem(
                   iconPath: 'assets/icons/menu/add_payment.png',
@@ -332,7 +334,7 @@ class MenuPageState extends State<MenuPage> {
                 Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
-                    child: Text('Favourite Location',
+                    child: const Text('Favourite Location',
                         style: kAppBarTitleTextStyle)),
                 const SizedBox(height: 10),
                 MenuItem(
@@ -371,7 +373,7 @@ class MenuPageState extends State<MenuPage> {
                 Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
-                    child: Text('Support', style: kAppBarTitleTextStyle)),
+                    child: const Text('Support', style: kAppBarTitleTextStyle)),
                 const SizedBox(height: 10),
                 MenuItem(
                   iconPath: 'assets/icons/menu/about_us.png',

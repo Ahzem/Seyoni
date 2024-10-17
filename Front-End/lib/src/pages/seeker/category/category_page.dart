@@ -26,34 +26,7 @@ class CategoryPageState extends State<CategoryPage> {
           key: _formKey,
           child: Column(
             children: [
-              TypeAheadFormField(
-                textFieldConfiguration: TextFieldConfiguration(
-                  controller: _typeAheadController,
-                  decoration: InputDecoration(
-                    icon: const Icon(Icons.location_on, color: kPrimaryColor),
-                    label: const Text('Select Nearest City',
-                        style: TextStyle(color: Colors.white)),
-                    filled: true,
-                    helperStyle: const TextStyle(color: kPrimaryColor),
-                    fillColor: Colors.transparent,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide:
-                          const BorderSide(color: kPrimaryColor, width: 1),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 1),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide:
-                          const BorderSide(color: kPrimaryColor, width: 1),
-                    ),
-                  ),
-                  style: const TextStyle(color: Colors.white),
-                ),
+              TypeAheadField(
                 suggestionsCallback: (pattern) async {
                   if (pattern.isEmpty) {
                     return [];
@@ -66,21 +39,41 @@ class CategoryPageState extends State<CategoryPage> {
                     title: Text(suggestion),
                   );
                 },
-                onSuggestionSelected: (suggestion) {
+                onSelected: (suggestion) {
                   _typeAheadController.text = suggestion;
                   setState(() {
                     _selectedCity = suggestion;
                   });
                 },
-                noItemsFoundBuilder: (context) => const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('No cities found'),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select a city';
-                  }
-                  return null;
+                builder: (context, controller, focusNode) {
+                  return TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      icon: const Icon(Icons.location_on, color: kPrimaryColor),
+                      label: const Text('Select Nearest City',
+                          style: TextStyle(color: Colors.white)),
+                      filled: true,
+                      helperStyle: const TextStyle(color: kPrimaryColor),
+                      fillColor: Colors.transparent,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide:
+                            const BorderSide(color: kPrimaryColor, width: 1),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide:
+                            const BorderSide(color: kPrimaryColor, width: 1),
+                      ),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                  );
                 },
               ),
               const SizedBox(height: 20),
@@ -108,8 +101,9 @@ class CategoryPageState extends State<CategoryPage> {
                         color: Colors.white.withOpacity(0.06),
                         borderRadius: BorderRadius.circular(20),
                         border: Border(
-                            bottom: BorderSide(
-                                color: Colors.white.withOpacity(0.8))),
+                          bottom:
+                              BorderSide(color: Colors.white.withOpacity(0.8)),
+                        ),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

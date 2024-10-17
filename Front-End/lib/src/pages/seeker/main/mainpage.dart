@@ -46,7 +46,6 @@ class HomePageState extends State<HomePage> {
   Future<void> _checkPermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.storage,
-      Permission.microphone,
       Permission.camera,
       Permission.location,
     ].request();
@@ -54,10 +53,6 @@ class HomePageState extends State<HomePage> {
     // Handle denied permissions (example: showing an alert for denied permissions)
     if (statuses[Permission.storage]?.isDenied ?? false) {
       _showPermissionAlert("Storage");
-    }
-
-    if (statuses[Permission.microphone]?.isDenied ?? false) {
-      _showPermissionAlert("Microphone");
     }
 
     if (statuses[Permission.camera]?.isDenied ?? false) {
@@ -83,7 +78,7 @@ class HomePageState extends State<HomePage> {
               Navigator.of(context).pop();
               openAppSettings(); // Open app settings if the user wants to enable permission manually
             },
-            child: Text("Open Settings"),
+            child: const Text("Open Settings"),
           ),
         ],
       ),

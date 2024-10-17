@@ -24,7 +24,7 @@ class ServiceProviderInfo extends StatelessWidget {
           radius: 35,
           backgroundImage: NetworkImage(profileImage),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

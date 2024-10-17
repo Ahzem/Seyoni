@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.instruction: (context) => const InstructionPage(),
         AppRoutes.signIn: (context) => const SignInPage(),
         AppRoutes.signUp: (context) => SignUpPage(),
-        AppRoutes.home: (context) => HomePage(),
+        AppRoutes.home: (context) => const HomePage(),
         AppRoutes.otppage: (context) => const OtpScreen(),
         AppRoutes.otppagefornewpassword: (context) =>
             const OtpScreenForNewPassword(),
@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
     if (!hasSeenLaunchScreen) {
       return LaunchScreen(onLaunchScreenComplete: _onLaunchScreenComplete);
     } else if (token != null && !JwtDecoder.isExpired(token!)) {
-      return HomePage();
+      return const HomePage();
     } else {
       return const SignInPage();
     }

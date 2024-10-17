@@ -22,7 +22,7 @@ class BadgeWidget extends StatelessWidget {
           Column(
             children: [
               Icon(icon, size: 40, color: kPrimaryColor),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               Text(
                 label,
                 style: TextStyle(color: textColor, fontSize: 12),

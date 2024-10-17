@@ -34,7 +34,7 @@ class AdminHomePageState extends State<AdminHomePage> {
     }
   }
 
-  Future<void> _updateProviderStatus(String id, bool isApproved) async {
+  Future<void> updateProviderStatus(String id, bool isApproved) async {
     final response = await http.post(
       Uri.parse('$updateProviderStatusUrl/$id'),
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -67,7 +67,7 @@ class AdminHomePageState extends State<AdminHomePage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout, color: kPrimaryColor),
+            icon: const Icon(Icons.logout, color: kPrimaryColor),
             onPressed: _logout,
           ),
         ],

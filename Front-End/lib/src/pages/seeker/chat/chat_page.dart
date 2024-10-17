@@ -18,7 +18,6 @@ class ChatScreen extends StatefulWidget {
 class ChatScreenState extends State<ChatScreen> {
   TextEditingController msgInputController = TextEditingController();
   List<Message> messages = []; // List to hold chat messages
-  int _selectedIndex = 0;
 
   // Simulated user for incoming messages
   final String otherUserProfilePic = 'assets/images/profile-7.jpg';
@@ -51,10 +50,8 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  void onItemTapped(int index) {
+    setState(() {});
   }
 
   @override

@@ -26,14 +26,14 @@ class ImagePickerWidget extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             color: Colors.white.withOpacity(0.1),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
                   onPressed: onPickImage,
-                  child: Column(
+                  child: const Column(
                     children: [
                       Icon(Icons.add_a_photo, size: 24, color: kPrimaryColor),
                       SizedBox(width: 10),
@@ -76,7 +76,7 @@ class SelectedImagesWidget extends StatelessWidget {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               color: Colors.white.withOpacity(0.1),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -28,12 +28,12 @@ class TimePicker extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             color: Colors.white.withOpacity(0.1),
             child: Row(
               children: [
-                Icon(Icons.access_time, size: 24, color: kPrimaryColor),
-                SizedBox(width: 5),
+                const Icon(Icons.access_time, size: 24, color: kPrimaryColor),
+                const SizedBox(width: 5),
                 TextButton(
                   onPressed: onPickTime,
                   child: Text(

@@ -12,7 +12,7 @@ class StatWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white.withOpacity(0.05),
-        border: Border(
+        border: const Border(
             bottom: BorderSide(
                 color: Color.fromARGB(150, 255, 255, 255), width: 1)),
       ),
@@ -22,14 +22,15 @@ class StatWidget extends StatelessWidget {
         children: [
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 5),
-          Text(label, style: TextStyle(fontSize: 12, color: Colors.white)),
+          const SizedBox(height: 5),
+          Text(label,
+              style: const TextStyle(fontSize: 12, color: Colors.white)),
         ],
       ),
     );

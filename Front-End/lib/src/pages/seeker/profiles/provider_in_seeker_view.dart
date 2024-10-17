@@ -44,11 +44,11 @@ class _SeekerViewState extends State<SeekerView> {
       try {
         return NetworkImage(imageUrl);
       } catch (e) {
-        print('Error loading image: $e');
-        return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+        return const AssetImage(
+            'assets/images/profile-3.jpg'); // Fallback image
       }
     } else {
-      return AssetImage('assets/images/profile-3.jpg'); // Fallback image
+      return const AssetImage('assets/images/profile-3.jpg'); // Fallback image
     }
   }
 
@@ -135,7 +135,7 @@ class _SeekerViewState extends State<SeekerView> {
                                 style: const TextStyle(color: Colors.white),
                               ),
                               const SizedBox(height: 5),
-                              Row(
+                              const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(Icons.star, color: kPrimaryColor),
@@ -213,9 +213,9 @@ class _SeekerViewState extends State<SeekerView> {
                               ),
                             ),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               BadgeWidget(icon: Icons.star, label: "Hero"),
                               BadgeWidget(
                                   icon: Icons.flash_on, label: "Superman"),
@@ -235,7 +235,8 @@ class _SeekerViewState extends State<SeekerView> {
                         StatWidget(
                             label: 'Completed Works',
                             value: completedWorks.toString()),
-                        StatWidget(label: 'Customer Reviews', value: '85+'),
+                        const StatWidget(
+                            label: 'Customer Reviews', value: '85+'),
                       ],
                     ),
 
@@ -247,7 +248,7 @@ class _SeekerViewState extends State<SeekerView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Gallery',
                               style: kTitleTextStyle,
                             ),
