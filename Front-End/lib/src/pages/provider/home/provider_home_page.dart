@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:seyoni/src/pages/provider/home/accepted_reservations_page.dart';
+import 'package:seyoni/src/pages/provider/home/new_requests_page.dart';
+import 'package:seyoni/src/pages/provider/home/rejected_reservations_page.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/url.dart';
@@ -197,6 +200,33 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                 ],
               ),
               const SizedBox(height: 20),
+              // GridView for Reservations
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  children: [
+                    _buildBlurredContainer(
+                      context,
+                      'Accepted Reservations',
+                      Icons.check_circle,
+                      const AcceptedReservationsPage(),
+                    ),
+                    _buildBlurredContainer(
+                      context,
+                      'Rejected Reservations',
+                      Icons.cancel,
+                      const RejectedReservationsPage(),
+                    ),
+                    _buildBlurredContainer(
+                      context,
+                      'New Requests',
+                      Icons.new_releases,
+                      const NewRequestsPage(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
               // Reservations List
               Expanded(
                 child: isLoading
@@ -234,4 +264,33 @@ class ProviderHomePageState extends State<ProviderHomePage> {
       ),
     );
   }
+}
+
+Widget _buildBlurredContainer(
+    BuildContext context, String title, IconData icon, Widget page) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => page),
+      );
+    },
+    child: Container(
+      margin: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: kPrimaryColor.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 50, color: Colors.white),
+            const SizedBox(height: 10),
+            Text(title, style: kSubtitleTextStyle, textAlign: TextAlign.center),
+          ],
+        ),
+      ),
+    ),
+  );
 }

@@ -1,4 +1,4 @@
-const url = 'https://seyoni.onrender.com';
+const url = 'http://localhost:3000';
 const registerSeekersUrl = '$url/api/seeker/signup';
 const loginSeekersUrl = '$url/api/seeker/signin';
 const verifyOtpUrl = '$url/api/seeker/verifySignUpOtp';
@@ -23,3 +23,6 @@ const loginProvidersUrl = '$url/api/providers/signin';
 
 const fetchProvidersUrl = '$url/api/providers';
 const updateProviderStatusUrl = '$url/api/providers';
+
+const acceptReservationUrl = '$url/api/reservations';
+const rejectReservationUrl = '$url/api/reservations';
