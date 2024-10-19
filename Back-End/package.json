@@ -4,9 +4,7 @@
   "description": "Semester 4 final group project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js",
-    "build": "tsc"
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
