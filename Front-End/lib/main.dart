@@ -3,6 +3,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/foundation.dart';
 import 'src/pages/admin/admin_home_page.dart';
 import 'src/pages/admin/list_of_providers.dart';
 import 'src/pages/admin/list_of_reg_requests.dart';
@@ -35,11 +36,18 @@ Future<void> main() async {
 }
 
 Future<void> _requestPermissions() async {
-  await [
+  final permissions = [
     Permission.camera,
-    Permission.photos,
     Permission.location,
-  ].request();
+  ];
+
+  if (!kIsWeb) {
+    // Use kIsWeb instead of Platform.isWeb
+    permissions.add(Permission.photos);
+    permissions.add(Permission.storage);
+  }
+
+  await permissions.request();
 }
 
 class MyApp extends StatelessWidget {
