@@ -1,4 +1,4 @@
-const url = 'http://localhost:3000';
+const url = 'http://98.83.137.96:3000';
 const registerSeekersUrl = '$url/api/seeker/signup';
 const loginSeekersUrl = '$url/api/seeker/signin';
 const verifyOtpUrl = '$url/api/seeker/verifySignUpOtp';
