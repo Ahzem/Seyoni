@@ -1,4 +1,4 @@
-const url = 'http://3.89.201.14:3000';
+const url = 'https://seyoni.onrender.com';
 const registerSeekersUrl = '$url/api/seeker/signup';
 const loginSeekersUrl = '$url/api/seeker/signin';
 const verifyOtpUrl = '$url/api/seeker/verifySignUpOtp';

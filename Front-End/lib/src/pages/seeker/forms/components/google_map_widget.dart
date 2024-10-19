@@ -97,15 +97,20 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
   }
 
   Future<String> _getAddressFromLatLng(LatLng position) async {
-    final placemarks = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
-    if (placemarks.isNotEmpty) {
-      final placemark = placemarks.first;
-      return '${placemark.street}, ${placemark.locality}, ${placemark.country}';
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      if (placemarks.isNotEmpty) {
+        final placemark = placemarks.first;
+        return '${placemark.street}, ${placemark.locality}, ${placemark.country}';
+      }
+    } catch (e) {
+      print('Error occurred while getting address from coordinates: $e');
     }
-    return 'Unknown location';
+    // Return latitude and longitude as a fallback
+    return '${position.latitude},${position.longitude}';
   }
 
   @override
@@ -218,18 +223,21 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
                       text: 'Cancel',
                     ),
                     PrimaryFilledButton(
-                        text: 'Pick',
-                        onPressed: () async {
-                          if (currentPosition != null) {
-                            final address =
-                                await _getAddressFromLatLng(currentPosition!);
-                            Navigator.pop(context, {
-                              'address': address,
-                              'latitude': currentPosition!.latitude,
-                              'longitude': currentPosition!.longitude,
-                            });
-                          }
-                        }),
+                      text: 'Pick',
+                      onPressed: () async {
+                        if (currentPosition != null) {
+                          final address =
+                              await _getAddressFromLatLng(currentPosition!);
+                          Navigator.pop(context, {
+                            'address': address,
+                            'latitude': currentPosition!.latitude,
+                            'longitude': currentPosition!.longitude,
+                          });
+                        } else {
+                          print('Current position is null');
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),

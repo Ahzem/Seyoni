@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geocoding/geocoding.dart';
 import '../../../config/url.dart';
 import '../../../constants/constants_font.dart';
 import '../../../widgets/background_widget.dart';
@@ -159,6 +160,23 @@ class HiringFormState extends State<HiringForm> {
     }
   }
 
+  Future<String> _getAddressFromLatLng(LatLng position) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      if (placemarks.isNotEmpty) {
+        final placemark = placemarks.first;
+        return '${placemark.street}, ${placemark.locality}, ${placemark.country}';
+      }
+    } catch (e) {
+      print('Error occurred while getting address from coordinates: $e');
+    }
+    // Return latitude and longitude as a fallback
+    return '${position.latitude},${position.longitude}';
+  }
+
   void pickLocation(LatLng location) {
     setState(() {
       _selectedLocation = location;
@@ -285,7 +303,8 @@ class HiringFormState extends State<HiringForm> {
                         controller: _locationController,
                         labelText: 'Location',
                         onTap: () async {
-                          final result = await showModalBottomSheet<String>(
+                          final result =
+                              await showModalBottomSheet<Map<String, dynamic>>(
                             context: context,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
@@ -295,7 +314,13 @@ class HiringFormState extends State<HiringForm> {
                             ),
                           );
                           if (result != null) {
-                            _locationController.text = result;
+                            final address = result['address'] as String;
+                            final latitude = result['latitude'] as double;
+                            final longitude = result['longitude'] as double;
+                            setState(() {
+                              _locationController.text = address;
+                              _selectedLocation = LatLng(latitude, longitude);
+                            });
                           }
                         },
                       ),

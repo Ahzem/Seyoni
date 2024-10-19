@@ -76,6 +76,7 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: const Text('Reservation Details'),
       ),
       body: SingleChildScrollView(
