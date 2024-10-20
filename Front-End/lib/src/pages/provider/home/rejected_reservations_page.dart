@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:seyoni/src/widgets/custom_button.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/url.dart';
@@ -12,7 +13,8 @@ class RejectedReservationsPage extends StatefulWidget {
   const RejectedReservationsPage({super.key});
 
   @override
-  RejectedReservationsPageState createState() => RejectedReservationsPageState();
+  RejectedReservationsPageState createState() =>
+      RejectedReservationsPageState();
 }
 
 class RejectedReservationsPageState extends State<RejectedReservationsPage> {
@@ -50,7 +52,8 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
         List<dynamic> allReservations = json.decode(response.body);
         setState(() {
           reservations = allReservations.where((reservation) {
-            return reservation['providerId'] == providerId && reservation['status'] == 'rejected';
+            return reservation['providerId'] == providerId &&
+                reservation['status'] == 'rejected';
           }).toList();
           isLoading = false;
         });
@@ -68,15 +71,6 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
     }
   }
 
-  void _viewReservation(Map<String, dynamic> reservation) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ReservationDetailPage(reservation: reservation),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BackgroundWidget(
@@ -84,39 +78,46 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: const Text('Rejected Reservations', style: kAppBarTitleTextStyle),
-          automaticallyImplyLeading: true,
+          title: const Text('Rejected Reservations',
+              style: TextStyle(color: Colors.white)),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : errorMessage.isNotEmpty
-                  ? Center(child: Text(errorMessage))
-                  : ListView.builder(
-                      itemCount: reservations.length,
-                      itemBuilder: (context, index) {
-                        final reservation = reservations[index];
-                        return Card(
-                          color: kContainerColor,
-                          child: ListTile(
-                            title: Text(
-                              reservation['serviceType'],
-                              style: kCardTitleTextStyle,
-                            ),
-                            subtitle: Text(
-                              '${reservation['description'].toString().split(' ').take(12).join(' ')}...',
-                              style: kCardTextStyle,
-                            ),
-                            trailing: ElevatedButton(
-                              onPressed: () => _viewReservation(reservation),
-                              child: const Text('View'),
-                            ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : errorMessage.isNotEmpty
+                ? Center(child: Text(errorMessage))
+                : ListView.builder(
+                    itemCount: reservations.length,
+                    itemBuilder: (context, index) {
+                      final reservation = reservations[index];
+                      return Card(
+                        color: kContainerColor,
+                        child: ListTile(
+                          title: Text(
+                            reservation['serviceType'],
+                            style: kCardTitleTextStyle,
                           ),
-                        );
-                      },
-                    ),
-        ),
+                          subtitle: Text(
+                            '${reservation['description'].toString().split(' ').take(12).join(' ')}...',
+                            style: kCardTextStyle,
+                          ),
+                          trailing: PrimaryFilledButtonThree(
+                            text: 'View Request',
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ReservationDetailPage(
+                                    reservationId: reservation['_id'],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
       ),
     );
   }

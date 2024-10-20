@@ -6,30 +6,86 @@ import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:geocoding/geocoding.dart';
+import 'dart:convert';
 
 class ReservationDetailPage extends StatefulWidget {
-  final Map<String, dynamic> reservation;
+  final String reservationId;
 
-  const ReservationDetailPage({required this.reservation, Key? key})
-      : super(key: key);
+  const ReservationDetailPage({required this.reservationId, super.key});
 
   @override
-  _ReservationDetailPageState createState() => _ReservationDetailPageState();
+  ReservationDetailPageState createState() => ReservationDetailPageState();
 }
 
-class _ReservationDetailPageState extends State<ReservationDetailPage> {
+class ReservationDetailPageState extends State<ReservationDetailPage> {
+  Map<String, dynamic>? reservation;
   String readableAddress = '';
+  bool isLoading = true;
   bool isAccepted = false;
 
   @override
   void initState() {
     super.initState();
-    _getReadableAddress();
+    _fetchReservationDetails();
+  }
+
+  Future<void> _fetchReservationDetails() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? providerId = prefs.getString('providerId');
+      if (providerId == null || providerId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('User not logged in'),
+            backgroundColor: kErrorColor,
+          ),
+        );
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse('$getReservationsUrl/${widget.reservationId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'provider-id': providerId,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final reservationData = json.decode(response.body);
+        setState(() {
+          reservation = reservationData;
+          isAccepted = reservationData['status'] == 'accepted';
+          isLoading = false;
+        });
+        _getReadableAddress();
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load reservation: ${response.body}'),
+            backgroundColor: kErrorColor,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load reservation: $e'),
+          backgroundColor: kErrorColor,
+        ),
+      );
+    }
   }
 
   Future<void> _getReadableAddress() async {
     try {
-      final locationString = widget.reservation['location'] ?? '';
+      final locationString = reservation?['location'] ?? '';
       final latLng = locationString
           .substring(
             locationString.indexOf('(') + 1,
@@ -68,8 +124,8 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
       }
 
       final url = status == 'accepted'
-          ? '$acceptReservationUrl/${widget.reservation['_id']}/accept'
-          : '$rejectReservationUrl/${widget.reservation['_id']}/reject';
+          ? '$acceptReservationUrl/${widget.reservationId}/accept'
+          : '$rejectReservationUrl/${widget.reservationId}/reject';
 
       final response = await http.patch(
         Uri.parse(url),
@@ -81,7 +137,7 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
 
       if (response.statusCode == 200) {
         setState(() {
-          widget.reservation['status'] = status;
+          reservation?['status'] = status;
           if (status == 'accepted') {
             isAccepted = true;
           } else if (status == 'rejected') {
@@ -136,12 +192,28 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final seeker = widget.reservation['seeker'] ?? {};
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (reservation == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: const Text('Reservation Details',
+              style: TextStyle(color: Colors.white)),
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        body: const Center(child: Text('Failed to load reservation details')),
+      );
+    }
+
+    final seeker = reservation?['seeker'] ?? {};
     final profileImage = seeker['profileImage'] ?? '';
-    final name = widget.reservation['name'] ?? 'Unknown';
-    final date = widget.reservation['date'] ?? 'Unknown';
-    final time = widget.reservation['time'] ?? 'Unknown';
-    final description = widget.reservation['description'] ?? 'No description';
+    final name = reservation?['name'] ?? 'Unknown';
+    final date = reservation?['date'] ?? 'Unknown';
+    final time = reservation?['time'] ?? 'Unknown';
+    final description = reservation?['description'] ?? 'No description';
 
     return BackgroundWidget(
       child: Scaffold(
@@ -211,10 +283,9 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
                   height: 200,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: widget.reservation['images']?.length ?? 0,
+                    itemCount: reservation?['images']?.length ?? 0,
                     itemBuilder: (context, index) {
-                      final imageUrl =
-                          widget.reservation['images'][index] ?? '';
+                      final imageUrl = reservation?['images'][index] ?? '';
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(

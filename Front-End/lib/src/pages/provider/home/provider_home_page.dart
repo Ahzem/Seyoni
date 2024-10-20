@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:seyoni/src/pages/provider/home/accepted_reservations_page.dart';
@@ -24,11 +26,14 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   List<dynamic> reservations = [];
   bool isLoading = true;
   String errorMessage = '';
+  String providerName = '';
+  String profileImageUrl = '';
 
   @override
   void initState() {
     super.initState();
     _fetchReservations();
+    _fetchProviderDetails();
   }
 
   Future<void> _fetchReservations() async {
@@ -73,11 +78,47 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     }
   }
 
+  Future<void> _fetchProviderDetails() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? providerId = prefs.getString('providerId');
+
+      if (providerId == null || providerId.isEmpty) {
+        setState(() {
+          errorMessage = 'User not logged in';
+          isLoading = false;
+        });
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse('$url/api/providers/$providerId'),
+      );
+
+      if (response.statusCode == 200) {
+        final provider = json.decode(response.body);
+        setState(() {
+          providerName = provider['lastName'];
+          profileImageUrl = provider['profileImageUrl'];
+        });
+      } else {
+        setState(() {
+          errorMessage = 'Failed to load provider details: ${response.body}';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to load provider details: $e';
+      });
+    }
+  }
+
   void _viewReservation(Map<String, dynamic> reservation) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ReservationDetailPage(reservation: reservation),
+        builder: (context) =>
+            ReservationDetailPage(reservationId: reservation['_id']),
       ),
     );
   }
@@ -140,7 +181,11 @@ class ProviderHomePageState extends State<ProviderHomePage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: const Text('Provider Home Page', style: kAppBarTitleTextStyle),
+          title: Image.asset(
+            'assets/images/logo.png',
+            height: height * 0.05,
+            fit: BoxFit.contain,
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.logout, color: kPrimaryColor),
@@ -150,16 +195,57 @@ class ProviderHomePageState extends State<ProviderHomePage> {
           automaticallyImplyLeading: false, // Remove back arrow
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              // Logo
-              Image.asset(
-                'assets/images/logo.png',
-                height: height * 0.1,
-                fit: BoxFit.contain,
+              const SizedBox(height: 10),
+              // Blurred Profile Card
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundImage: profileImageUrl.isNotEmpty
+                              ? NetworkImage(profileImageUrl)
+                              : const AssetImage('assets/images/profile-3.jpg')
+                                  as ImageProvider,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Hello, $providerName',
+                                style: kTitleTextStyle,
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Navigate to Edit Profile Page
+                                },
+                                child: const Text(
+                                  'Edit Profile',
+                                  style: TextStyle(color: kPrimaryColor),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               // Summary Card
               Card(
                 color: kPrimaryColor,
@@ -180,7 +266,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               // Profile and Settings Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -199,7 +285,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               // GridView for Reservations
               Expanded(
                 child: GridView.count(
@@ -226,7 +312,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               // Reservations List
               Expanded(
                 child: isLoading

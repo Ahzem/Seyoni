@@ -14,6 +14,13 @@ router.post(
 // GET route to retrieve reservations
 router.get("/", authMiddleware, reservationController.getReservations);
 
+// GET route to retrieve a specific reservation by ID
+router.get(
+  "/:reservationId",
+  authMiddleware,
+  reservationController.getReservationById
+);
+
 router.patch(
   "/:reservationId/accept",
   authMiddleware,
