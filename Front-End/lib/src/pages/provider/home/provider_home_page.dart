@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -28,12 +29,29 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   String errorMessage = '';
   String providerName = '';
   String profileImageUrl = '';
+  int acceptedCount = 0;
+  int rejectedCount = 0;
+  int newRequestsCount = 0;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     _fetchReservations();
     _fetchProviderDetails();
+    _startPeriodicUpdate();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startPeriodicUpdate() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      _fetchReservations();
+    });
   }
 
   Future<void> _fetchReservations() async {
@@ -62,6 +80,15 @@ class ProviderHomePageState extends State<ProviderHomePage> {
           reservations = allReservations.where((reservation) {
             return reservation['providerId'] == providerId;
           }).toList();
+          acceptedCount = reservations
+              .where((reservation) => reservation['status'] == 'accepted')
+              .length;
+          rejectedCount = reservations
+              .where((reservation) => reservation['status'] == 'rejected')
+              .length;
+          newRequestsCount = reservations
+              .where((reservation) => reservation['status'] == 'pending')
+              .length;
           isLoading = false;
         });
       } else {
@@ -296,53 +323,24 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                       'Accepted Reservations',
                       Icons.check_circle,
                       const AcceptedReservationsPage(),
+                      acceptedCount,
                     ),
                     _buildBlurredContainer(
                       context,
                       'Rejected Reservations',
                       Icons.cancel,
                       const RejectedReservationsPage(),
+                      rejectedCount,
                     ),
                     _buildBlurredContainer(
                       context,
                       'New Requests',
                       Icons.new_releases,
                       const NewRequestsPage(),
+                      newRequestsCount,
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 10),
-              // Reservations List
-              Expanded(
-                child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : errorMessage.isNotEmpty
-                        ? Center(child: Text(errorMessage))
-                        : ListView.builder(
-                            itemCount: reservations.length,
-                            itemBuilder: (context, index) {
-                              final reservation = reservations[index];
-                              return Card(
-                                color: kContainerColor,
-                                child: ListTile(
-                                  title: Text(
-                                    reservation['serviceType'],
-                                    style: kCardTitleTextStyle,
-                                  ),
-                                  subtitle: Text(
-                                    '${reservation['description'].toString().split(' ').take(12).join(' ')}...',
-                                    style: kCardTextStyle,
-                                  ),
-                                  trailing: PrimaryFilledButtonThree(
-                                    text: 'View Request',
-                                    onPressed: () =>
-                                        _viewReservation(reservation),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
               ),
             ],
           ),
@@ -353,7 +351,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
 }
 
 Widget _buildBlurredContainer(
-    BuildContext context, String title, IconData icon, Widget page) {
+    BuildContext context, String title, IconData icon, Widget page, int count) {
   return GestureDetector(
     onTap: () {
       Navigator.push(
@@ -361,22 +359,51 @@ Widget _buildBlurredContainer(
         MaterialPageRoute(builder: (context) => page),
       );
     },
-    child: Container(
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: kPrimaryColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 50, color: Colors.white),
-            const SizedBox(height: 10),
-            Text(title, style: kSubtitleTextStyle, textAlign: TextAlign.center),
-          ],
+    child: Stack(
+      children: [
+        Container(
+          margin: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: kPrimaryColor.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 50, color: Colors.white),
+                const SizedBox(height: 10),
+                Text(title,
+                    style: kSubtitleTextStyle, textAlign: TextAlign.center),
+              ],
+            ),
+          ),
         ),
-      ),
+        if (count > 0)
+          Positioned(
+            right: 10,
+            top: 10,
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 24,
+                minHeight: 24,
+              ),
+              child: Text(
+                '$count',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
     ),
   );
 }

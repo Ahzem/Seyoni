@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:seyoni/src/widgets/custom_button.dart';
@@ -6,8 +8,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/url.dart';
 import 'reservation_detail_page.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
+// ignore: unused_import
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
+import 'package:seyoni/src/widgets/no_reservations_widget.dart';
 
 class AcceptedReservationsPage extends StatefulWidget {
   const AcceptedReservationsPage({super.key});
@@ -86,38 +90,111 @@ class AcceptedReservationsPageState extends State<AcceptedReservationsPage> {
             ? const Center(child: CircularProgressIndicator())
             : errorMessage.isNotEmpty
                 ? Center(child: Text(errorMessage))
-                : ListView.builder(
-                    itemCount: reservations.length,
-                    itemBuilder: (context, index) {
-                      final reservation = reservations[index];
-                      return Card(
-                        color: kContainerColor,
-                        child: ListTile(
-                          title: Text(
-                            reservation['serviceType'],
-                            style: kCardTitleTextStyle,
-                          ),
-                          subtitle: Text(
-                            '${reservation['description'].toString().split(' ').take(12).join(' ')}...',
-                            style: kCardTextStyle,
-                          ),
-                          trailing: PrimaryFilledButtonThree(
-                            text: 'View Request',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ReservationDetailPage(
-                                    reservationId: reservation['_id'],
+                : reservations.isEmpty
+                    ? const NoReservationsWidget(
+                        message: 'No accepted reservations')
+                    : GridView.builder(
+                        padding: const EdgeInsets.all(10),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
+                        itemCount: reservations.length,
+                        itemBuilder: (context, index) {
+                          final reservation = reservations[index];
+                          final seeker = reservation['seeker'];
+                          final seekerLastName = seeker['lastName'] ?? 'N/A';
+                          final description = reservation['description']
+                              .toString()
+                              .split(' ')
+                              .take(8)
+                              .join(' ');
+
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                              seeker['profileImageUrl'] ??
+                                                  'https://via.placeholder.com/150',
+                                            ),
+                                            radius: 30,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                seekerLastName,
+                                                style: kCardTitleTextStyle,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                              const SizedBox(height: 5),
+                                              Text(
+                                                reservation['serviceType']
+                                                    .toString()
+                                                    .substring(0, 12),
+                                                style: kCardTextStyle,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        description,
+                                        style: kBodyTextStyle,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                      ),
+                                      const Spacer(),
+                                      Center(
+                                        child: PrimaryFilledButtonThree(
+                                          text: 'View Request',
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ReservationDetailPage(
+                                                  reservationId:
+                                                      reservation['_id'],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
       ),
     );
   }

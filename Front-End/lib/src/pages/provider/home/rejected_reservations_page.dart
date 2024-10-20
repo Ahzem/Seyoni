@@ -8,6 +8,7 @@ import 'reservation_detail_page.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
+import 'package:seyoni/src/widgets/no_reservations_widget.dart';
 
 class RejectedReservationsPage extends StatefulWidget {
   const RejectedReservationsPage({super.key});
@@ -86,38 +87,42 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
             ? const Center(child: CircularProgressIndicator())
             : errorMessage.isNotEmpty
                 ? Center(child: Text(errorMessage))
-                : ListView.builder(
-                    itemCount: reservations.length,
-                    itemBuilder: (context, index) {
-                      final reservation = reservations[index];
-                      return Card(
-                        color: kContainerColor,
-                        child: ListTile(
-                          title: Text(
-                            reservation['serviceType'],
-                            style: kCardTitleTextStyle,
-                          ),
-                          subtitle: Text(
-                            '${reservation['description'].toString().split(' ').take(12).join(' ')}...',
-                            style: kCardTextStyle,
-                          ),
-                          trailing: PrimaryFilledButtonThree(
-                            text: 'View Request',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ReservationDetailPage(
-                                    reservationId: reservation['_id'],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                : reservations.isEmpty
+                    ? const NoReservationsWidget(
+                        message: 'No rejected reservations')
+                    : ListView.builder(
+                        itemCount: reservations.length,
+                        itemBuilder: (context, index) {
+                          final reservation = reservations[index];
+                          return Card(
+                            color: kContainerColor,
+                            child: ListTile(
+                              title: Text(
+                                reservation['serviceType'],
+                                style: kCardTitleTextStyle,
+                              ),
+                              subtitle: Text(
+                                '${reservation['description'].toString().split(' ').take(12).join(' ')}...',
+                                style: kCardTextStyle,
+                              ),
+                              trailing: PrimaryFilledButtonThree(
+                                text: 'View Request',
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ReservationDetailPage(
+                                        reservationId: reservation['_id'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
       ),
     );
   }
