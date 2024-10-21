@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
+import 'package:seyoni/src/pages/provider/track/google_map_track_page.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 
 class AcceptedReservationDetailPage extends StatefulWidget {
@@ -321,7 +323,93 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                     const SizedBox(width: 20),
                     PrimaryFilledButton(
                       text: 'Track',
-                      onPressed: () {},
+                      onPressed: () async {
+                        final locationString = reservation?['location'] ?? '';
+                        print(
+                            'Location String: $locationString'); // Debug print
+
+                        final startIndex = locationString.indexOf('(');
+                        final endIndex = locationString.indexOf(')');
+
+                        if (startIndex != -1 &&
+                            endIndex != -1 &&
+                            startIndex < endIndex) {
+                          final latLng = locationString
+                              .substring(startIndex + 1, endIndex)
+                              .split(', ');
+                          print('Parsed LatLng: $latLng'); // Debug print
+
+                          if (latLng.length == 2) {
+                            try {
+                              final latitude = double.parse(latLng[0]);
+                              final longitude = double.parse(latLng[1]);
+                              print(
+                                  'Latitude: $latitude, Longitude: $longitude'); // Debug print
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GoogleMapsTrackPage(
+                                    seekerLocation: LatLng(latitude, longitude),
+                                  ),
+                                ),
+                              );
+                            } catch (e) {
+                              print(
+                                  'Error parsing latitude/longitude: $e'); // Debug print
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Invalid location format'),
+                                  backgroundColor: kErrorColor,
+                                ),
+                              );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Invalid location format'),
+                                backgroundColor: kErrorColor,
+                              ),
+                            );
+                          }
+                        } else {
+                          try {
+                            List<Location> locations =
+                                await locationFromAddress(locationString);
+                            if (locations.isNotEmpty) {
+                              final latitude = locations[0].latitude;
+                              final longitude = locations[0].longitude;
+                              print(
+                                  'Geocoded Latitude: $latitude, Longitude: $longitude'); // Debug print
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GoogleMapsTrackPage(
+                                    seekerLocation: LatLng(latitude, longitude),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Location not found'),
+                                  backgroundColor: kErrorColor,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            print(
+                                'Error geocoding location: $e'); // Debug print
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Failed to get location'),
+                                backgroundColor: kErrorColor,
+                              ),
+                            );
+                          }
+                        }
+                      },
                     ),
                   ],
                 ),
