@@ -241,7 +241,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                             children: [
                               Text(
                                 'Hello, $providerName',
-                                style: kTitleTextStyle,
+                                style: kSubtitleTextStyle,
                               ),
                               Text(
                                 '$proffession',

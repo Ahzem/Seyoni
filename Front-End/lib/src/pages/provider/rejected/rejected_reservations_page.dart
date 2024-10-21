@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/pages/provider/rejected/rejected_reservation_detail_page.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'dart:convert';
@@ -164,12 +165,11 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
                                         description,
                                         style: kBodyTextStyle,
                                         overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
+                                        maxLines: 1,
                                       ),
                                       const Spacer(),
                                       Center(
-                                        child: PrimaryFilledButtonThree(
-                                          text: 'View Request',
+                                        child: TextButton(
                                           onPressed: () async {
                                             final result = await Navigator.push(
                                               context,
@@ -185,6 +185,19 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
                                               _fetchReservations();
                                             }
                                           },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 5),
+                                            decoration: BoxDecoration(
+                                              color: kPrimaryColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            child: const Text('View Request',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 14)),
+                                          ),
                                         ),
                                       ),
                                     ],
