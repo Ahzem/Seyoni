@@ -135,9 +135,6 @@ class HiringFormState extends State<HiringForm> {
 
     var response = await request.send();
 
-    // Added logging for response status and body
-    var responseBody = await response.stream.bytesToString();
-
     if (response.statusCode == 201) {
       if (!mounted) return;
       Navigator.push(

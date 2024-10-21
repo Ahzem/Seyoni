@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:seyoni/src/pages/provider/home/rejected_reservation_detail_page.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/url.dart';
-import 'reservation_detail_page.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
@@ -107,16 +107,19 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
                               ),
                               trailing: PrimaryFilledButtonThree(
                                 text: 'View Request',
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async {
+                                  final result = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          ReservationDetailPage(
+                                          RejectedReservationDetailPage(
                                         reservationId: reservation['_id'],
                                       ),
                                     ),
                                   );
+                                  if (result == true) {
+                                    _fetchReservations();
+                                  }
                                 },
                               ),
                             ),

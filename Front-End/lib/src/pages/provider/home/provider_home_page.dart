@@ -29,6 +29,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   String errorMessage = '';
   String providerName = '';
   String profileImageUrl = '';
+  String proffession = '';
   int acceptedCount = 0;
   int rejectedCount = 0;
   int newRequestsCount = 0;
@@ -127,6 +128,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
         setState(() {
           providerName = provider['lastName'];
           profileImageUrl = provider['profileImageUrl'];
+          proffession = provider['proffession'];
         });
       } else {
         setState(() {
@@ -140,7 +142,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     }
   }
 
-  void _viewReservation(Map<String, dynamic> reservation) {
+  void viewReservation(Map<String, dynamic> reservation) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -233,10 +235,6 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Container(
                     padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
                     child: Row(
                       children: [
                         CircleAvatar(
@@ -246,7 +244,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                               : const AssetImage('assets/images/profile-3.jpg')
                                   as ImageProvider,
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 20),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,17 +253,18 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                                 'Hello, $providerName',
                                 style: kTitleTextStyle,
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  // Navigate to Edit Profile Page
-                                },
-                                child: const Text(
-                                  'Edit Profile',
-                                  style: TextStyle(color: kPrimaryColor),
-                                ),
-                              ),
+                              Text(
+                                '$proffession',
+                                style: kSubtitleTextStyle,
+                              )
                             ],
                           ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: kPrimaryColor),
+                          onPressed: () {
+                            // Navigate to Notifications Page
+                          },
                         ),
                       ],
                     ),

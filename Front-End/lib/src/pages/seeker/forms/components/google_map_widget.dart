@@ -134,6 +134,7 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
+                  style: kInputTextStyle,
                   controller: _searchController,
                   decoration: InputDecoration(
                     labelText: 'Search location',
@@ -164,41 +165,45 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
                 ),
               ),
               Expanded(
-                child: GoogleMap(
-                  onMapCreated: (controller) {
-                    mapController = controller;
-                    mapController!.animateCamera(
-                      CameraUpdate.newCameraPosition(
+                child: Container(
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(24)),
+                  child: GoogleMap(
+                    onMapCreated: (controller) {
+                      mapController = controller;
+                      mapController!.animateCamera(
+                        CameraUpdate.newCameraPosition(
+                          const CameraPosition(target: colombo, zoom: 14),
+                        ),
+                      );
+                    },
+                    initialCameraPosition:
                         const CameraPosition(target: colombo, zoom: 14),
-                      ),
-                    );
-                  },
-                  initialCameraPosition:
-                      const CameraPosition(target: colombo, zoom: 14),
-                  markers: {
-                    if (currentPosition != null)
-                      Marker(
-                        markerId: const MarkerId('currentLocation'),
-                        position: currentPosition!,
-                        draggable: true,
-                        icon: BitmapDescriptor.defaultMarkerWithHue(
-                            BitmapDescriptor.hueYellow),
-                        onDragEnd: (newPosition) {
-                          setState(() {
-                            currentPosition = newPosition;
-                          });
-                        },
-                      ),
-                  },
-                  myLocationEnabled: true,
-                  zoomGesturesEnabled: true,
-                  scrollGesturesEnabled: true,
-                  onCameraMove: (position) {
-                    // Update the marker position when the camera moves
-                    setState(() {
-                      currentPosition = position.target;
-                    });
-                  },
+                    markers: {
+                      if (currentPosition != null)
+                        Marker(
+                          markerId: const MarkerId('currentLocation'),
+                          position: currentPosition!,
+                          draggable: true,
+                          icon: BitmapDescriptor.defaultMarkerWithHue(
+                              BitmapDescriptor.hueYellow),
+                          onDragEnd: (newPosition) {
+                            setState(() {
+                              currentPosition = newPosition;
+                            });
+                          },
+                        ),
+                    },
+                    myLocationEnabled: true,
+                    zoomGesturesEnabled: true,
+                    scrollGesturesEnabled: true,
+                    onCameraMove: (position) {
+                      // Update the marker position when the camera moves
+                      setState(() {
+                        currentPosition = position.target;
+                      });
+                    },
+                  ),
                 ),
               ),
               Padding(

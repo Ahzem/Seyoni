@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
-import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 
-class ReservationDetailPage extends StatefulWidget {
+class RejectedReservationDetailPage extends StatefulWidget {
   final String reservationId;
 
-  const ReservationDetailPage({required this.reservationId, super.key});
+  const RejectedReservationDetailPage({required this.reservationId, super.key});
 
   @override
-  ReservationDetailPageState createState() => ReservationDetailPageState();
+  RejectedReservationDetailPageState createState() =>
+      RejectedReservationDetailPageState();
 }
 
-class ReservationDetailPageState extends State<ReservationDetailPage> {
+class RejectedReservationDetailPageState
+    extends State<RejectedReservationDetailPage> {
   Map<String, dynamic>? reservation;
   String readableAddress = '';
   bool isLoading = true;
@@ -110,87 +112,6 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
     }
   }
 
-  Future<void> _updateReservationStatus(String status) async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? providerId = prefs.getString('providerId');
-      if (providerId == null || providerId.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('User not logged in'),
-            backgroundColor: kErrorColor,
-          ),
-        );
-        return;
-      }
-
-      final url = status == 'accepted'
-          ? '$acceptReservationUrl/${widget.reservationId}/accept'
-          : '$rejectReservationUrl/${widget.reservationId}/reject';
-
-      final response = await http.patch(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'provider-id': providerId,
-        },
-      );
-
-      if (response.statusCode == 200) {
-        setState(() {
-          reservation?['status'] = status;
-          if (status == 'accepted') {
-            isAccepted = true;
-          } else if (status == 'rejected') {
-            Navigator.pop(context, true); // Pass true to indicate rejection
-          }
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to update reservation: ${response.body}'),
-            backgroundColor: kErrorColor,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to update reservation: $e'),
-          backgroundColor: kErrorColor,
-        ),
-      );
-    }
-  }
-
-  void _showConfirmationDialog(String action) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirm $action'),
-          content: Text('Are you sure you want to $action this reservation?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _updateReservationStatus(
-                    action == 'accept' ? 'accepted' : 'rejected');
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -211,9 +132,9 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
 
     final seeker = reservation?['seeker'] ?? {};
     final profileImage = seeker['profileImage'] ?? '';
-    final name = reservation?['name'] ?? 'Unknown';
+    final name = '${seeker['firstName']} ${seeker['lastName']}';
     final date = reservation?['date'] ?? 'Unknown';
-    final formattedDate = DateTime.parse(date);
+    final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
     final time = reservation?['time'] ?? 'Unknown';
     final description = reservation?['description'] ?? 'No description';
 
@@ -264,7 +185,7 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
                   children: [
                     const Icon(Icons.calendar_today),
                     const SizedBox(width: 8),
-                    Text(date, style: kSubtitleTextStyle),
+                    Text(formattedDate, style: kSubtitleTextStyle),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -306,28 +227,6 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
                       );
                     },
                   ),
-                ),
-                const SizedBox(height: 16),
-                // Accept and Reject buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    PrimaryOutlinedButtonTwo(
-                        text: 'Cancel',
-                        onPressed: () {
-                          _showConfirmationDialog('reject');
-                        }),
-                    const SizedBox(width: 10),
-                    PrimaryFilledButtonThree(
-                        text: isAccepted ? 'Track' : 'Accept',
-                        onPressed: () {
-                          if (isAccepted) {
-                            // Logic for tracking
-                          } else {
-                            _showConfirmationDialog('accept');
-                          }
-                        }),
-                  ],
                 ),
               ],
             ),

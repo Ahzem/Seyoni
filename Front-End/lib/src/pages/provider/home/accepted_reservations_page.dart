@@ -1,15 +1,12 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:seyoni/src/pages/provider/home/accepted_reservation_detail_page.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/url.dart';
-import 'reservation_detail_page.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
-// ignore: unused_import
-import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/widgets/no_reservations_widget.dart';
 
@@ -173,17 +170,20 @@ class AcceptedReservationsPageState extends State<AcceptedReservationsPage> {
                                       Center(
                                         child: PrimaryFilledButtonThree(
                                           text: 'View Request',
-                                          onPressed: () {
-                                            Navigator.push(
+                                          onPressed: () async {
+                                            final result = await Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ReservationDetailPage(
+                                                    AcceptedReservationDetailPage(
                                                   reservationId:
                                                       reservation['_id'],
                                                 ),
                                               ),
                                             );
+                                            if (result == true) {
+                                              _fetchReservations();
+                                            }
                                           },
                                         ),
                                       ),

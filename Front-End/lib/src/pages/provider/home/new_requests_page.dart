@@ -78,7 +78,8 @@ class NewRequestsPageState extends State<NewRequestsPage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: const Text('New Requests', style: TextStyle(color: Colors.white)),
+          title:
+              const Text('New Requests', style: TextStyle(color: Colors.white)),
           iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: isLoading
@@ -104,15 +105,19 @@ class NewRequestsPageState extends State<NewRequestsPage> {
                               ),
                               trailing: PrimaryFilledButtonThree(
                                 text: 'View Request',
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async {
+                                  final result = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ReservationDetailPage(
+                                      builder: (context) =>
+                                          ReservationDetailPage(
                                         reservationId: reservation['_id'],
                                       ),
                                     ),
                                   );
+                                  if (result == true) {
+                                    _fetchReservations();
+                                  }
                                 },
                               ),
                             ),

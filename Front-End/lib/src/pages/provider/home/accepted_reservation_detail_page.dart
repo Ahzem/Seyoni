@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
@@ -9,16 +10,16 @@ import 'package:http/http.dart' as http;
 import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 
-class ReservationDetailPage extends StatefulWidget {
+class AcceptedReservationDetailPage extends StatefulWidget {
   final String reservationId;
 
-  const ReservationDetailPage({required this.reservationId, super.key});
+  const AcceptedReservationDetailPage({required this.reservationId, super.key});
 
   @override
   ReservationDetailPageState createState() => ReservationDetailPageState();
 }
 
-class ReservationDetailPageState extends State<ReservationDetailPage> {
+class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
   Map<String, dynamic>? reservation;
   String readableAddress = '';
   bool isLoading = true;
@@ -211,9 +212,9 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
 
     final seeker = reservation?['seeker'] ?? {};
     final profileImage = seeker['profileImage'] ?? '';
-    final name = reservation?['name'] ?? 'Unknown';
+    final name = '${seeker['firstName']} ${seeker['lastName']}';
     final date = reservation?['date'] ?? 'Unknown';
-    final formattedDate = DateTime.parse(date);
+    final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
     final time = reservation?['time'] ?? 'Unknown';
     final description = reservation?['description'] ?? 'No description';
 
@@ -228,7 +229,7 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -246,15 +247,15 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
                 // Display reservation details with icons
                 Row(
                   children: [
-                    const Icon(Icons.person),
+                    const Icon(Icons.person, color: kPrimaryColor),
                     const SizedBox(width: 8),
-                    Text(name, style: kTitleTextStyle),
+                    Text(name, style: kSubtitleTextStyle),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.location_on),
+                    const Icon(Icons.location_on, color: kPrimaryColor),
                     const SizedBox(width: 8),
                     Text(readableAddress, style: kSubtitleTextStyle),
                   ],
@@ -262,15 +263,15 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today),
+                    const Icon(Icons.calendar_today, color: kPrimaryColor),
                     const SizedBox(width: 8),
-                    Text(date, style: kSubtitleTextStyle),
+                    Text(formattedDate, style: kSubtitleTextStyle),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.access_time),
+                    const Icon(Icons.access_time, color: kPrimaryColor),
                     const SizedBox(width: 8),
                     Text(time, style: kSubtitleTextStyle),
                   ],
@@ -312,21 +313,16 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    PrimaryOutlinedButtonTwo(
+                    PrimaryOutlinedButton(
                         text: 'Cancel',
                         onPressed: () {
                           _showConfirmationDialog('reject');
                         }),
-                    const SizedBox(width: 10),
-                    PrimaryFilledButtonThree(
-                        text: isAccepted ? 'Track' : 'Accept',
-                        onPressed: () {
-                          if (isAccepted) {
-                            // Logic for tracking
-                          } else {
-                            _showConfirmationDialog('accept');
-                          }
-                        }),
+                    const SizedBox(width: 20),
+                    PrimaryFilledButton(
+                      text: 'Track',
+                      onPressed: () {},
+                    ),
                   ],
                 ),
               ],
