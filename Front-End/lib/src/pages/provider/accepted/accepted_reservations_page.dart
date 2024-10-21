@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:seyoni/src/pages/provider/home/accepted_reservation_detail_page.dart';
+import 'package:seyoni/src/pages/provider/accepted/accepted_reservation_detail_page.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';

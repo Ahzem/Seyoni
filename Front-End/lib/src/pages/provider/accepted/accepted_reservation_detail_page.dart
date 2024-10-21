@@ -4,23 +4,22 @@ import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
+import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 
-class RejectedReservationDetailPage extends StatefulWidget {
+class AcceptedReservationDetailPage extends StatefulWidget {
   final String reservationId;
 
-  const RejectedReservationDetailPage({required this.reservationId, super.key});
+  const AcceptedReservationDetailPage({required this.reservationId, super.key});
 
   @override
-  RejectedReservationDetailPageState createState() =>
-      RejectedReservationDetailPageState();
+  ReservationDetailPageState createState() => ReservationDetailPageState();
 }
 
-class RejectedReservationDetailPageState
-    extends State<RejectedReservationDetailPage> {
+class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
   Map<String, dynamic>? reservation;
   String readableAddress = '';
   bool isLoading = true;
@@ -112,6 +111,87 @@ class RejectedReservationDetailPageState
     }
   }
 
+  Future<void> _updateReservationStatus(String status) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? providerId = prefs.getString('providerId');
+      if (providerId == null || providerId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('User not logged in'),
+            backgroundColor: kErrorColor,
+          ),
+        );
+        return;
+      }
+
+      final url = status == 'accepted'
+          ? '$acceptReservationUrl/${widget.reservationId}/accept'
+          : '$rejectReservationUrl/${widget.reservationId}/reject';
+
+      final response = await http.patch(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'provider-id': providerId,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          reservation?['status'] = status;
+          if (status == 'accepted') {
+            isAccepted = true;
+          } else if (status == 'rejected') {
+            Navigator.pop(context, true); // Pass true to indicate rejection
+          }
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update reservation: ${response.body}'),
+            backgroundColor: kErrorColor,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update reservation: $e'),
+          backgroundColor: kErrorColor,
+        ),
+      );
+    }
+  }
+
+  void _showConfirmationDialog(String action) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm $action'),
+          content: Text('Are you sure you want to $action this reservation?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _updateReservationStatus(
+                    action == 'accept' ? 'accepted' : 'rejected');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -149,7 +229,7 @@ class RejectedReservationDetailPageState
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -167,37 +247,37 @@ class RejectedReservationDetailPageState
                 // Display reservation details with icons
                 Row(
                   children: [
-                    const Icon(Icons.person),
+                    const Icon(Icons.person, color: kPrimaryColor),
                     const SizedBox(width: 8),
-                    Text(name, style: kTitleTextStyle),
+                    Text(name, style: kSubtitleTextStyle2),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.location_on),
+                    const Icon(Icons.location_on, color: kPrimaryColor),
                     const SizedBox(width: 8),
-                    Text(readableAddress, style: kSubtitleTextStyle),
+                    Text(readableAddress, style: kSubtitleTextStyle2),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today),
+                    const Icon(Icons.calendar_today, color: kPrimaryColor),
                     const SizedBox(width: 8),
-                    Text(formattedDate, style: kSubtitleTextStyle),
+                    Text(formattedDate, style: kSubtitleTextStyle2),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.access_time),
+                    const Icon(Icons.access_time, color: kPrimaryColor),
                     const SizedBox(width: 8),
-                    Text(time, style: kSubtitleTextStyle),
+                    Text(time, style: kSubtitleTextStyle2),
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text('Description', style: kSubtitleTextStyle),
+                Text('Description', style: kSubtitleTextStyle2),
                 const SizedBox(height: 8),
                 Text(description, style: kBodyTextStyle),
                 const SizedBox(height: 16),
@@ -227,6 +307,23 @@ class RejectedReservationDetailPageState
                       );
                     },
                   ),
+                ),
+                const SizedBox(height: 16),
+                // Accept and Reject buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    PrimaryOutlinedButton(
+                        text: 'Cancel',
+                        onPressed: () {
+                          _showConfirmationDialog('reject');
+                        }),
+                    const SizedBox(width: 20),
+                    PrimaryFilledButton(
+                      text: 'Track',
+                      onPressed: () {},
+                    ),
+                  ],
                 ),
               ],
             ),

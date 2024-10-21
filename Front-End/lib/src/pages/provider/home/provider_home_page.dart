@@ -3,14 +3,13 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:seyoni/src/pages/provider/home/accepted_reservations_page.dart';
-import 'package:seyoni/src/pages/provider/home/new_requests_page.dart';
-import 'package:seyoni/src/pages/provider/home/rejected_reservations_page.dart';
+import 'package:seyoni/src/pages/provider/accepted/accepted_reservations_page.dart';
+import 'package:seyoni/src/pages/provider/new/new_requests_page.dart';
+import 'package:seyoni/src/pages/provider/rejected/rejected_reservations_page.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/url.dart';
 import '../login/provider_signin_page.dart';
-import 'reservation_detail_page.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
@@ -142,15 +141,6 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     }
   }
 
-  void viewReservation(Map<String, dynamic> reservation) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            ReservationDetailPage(reservationId: reservation['_id']),
-      ),
-    );
-  }
 
   Future<void> updateReservationStatus(
       String reservationId, String status) async {

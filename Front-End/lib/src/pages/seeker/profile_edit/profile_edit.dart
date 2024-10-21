@@ -68,7 +68,6 @@ class ProfileEditPageState extends State<ProfileEditPage> {
         _profileImage = image.path;
       });
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('profileImageUrl', image.path);
       await prefs.setString('address', _addressController.text);
     }
   }

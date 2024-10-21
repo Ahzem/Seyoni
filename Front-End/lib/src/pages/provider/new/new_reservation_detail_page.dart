@@ -9,16 +9,16 @@ import 'package:http/http.dart' as http;
 import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 
-class ReservationDetailPage extends StatefulWidget {
+class NewReservationDetailPage extends StatefulWidget {
   final String reservationId;
 
-  const ReservationDetailPage({required this.reservationId, super.key});
+  const NewReservationDetailPage({required this.reservationId, super.key});
 
   @override
-  ReservationDetailPageState createState() => ReservationDetailPageState();
+  NewReservationDetailPageState createState() => NewReservationDetailPageState();
 }
 
-class ReservationDetailPageState extends State<ReservationDetailPage> {
+class NewReservationDetailPageState extends State<NewReservationDetailPage> {
   Map<String, dynamic>? reservation;
   String readableAddress = '';
   bool isLoading = true;
@@ -248,7 +248,7 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
                   children: [
                     const Icon(Icons.person),
                     const SizedBox(width: 8),
-                    Text(name, style: kTitleTextStyle),
+                    Text(name, style: kSubtitleTextStyle2),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -256,7 +256,7 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
                   children: [
                     const Icon(Icons.location_on),
                     const SizedBox(width: 8),
-                    Text(readableAddress, style: kSubtitleTextStyle),
+                    Text(readableAddress, style: kSubtitleTextStyle2),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -264,7 +264,7 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
                   children: [
                     const Icon(Icons.calendar_today),
                     const SizedBox(width: 8),
-                    Text(date, style: kSubtitleTextStyle),
+                    Text(formattedDate as String, style: kSubtitleTextStyle2),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -272,11 +272,11 @@ class ReservationDetailPageState extends State<ReservationDetailPage> {
                   children: [
                     const Icon(Icons.access_time),
                     const SizedBox(width: 8),
-                    Text(time, style: kSubtitleTextStyle),
+                    Text(time, style: kSubtitleTextStyle2),
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text('Description', style: kSubtitleTextStyle),
+                Text('Description', style: kSubtitleTextStyle2),
                 const SizedBox(height: 8),
                 Text(description, style: kBodyTextStyle),
                 const SizedBox(height: 16),
