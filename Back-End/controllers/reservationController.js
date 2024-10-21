@@ -34,11 +34,7 @@ exports.uploadImages = upload.array("images", 3);
 
 exports.createReservation = async (req, res) => {
   try {
-    // console.log("Headers:", req.headers); // Log request headers
-    // console.log("Body:", req.body); // Log request body
-
     const reservationData = req.body;
-    // console.log("Incoming reservation data:", reservationData); // Log incoming data
 
     if (req.files) {
       reservationData.images = req.files.map((file) => file.location); // S3 URL
@@ -54,8 +50,6 @@ exports.createReservation = async (req, res) => {
     };
     reservationData.providerId = req.body.providerId; // Ensure providerId is set
 
-    // console.log("Creating Reservation with Data:", reservationData); // Debug statement
-
     const reservation = new Reservation(reservationData);
     await reservation.save();
     res.status(201).send(reservation);
@@ -66,6 +60,7 @@ exports.createReservation = async (req, res) => {
       .send({ error: "Failed to create reservation", details: error.message });
   }
 };
+
 exports.getReservations = async (req, res) => {
   try {
     const seekerId = req.headers["seeker-id"];
@@ -81,15 +76,29 @@ exports.getReservations = async (req, res) => {
     if (seekerId) {
       reservations = await Reservation.find({ "seeker.id": seekerId });
     } else if (providerId) {
-      // console.log("Provider ID:", providerId);  Debug statement
       reservations = await Reservation.find({ providerId: providerId });
-      // console.log("Fetched Reservations:", reservations);  Debug statement
     }
 
     res.status(200).send(reservations);
   } catch (error) {
     console.error("Error fetching reservations:", error);
     res.status(400).send({ error: "Failed to fetch reservations" });
+  }
+};
+
+exports.getReservationById = async (req, res) => {
+  try {
+    const { reservationId } = req.params;
+    const reservation = await Reservation.findById(reservationId);
+
+    if (!reservation) {
+      return res.status(404).send({ error: "Reservation not found" });
+    }
+
+    res.status(200).send(reservation);
+  } catch (error) {
+    console.error("Error fetching reservation:", error);
+    res.status(400).send({ error: "Failed to fetch reservation" });
   }
 };
 

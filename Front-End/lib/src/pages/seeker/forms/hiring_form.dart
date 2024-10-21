@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geocoding/geocoding.dart';
 import '../../../config/url.dart';
 import '../../../constants/constants_font.dart';
 import '../../../widgets/background_widget.dart';
@@ -60,15 +61,18 @@ class HiringFormState extends State<HiringForm> {
     String? lastName = prefs.getString('lastName');
     String? email = prefs.getString('email');
 
+    // Debug prints to verify field values
+
     if (_selectedDate == null ||
         _selectedTime == null ||
-        _selectedLocation == null && _enteredAddress == null ||
+        (_selectedLocation == null &&
+            (_enteredAddress == null || _enteredAddress!.isEmpty)) ||
         _descriptionController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
-            'Please fill all the required fields'
-            ' before confirming the reservation.',
-            style: TextStyle(color: Colors.black)),
+          'Please fill all the required fields before confirming the reservation.',
+          style: TextStyle(color: Colors.black),
+        ),
         backgroundColor: kPrimaryColor,
       ));
       return;
@@ -94,8 +98,10 @@ class HiringFormState extends State<HiringForm> {
       'rating': widget.rating,
       'profession': widget.profession,
       'serviceType': widget.serviceType,
-      'location': _selectedLocation?.toString() ?? _enteredAddress!,
-      'time': _selectedTime!.format(context), // Format the time correctly
+      'location': _selectedLocation != null
+          ? '${_selectedLocation!.latitude},${_selectedLocation!.longitude}'
+          : _enteredAddress!,
+      'time': _selectedTime!.format(context),
       'date': _selectedDate.toString(),
       'description': _descriptionController.text,
       'seeker': {
@@ -139,7 +145,9 @@ class HiringFormState extends State<HiringForm> {
             profileImage: widget.profileImage,
             rating: widget.rating,
             profession: widget.profession,
-            location: _selectedLocation?.toString() ?? _enteredAddress!,
+            location: _selectedLocation != null
+                ? '${_selectedLocation!.latitude},${_selectedLocation!.longitude}'
+                : _enteredAddress!,
             time: _selectedTime!.format(context), // Format the time correctly
             date: _selectedDate.toString(),
             description: _descriptionController.text,
@@ -159,9 +167,36 @@ class HiringFormState extends State<HiringForm> {
     }
   }
 
+  Future<String> getAddressFromLatLng(LatLng position) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      if (placemarks.isNotEmpty) {
+        final placemark = placemarks.first;
+        return '${placemark.street}, ${placemark.locality}, ${placemark.country}';
+      }
+    } catch (e) {
+      // Handle the error, e.g., show a message to the user
+      print('Error occurred while getting address from latitude and longitude: $e');
+    }
+    // Return latitude and longitude as a fallback
+    return '${position.latitude},${position.longitude}';
+  }
+
   void pickLocation(LatLng location) {
     setState(() {
       _selectedLocation = location;
+      _enteredAddress = null; // Clear entered address when location is picked
+    });
+  }
+
+  void enterAddress(String address) {
+    setState(() {
+      _enteredAddress = address;
+      _selectedLocation =
+          null; // Clear selected location when address is entered
     });
   }
 
@@ -201,12 +236,6 @@ class HiringFormState extends State<HiringForm> {
     }
   }
 
-  void enterAddress(String address) {
-    setState(() {
-      _enteredAddress = address;
-    });
-  }
-
   void _showUnsavedChangesDialog() {
     showDialog(
       context: context,
@@ -241,6 +270,7 @@ class HiringFormState extends State<HiringForm> {
   @override
   void dispose() {
     _descriptionController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -285,7 +315,8 @@ class HiringFormState extends State<HiringForm> {
                         controller: _locationController,
                         labelText: 'Location',
                         onTap: () async {
-                          final result = await showModalBottomSheet<String>(
+                          final result =
+                              await showModalBottomSheet<Map<String, dynamic>>(
                             context: context,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
@@ -295,7 +326,15 @@ class HiringFormState extends State<HiringForm> {
                             ),
                           );
                           if (result != null) {
-                            _locationController.text = result;
+                            final address = result['address'] as String;
+                            final latitude = result['latitude'] as double;
+                            final longitude = result['longitude'] as double;
+                            setState(() {
+                              _locationController.text = address;
+                              _selectedLocation = LatLng(latitude, longitude);
+                              _enteredAddress = address;
+                            });
+                          } else {
                           }
                         },
                       ),

@@ -68,7 +68,6 @@ class ProfileEditPageState extends State<ProfileEditPage> {
         _profileImage = image.path;
       });
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('profileImageUrl', image.path);
       await prefs.setString('address', _addressController.text);
     }
   }
@@ -152,20 +151,20 @@ class ProfileEditPageState extends State<ProfileEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Profile', style: kSubtitleTextStyle),
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context, true);
-          },
+    return BackgroundWidget(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Edit Profile', style: kSubtitleTextStyle),
+          backgroundColor: Colors.transparent,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+          ),
         ),
-      ),
-      backgroundColor: Colors.transparent,
-      body: BackgroundWidget(
-        child: SingleChildScrollView(
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
