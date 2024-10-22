@@ -31,8 +31,13 @@ Future<void> main() async {
   await _requestPermissions();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
+  String? userType = prefs.getString(
+      'userType'); // Added to differentiate between seeker and provider
   bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
-  runApp(MyApp(token: token, hasSeenLaunchScreen: hasSeenLaunchScreen));
+  runApp(MyApp(
+      token: token,
+      userType: userType,
+      hasSeenLaunchScreen: hasSeenLaunchScreen));
 }
 
 Future<void> _requestPermissions() async {
@@ -42,7 +47,6 @@ Future<void> _requestPermissions() async {
   ];
 
   if (!kIsWeb) {
-    // Use kIsWeb instead of Platform.isWeb
     permissions.add(Permission.photos);
     permissions.add(Permission.storage);
   }
@@ -52,9 +56,14 @@ Future<void> _requestPermissions() async {
 
 class MyApp extends StatelessWidget {
   final String? token;
+  final String? userType;
   final bool hasSeenLaunchScreen;
 
-  const MyApp({super.key, this.token, required this.hasSeenLaunchScreen});
+  const MyApp(
+      {super.key,
+      this.token,
+      this.userType,
+      required this.hasSeenLaunchScreen});
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +101,11 @@ class MyApp extends StatelessWidget {
     if (!hasSeenLaunchScreen) {
       return LaunchScreen(onLaunchScreenComplete: _onLaunchScreenComplete);
     } else if (token != null && !JwtDecoder.isExpired(token!)) {
-      return const HomePage();
+      if (userType == 'provider') {
+        return const ProviderHomePage();
+      } else {
+        return const HomePage();
+      }
     } else {
       return const SignInPage();
     }

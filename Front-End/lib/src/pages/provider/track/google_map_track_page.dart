@@ -1,20 +1,20 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import 'package:seyoni/src/pages/provider/service_process_page.dart';
 
 class GoogleMapsTrackPage extends StatefulWidget {
   final LatLng seekerLocation;
   final String seekerName;
-  final String seekerProfileImage;
 
   const GoogleMapsTrackPage({
     required this.seekerLocation,
     required this.seekerName,
-    required this.seekerProfileImage,
     super.key,
   });
 
@@ -28,6 +28,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
   LatLng? currentPosition;
   Set<Polyline> polylines = {};
   Set<Marker> markers = {};
+  bool _otpGenerated = false;
 
   @override
   void initState() {
@@ -80,8 +81,50 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
         currentPosition =
             LatLng(currentLocation.latitude!, currentLocation.longitude!);
         _updateRoute();
+        _checkProximity();
       });
     });
+  }
+
+  void _checkProximity() {
+    if (currentPosition == null || _otpGenerated)
+      return; // Check if OTP is already generated
+
+    final distance = _calculateDistance(
+      currentPosition!.latitude,
+      currentPosition!.longitude,
+      widget.seekerLocation.latitude,
+      widget.seekerLocation.longitude,
+    );
+
+    if (distance <= 0.5) {
+      final otp = _generateOtp();
+      print(
+          '-------------------------Generated OTP: $otp----------------------');
+      _otpGenerated = true;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ServiceProcessPage(
+            seekerName: widget.seekerName,
+            otp: otp,
+          ),
+        ),
+      );
+    }
+  }
+
+  double _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
+    const p = 0.017453292519943295;
+    final a = 0.5 -
+        cos((lat2 - lat1) * p) / 2 +
+        cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
+
+  String _generateOtp() {
+    return (100000 + (Random().nextInt(900000))).toString();
   }
 
   Future<void> _updateRoute() async {

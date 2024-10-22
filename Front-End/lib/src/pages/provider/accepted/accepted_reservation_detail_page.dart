@@ -358,7 +358,6 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                                   builder: (context) => GoogleMapsTrackPage(
                                     seekerLocation: LatLng(latitude, longitude),
                                     seekerName: lastName,
-                                    seekerProfileImage: profileImage,
                                   ),
                                 ),
                               );
@@ -396,7 +395,6 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                                   builder: (context) => GoogleMapsTrackPage(
                                     seekerLocation: LatLng(latitude, longitude),
                                     seekerName: lastName,
-                                    seekerProfileImage: profileImage,
                                   ),
                                 ),
                               );
