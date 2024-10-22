@@ -4,11 +4,19 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:seyoni/src/constants/constants_color.dart';
 
 class GoogleMapsTrackPage extends StatefulWidget {
   final LatLng seekerLocation;
+  final String seekerName;
+  final String seekerProfileImage;
 
-  const GoogleMapsTrackPage({required this.seekerLocation, super.key});
+  const GoogleMapsTrackPage({
+    required this.seekerLocation,
+    required this.seekerName,
+    required this.seekerProfileImage,
+    super.key,
+  });
 
   @override
   State<GoogleMapsTrackPage> createState() => _GoogleMapsTrackPageState();
@@ -25,6 +33,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
   void initState() {
     super.initState();
     _initializeMarkers();
+    _fetchLocationUpdates();
   }
 
   void _initializeMarkers() {
@@ -33,6 +42,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
         markerId: MarkerId('seeker'),
         position: widget.seekerLocation,
         infoWindow: InfoWindow(title: 'Seeker Location'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
       ),
     );
   }
@@ -61,13 +71,6 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     setState(() {
       currentPosition =
           LatLng(currentLocation.latitude!, currentLocation.longitude!);
-      markers.add(
-        Marker(
-          markerId: MarkerId('provider'),
-          position: currentPosition!,
-          infoWindow: InfoWindow(title: 'Provider Location'),
-        ),
-      );
       _updateRoute();
     });
 
@@ -76,14 +79,6 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
       setState(() {
         currentPosition =
             LatLng(currentLocation.latitude!, currentLocation.longitude!);
-        markers.removeWhere((m) => m.markerId.value == 'provider');
-        markers.add(
-          Marker(
-            markerId: MarkerId('provider'),
-            position: currentPosition!,
-            infoWindow: InfoWindow(title: 'Provider Location'),
-          ),
-        );
         _updateRoute();
       });
     });
@@ -101,7 +96,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
         Polyline(
           polylineId: PolylineId('route'),
           points: route,
-          color: Colors.blue,
+          color: kPrimaryColor,
           width: 5,
         ),
       );
@@ -162,29 +157,25 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kPrimaryColor,
       appBar: AppBar(
-        title: Text('Track Provider'),
+        backgroundColor: kPrimaryColor,
+        title: Text('Track ${widget.seekerName}'),
       ),
       body: Stack(
         children: [
           GoogleMap(
             initialCameraPosition: CameraPosition(
               target: widget.seekerLocation,
-              zoom: 14.0,
+              zoom: 16.0,
             ),
             markers: markers,
             polylines: polylines,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
             onMapCreated: (GoogleMapController controller) {
               mapController = controller;
             },
-          ),
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton(
-              onPressed: _fetchLocationUpdates,
-              child: Icon(Icons.my_location),
-            ),
           ),
         ],
       ),

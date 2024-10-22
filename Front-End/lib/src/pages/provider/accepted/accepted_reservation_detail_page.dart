@@ -218,6 +218,7 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
     final seeker = reservation?['seeker'] ?? {};
     final profileImage = seeker['profileImage'] ?? '';
     final name = '${seeker['firstName']} ${seeker['lastName']}';
+    final lastName = seeker['lastName'] ?? '';
     final date = reservation?['date'] ?? 'Unknown';
     final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
     final time = reservation?['time'] ?? 'Unknown';
@@ -356,6 +357,8 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                                 MaterialPageRoute(
                                   builder: (context) => GoogleMapsTrackPage(
                                     seekerLocation: LatLng(latitude, longitude),
+                                    seekerName: lastName,
+                                    seekerProfileImage: profileImage,
                                   ),
                                 ),
                               );
@@ -392,6 +395,8 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                                 MaterialPageRoute(
                                   builder: (context) => GoogleMapsTrackPage(
                                     seekerLocation: LatLng(latitude, longitude),
+                                    seekerName: lastName,
+                                    seekerProfileImage: profileImage,
                                   ),
                                 ),
                               );
