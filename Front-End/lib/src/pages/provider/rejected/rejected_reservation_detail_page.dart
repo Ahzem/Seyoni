@@ -115,7 +115,10 @@ class RejectedReservationDetailPageState
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+          child: CircularProgressIndicator(
+        color: kPrimaryColor,
+      ));
     }
 
     if (reservation == null) {
@@ -137,6 +140,7 @@ class RejectedReservationDetailPageState
     final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
     final time = reservation?['time'] ?? 'Unknown';
     final description = reservation?['description'] ?? 'No description';
+    final images = reservation?['images'] ?? [];
 
     return BackgroundWidget(
       child: Scaffold(
@@ -201,33 +205,35 @@ class RejectedReservationDetailPageState
                 const SizedBox(height: 8),
                 Text(description, style: kBodyTextStyle),
                 const SizedBox(height: 16),
-                // Display images with curves
-                SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: reservation?['images']?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final imageUrl = reservation?['images'][index] ?? '';
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FullScreenImage(
-                                imageUrl: imageUrl,
+                // Display images with curves if they exist
+                if (images.isNotEmpty)
+                  SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: images.length,
+                      itemBuilder: (context, index) {
+                        final imageUrl = images[index] ?? '';
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FullScreenImage(
+                                  imageUrl: imageUrl,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16.0),
-                          child: Image.network(imageUrl),
-                        ),
-                      );
-                    },
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16.0),
+                            child: Image.network(imageUrl),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
+                if (images.isNotEmpty) const SizedBox(height: 16),
               ],
             ),
           ),

@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/pages/provider/accepted/accepted_reservation_detail_page.dart';
-import 'package:seyoni/src/widgets/custom_button.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/url.dart';
@@ -84,7 +84,10 @@ class AcceptedReservationsPageState extends State<AcceptedReservationsPage> {
           iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(
+                child: CircularProgressIndicator(
+                color: kPrimaryColor,
+              ))
             : errorMessage.isNotEmpty
                 ? Center(child: Text(errorMessage))
                 : reservations.isEmpty
@@ -164,12 +167,11 @@ class AcceptedReservationsPageState extends State<AcceptedReservationsPage> {
                                         description,
                                         style: kBodyTextStyle,
                                         overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
+                                        maxLines: 1,
                                       ),
                                       const Spacer(),
                                       Center(
-                                        child: PrimaryFilledButtonThree(
-                                          text: 'View Request',
+                                        child: TextButton(
                                           onPressed: () async {
                                             final result = await Navigator.push(
                                               context,
@@ -185,6 +187,19 @@ class AcceptedReservationsPageState extends State<AcceptedReservationsPage> {
                                               _fetchReservations();
                                             }
                                           },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 5),
+                                            decoration: BoxDecoration(
+                                              color: kPrimaryColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            child: const Text('View Request',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 14)),
+                                          ),
                                         ),
                                       ),
                                     ],

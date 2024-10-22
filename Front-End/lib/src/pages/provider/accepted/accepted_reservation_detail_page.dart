@@ -197,7 +197,10 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+          child: CircularProgressIndicator(
+        color: kPrimaryColor,
+      ));
     }
 
     if (reservation == null) {
@@ -215,10 +218,12 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
     final seeker = reservation?['seeker'] ?? {};
     final profileImage = seeker['profileImage'] ?? '';
     final name = '${seeker['firstName']} ${seeker['lastName']}';
+    final lastName = seeker['lastName'] ?? '';
     final date = reservation?['date'] ?? 'Unknown';
     final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
     final time = reservation?['time'] ?? 'Unknown';
     final description = reservation?['description'] ?? 'No description';
+    final images = reservation?['images'] ?? [];
 
     return BackgroundWidget(
       child: Scaffold(
@@ -283,34 +288,35 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                 const SizedBox(height: 8),
                 Text(description, style: kBodyTextStyle),
                 const SizedBox(height: 16),
-                // Display images with curves
-                SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: reservation?['images']?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final imageUrl = reservation?['images'][index] ?? '';
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FullScreenImage(
-                                imageUrl: imageUrl,
+                // Display images with curves if they exist
+                if (images.isNotEmpty)
+                  SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: images.length,
+                      itemBuilder: (context, index) {
+                        final imageUrl = images[index] ?? '';
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FullScreenImage(
+                                  imageUrl: imageUrl,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16.0),
-                          child: Image.network(imageUrl),
-                        ),
-                      );
-                    },
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16.0),
+                            child: Image.network(imageUrl),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
+                if (images.isNotEmpty) const SizedBox(height: 16),
                 // Accept and Reject buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -351,6 +357,8 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                                 MaterialPageRoute(
                                   builder: (context) => GoogleMapsTrackPage(
                                     seekerLocation: LatLng(latitude, longitude),
+                                    seekerName: lastName,
+                                    seekerProfileImage: profileImage,
                                   ),
                                 ),
                               );
@@ -387,6 +395,8 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                                 MaterialPageRoute(
                                   builder: (context) => GoogleMapsTrackPage(
                                     seekerLocation: LatLng(latitude, longitude),
+                                    seekerName: lastName,
+                                    seekerProfileImage: profileImage,
                                   ),
                                 ),
                               );

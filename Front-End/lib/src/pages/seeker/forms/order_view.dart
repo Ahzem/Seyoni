@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import 'package:intl/intl.dart';
+import 'package:geocoding/geocoding.dart';
 import '../../../config/route.dart';
 import '../../../constants/constants_font.dart';
 import '../../../widgets/background_widget.dart';
@@ -35,8 +37,45 @@ class OrderView extends StatefulWidget {
 }
 
 class OrderViewState extends State<OrderView> {
+  String readableAddress = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getReadableAddress();
+  }
+
+  Future<void> _getReadableAddress() async {
+    try {
+      final locationString = widget.location;
+      final latLng = locationString
+          .substring(
+            locationString.indexOf('(') + 1,
+            locationString.indexOf(')'),
+          )
+          .split(', ');
+      final latitude = double.parse(latLng[0]);
+      final longitude = double.parse(latLng[1]);
+
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+      Placemark place = placemarks[0];
+      setState(() {
+        readableAddress =
+            '${place.street}, ${place.locality}, ${place.country}';
+      });
+    } catch (e) {
+      setState(() {
+        readableAddress = 'Unknown location';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final formattedDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.parse(widget.date));
+
     return Stack(
       children: [
         const Positioned.fill(
@@ -88,7 +127,7 @@ class OrderViewState extends State<OrderView> {
                                     size: 22, color: kPrimaryColor),
                                 const SizedBox(width: 10),
                                 Text(
-                                  widget.location,
+                                  readableAddress,
                                   style: kReservationsTitleTextStyle,
                                 ),
                               ],
@@ -112,7 +151,7 @@ class OrderViewState extends State<OrderView> {
                                     size: 22, color: kPrimaryColor),
                                 const SizedBox(width: 10),
                                 Text(
-                                  widget.date,
+                                  formattedDate,
                                   style: kReservationsTitleTextStyle,
                                 ),
                               ],

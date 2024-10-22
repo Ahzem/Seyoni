@@ -19,6 +19,7 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
   final loc.Location locationController = loc.Location();
   GoogleMapController? mapController;
   LatLng? currentPosition;
+  LatLng? markerPosition;
   final TextEditingController _searchController = TextEditingController();
 
   static const LatLng colombo = LatLng(6.925921399443209, 79.85997663648692);
@@ -64,6 +65,7 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
           currentLocation.latitude ?? 0.0,
           currentLocation.longitude ?? 0.0,
         );
+        markerPosition = currentPosition;
       });
       if (mapController != null) {
         mapController!.animateCamera(
@@ -83,6 +85,7 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
         final newPosition = LatLng(location.latitude, location.longitude);
         setState(() {
           currentPosition = newPosition;
+          markerPosition = newPosition;
         });
         mapController!.animateCamera(
           CameraUpdate.newCameraPosition(
@@ -180,16 +183,16 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
                     initialCameraPosition:
                         const CameraPosition(target: colombo, zoom: 14),
                     markers: {
-                      if (currentPosition != null)
+                      if (markerPosition != null)
                         Marker(
                           markerId: const MarkerId('currentLocation'),
-                          position: currentPosition!,
+                          position: markerPosition!,
                           draggable: true,
                           icon: BitmapDescriptor.defaultMarkerWithHue(
                               BitmapDescriptor.hueYellow),
                           onDragEnd: (newPosition) {
                             setState(() {
-                              currentPosition = newPosition;
+                              markerPosition = newPosition;
                             });
                           },
                         ),
@@ -200,7 +203,7 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
                     onCameraMove: (position) {
                       // Update the marker position when the camera moves
                       setState(() {
-                        currentPosition = position.target;
+                        markerPosition = position.target;
                       });
                     },
                   ),
@@ -230,16 +233,16 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
                     PrimaryFilledButton(
                       text: 'Pick',
                       onPressed: () async {
-                        if (currentPosition != null) {
+                        if (markerPosition != null) {
                           final address =
-                              await _getAddressFromLatLng(currentPosition!);
+                              await _getAddressFromLatLng(markerPosition!);
                           Navigator.pop(context, {
                             'address': address,
-                            'latitude': currentPosition!.latitude,
-                            'longitude': currentPosition!.longitude,
+                            'latitude': markerPosition!.latitude,
+                            'longitude': markerPosition!.longitude,
                           });
                         } else {
-                          print('Current position is null');
+                          print('Marker position is null');
                         }
                       },
                     ),

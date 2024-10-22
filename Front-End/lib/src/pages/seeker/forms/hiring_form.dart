@@ -179,7 +179,8 @@ class HiringFormState extends State<HiringForm> {
       }
     } catch (e) {
       // Handle the error, e.g., show a message to the user
-      print('Error occurred while getting address from latitude and longitude: $e');
+      print(
+          'Error occurred while getting address from latitude and longitude: $e');
     }
     // Return latitude and longitude as a fallback
     return '${position.latitude},${position.longitude}';
@@ -276,164 +277,154 @@ class HiringFormState extends State<HiringForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        const Positioned.fill(
-          child: BackgroundWidget(child: SizedBox.expand()),
-        ),
-        Scaffold(
+    return BackgroundWidget(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('Hiring Form', style: kAppBarTitleTextStyle),
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            title: const Text('Hiring Form', style: kAppBarTitleTextStyle),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-              onPressed: _showUnsavedChangesDialog,
-            ),
+          elevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: _showUnsavedChangesDialog,
           ),
-          body: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ServiceProviderInfo(
-                        name: widget.name,
-                        profileImage: widget.profileImage,
-                        rating: widget.rating,
-                        profession: widget.profession,
-                      ),
-                      const SizedBox(height: 20),
-                      CustomLocationField(
-                        controller: _locationController,
-                        labelText: 'Location',
-                        onTap: () async {
-                          final result =
-                              await showModalBottomSheet<Map<String, dynamic>>(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) => SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.85,
-                              child: const GoogleMapsBottomSheet(),
-                            ),
-                          );
-                          if (result != null) {
-                            final address = result['address'] as String;
-                            final latitude = result['latitude'] as double;
-                            final longitude = result['longitude'] as double;
-                            setState(() {
-                              _locationController.text = address;
-                              _selectedLocation = LatLng(latitude, longitude);
-                              _enteredAddress = address;
-                            });
-                          } else {
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          DatePicker(
-                            selectedDate: _selectedDate,
-                            onPickDate: _pickDate,
-                          ),
-                          const SizedBox(width: 10),
-                          TimePicker(
-                            selectedTime: _selectedTime,
-                            onPickTime: _pickTime,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          ImagePickerWidget(
-                            onPickImage: _pickImage,
-                          ),
-                          const SizedBox(width: 10),
-                          SelectedImagesWidget(selectedImages: _selectedImages),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      CustomTextField(controller: _descriptionController),
-                      const SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _selectedImages = [];
-                                _selectedDate = null;
-                                _selectedTime = null;
-                                _selectedLocation = null;
-                                _enteredAddress = null;
-                                _descriptionController.clear();
-                              });
-                            },
-                            child: const Row(
-                              children: [
-                                Text('Clear Form',
-                                    style: kBodyTextStyle,
-                                    textAlign: TextAlign.right),
-                                SizedBox(width: 5),
-                                Icon(Icons.clear_all, color: kPrimaryColor),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomIconButton(
-                            icon: Icons.phone,
-                            onPressed: () {},
-                          ),
-                          const SizedBox(width: 30),
-                          CustomIconButton(
-                            icon: Icons.chat,
-                            onPressed: () {},
-                          ),
-                          const SizedBox(width: 30),
-                          CustomIconButton(
-                            icon: Icons.bookmark_added_sharp,
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            PrimaryOutlinedButton(
-                                text: "Cancel",
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                }),
-                            const SizedBox(width: 10),
-                            PrimaryFilledButton(
-                                text: "Reserve",
-                                onPressed: showReservationConfirmationDialog),
-                          ]),
-                    ],
-                  ),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ServiceProviderInfo(
+                  name: widget.name,
+                  profileImage: widget.profileImage,
+                  rating: widget.rating,
+                  profession: widget.profession,
                 ),
-              ),
+                const SizedBox(height: 20),
+                CustomLocationField(
+                  controller: _locationController,
+                  labelText: 'Location',
+                  onTap: () async {
+                    final result =
+                        await showModalBottomSheet<Map<String, dynamic>>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        child: const GoogleMapsBottomSheet(),
+                      ),
+                    );
+                    if (result != null) {
+                      final address = result['address'] as String;
+                      final latitude = result['latitude'] as double;
+                      final longitude = result['longitude'] as double;
+                      if (address.isNotEmpty) {
+                        setState(() {
+                          _locationController.text = address;
+                          _selectedLocation = LatLng(latitude, longitude);
+                          _enteredAddress = address;
+                        });
+                      } else {
+                        // Handle the case where the address is empty
+                        print('Address is empty');
+                      }
+                    }
+                  },
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    DatePicker(
+                      selectedDate: _selectedDate,
+                      onPickDate: _pickDate,
+                    ),
+                    const SizedBox(width: 10),
+                    TimePicker(
+                      selectedTime: _selectedTime,
+                      onPickTime: _pickTime,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    ImagePickerWidget(
+                      onPickImage: _pickImage,
+                    ),
+                    const SizedBox(width: 10),
+                    SelectedImagesWidget(selectedImages: _selectedImages),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(controller: _descriptionController),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedImages = [];
+                          _selectedDate = null;
+                          _selectedTime = null;
+                          _selectedLocation = null;
+                          _enteredAddress = null;
+                          _descriptionController.clear();
+                        });
+                      },
+                      child: const Row(
+                        children: [
+                          Text('Clear Form',
+                              style: kBodyTextStyle,
+                              textAlign: TextAlign.right),
+                          SizedBox(width: 5),
+                          Icon(Icons.clear_all, color: kPrimaryColor),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CustomIconButton(
+                      icon: Icons.phone,
+                      onPressed: () {},
+                    ),
+                    const SizedBox(width: 30),
+                    CustomIconButton(
+                      icon: Icons.chat,
+                      onPressed: () {},
+                    ),
+                    const SizedBox(width: 30),
+                    CustomIconButton(
+                      icon: Icons.bookmark_added_sharp,
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  PrimaryOutlinedButton(
+                      text: "Cancel",
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      }),
+                  const SizedBox(width: 10),
+                  PrimaryFilledButton(
+                      text: "Reserve",
+                      onPressed: showReservationConfirmationDialog),
+                ]),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }
