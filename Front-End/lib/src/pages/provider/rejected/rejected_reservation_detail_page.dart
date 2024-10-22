@@ -115,7 +115,10 @@ class RejectedReservationDetailPageState
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+          child: CircularProgressIndicator(
+        color: kPrimaryColor,
+      ));
     }
 
     if (reservation == null) {

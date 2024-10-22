@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:seyoni/src/constants/constants_color.dart';
 import 'dart:convert';
 import '../../widgets/background_widget.dart';
 import '../../constants/constants_font.dart';
@@ -111,7 +112,10 @@ class _ProviderDetailsState extends State<ProviderDetails> {
             ),
           ),
           body: isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  color: kPrimaryColor,
+                ))
               : errorMessage.isNotEmpty
                   ? Center(
                       child: Text(

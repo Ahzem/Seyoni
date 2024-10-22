@@ -313,7 +313,7 @@ class HiringFormState extends State<HiringForm> {
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
                       builder: (context) => SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.85,
+                        height: MediaQuery.of(context).size.height * 0.9,
                         child: const GoogleMapsBottomSheet(),
                       ),
                     );
@@ -321,12 +321,17 @@ class HiringFormState extends State<HiringForm> {
                       final address = result['address'] as String;
                       final latitude = result['latitude'] as double;
                       final longitude = result['longitude'] as double;
-                      setState(() {
-                        _locationController.text = address;
-                        _selectedLocation = LatLng(latitude, longitude);
-                        _enteredAddress = address;
-                      });
-                    } else {}
+                      if (address.isNotEmpty) {
+                        setState(() {
+                          _locationController.text = address;
+                          _selectedLocation = LatLng(latitude, longitude);
+                          _enteredAddress = address;
+                        });
+                      } else {
+                        // Handle the case where the address is empty
+                        print('Address is empty');
+                      }
+                    }
                   },
                 ),
                 const SizedBox(height: 10),

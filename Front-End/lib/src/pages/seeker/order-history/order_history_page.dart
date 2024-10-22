@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -86,7 +87,10 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           child: BackgroundWidget(child: SizedBox.expand()),
         ),
         if (isLoading)
-          const Center(child: CircularProgressIndicator())
+          const Center(
+              child: CircularProgressIndicator(
+            color: kPrimaryColor,
+          ))
         else if (errorMessage.isNotEmpty)
           Center(
             child: Text(

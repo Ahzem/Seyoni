@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/pages/provider/new/new_reservation_detail_page.dart';
-import 'package:seyoni/src/widgets/custom_button.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/url.dart';
@@ -84,7 +83,10 @@ class NewRequestsPageState extends State<NewRequestsPage> {
           iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(
+                child: CircularProgressIndicator(
+                color: kPrimaryColor,
+              ))
             : errorMessage.isNotEmpty
                 ? Center(child: Text(errorMessage))
                 : reservations.isEmpty
