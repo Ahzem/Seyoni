@@ -24,6 +24,7 @@ class SignInPageState extends State<SignInPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool _isLoading = false;
 
   late SharedPreferences prefs;
 
@@ -39,12 +40,25 @@ class SignInPageState extends State<SignInPage> {
 
   Future<void> signIn() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
       try {
+        // Perform the login
         await loginSeeker(
           context,
           emailController,
           passwordController,
         );
+
+        // Save login state
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setString(
+            'token', 'your_token_here'); // Replace with actual token
+        await prefs.setString('userType', 'seeker');
+
+        // Navigate to the home page
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -52,6 +66,10 @@ class SignInPageState extends State<SignInPage> {
             backgroundColor: kErrorColor,
           ),
         );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -59,134 +77,140 @@ class SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: kTransparentColor,
-      body: BackgroundWidget(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'assets/images/logo-icon.png',
-                height: height * 0.15,
-                fit: BoxFit.contain,
-              ),
-              Image.asset(
-                'assets/images/logo-name.png',
-                height: height * 0.12,
-                fit: BoxFit.contain,
-              ),
-              Container(
-                // Adjust width to fit the screen
-                margin: const EdgeInsets.all(30),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      EmailField(
-                        key: const Key('phone-num-field'),
-                        controller: emailController,
-                        errorText: 'Phone number is incorrect',
-                      ),
-                      const SizedBox(height: 10),
-                      PasswordField(
-                        key: const Key('password-field'),
-                        controller: passwordController,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          ForgotPasswordButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                  context, AppRoutes.forgotpassword);
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      SignInButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            loginSeeker(
-                              context,
-                              emailController,
-                              passwordController,
-                            );
-                          }
-                        },
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Text(
-                            'Don\'t have an account? ',
-                            style: TextStyle(
-                              color: kParagraphTextColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                          FlatenSignUpButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.signUp);
-                            },
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Text(
-                            'Become a service provider? ',
-                            style: TextStyle(
-                              color: kParagraphTextColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                          RegisterFlatButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                  context, AppRoutes.providerEntryPage);
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Or sign in with',
-                        style: TextStyle(
-                          color: kParagraphTextColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SignInWithGoogleButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.home);
-                            },
-                          ),
-                          SignInWithFacebookButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.home);
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10), // Adjust bottom spacing
-                    ],
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: kTransparentColor,
+          body: BackgroundWidget(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/images/logo-icon.png',
+                    height: height * 0.15,
+                    fit: BoxFit.contain,
                   ),
-                ),
+                  Image.asset(
+                    'assets/images/logo-name.png',
+                    height: height * 0.12,
+                    fit: BoxFit.contain,
+                  ),
+                  Container(
+                    // Adjust width to fit the screen
+                    margin: const EdgeInsets.all(30),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          EmailField(
+                            key: const Key('phone-num-field'),
+                            controller: emailController,
+                            errorText: 'Phone number is incorrect',
+                          ),
+                          const SizedBox(height: 10),
+                          PasswordField(
+                            key: const Key('password-field'),
+                            controller: passwordController,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              ForgotPasswordButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.forgotpassword);
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          SignInButton(
+                            onPressed: signIn,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              const Text(
+                                'Don\'t have an account? ',
+                                style: TextStyle(
+                                  color: kParagraphTextColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              FlatenSignUpButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.signUp);
+                                },
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              const Text(
+                                'Become a service provider? ',
+                                style: TextStyle(
+                                  color: kParagraphTextColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              RegisterFlatButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.providerEntryPage);
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          const Text(
+                            'Or sign in with',
+                            style: TextStyle(
+                              color: kParagraphTextColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SignInWithGoogleButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, AppRoutes.home);
+                                },
+                              ),
+                              SignInWithFacebookButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, AppRoutes.home);
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10), // Adjust bottom spacing
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
-      ),
+        if (_isLoading)
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:provider/provider.dart';
+import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart';
@@ -31,8 +33,24 @@ Future<void> main() async {
   await _requestPermissions();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
+  String? userType = prefs.getString(
+      'userType'); // Added to differentiate between seeker and provider
   bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
-  runApp(MyApp(token: token, hasSeenLaunchScreen: hasSeenLaunchScreen));
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false; // Check login state
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => NotificationProvider()),
+        // Add other providers here if needed
+      ],
+      child: MyApp(
+        token: token,
+        userType: userType,
+        hasSeenLaunchScreen: hasSeenLaunchScreen,
+        isLoggedIn: isLoggedIn,
+      ),
+    ),
+  ); // Pass login state to MyApp
 }
 
 Future<void> _requestPermissions() async {
@@ -42,7 +60,6 @@ Future<void> _requestPermissions() async {
   ];
 
   if (!kIsWeb) {
-    // Use kIsWeb instead of Platform.isWeb
     permissions.add(Permission.photos);
     permissions.add(Permission.storage);
   }
@@ -52,9 +69,17 @@ Future<void> _requestPermissions() async {
 
 class MyApp extends StatelessWidget {
   final String? token;
+  final String? userType;
   final bool hasSeenLaunchScreen;
+  final bool isLoggedIn; // Add login state
 
-  const MyApp({super.key, this.token, required this.hasSeenLaunchScreen});
+  const MyApp({
+    super.key,
+    this.token,
+    this.userType,
+    required this.hasSeenLaunchScreen,
+    required this.isLoggedIn,
+  }); // Add login state
 
   @override
   Widget build(BuildContext context) {
@@ -91,8 +116,12 @@ class MyApp extends StatelessWidget {
   Widget _getInitialPage() {
     if (!hasSeenLaunchScreen) {
       return LaunchScreen(onLaunchScreenComplete: _onLaunchScreenComplete);
-    } else if (token != null && !JwtDecoder.isExpired(token!)) {
-      return const HomePage();
+    } else if (isLoggedIn && token != null && !JwtDecoder.isExpired(token!)) {
+      if (userType == 'provider') {
+        return const ProviderHomePage();
+      } else {
+        return const HomePage();
+      }
     } else {
       return const SignInPage();
     }
