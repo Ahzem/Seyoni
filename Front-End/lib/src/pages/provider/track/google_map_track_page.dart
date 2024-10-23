@@ -6,7 +6,10 @@ import 'package:location/location.dart' as loc;
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import 'package:seyoni/src/pages/provider/service_process_page.dart';
+import 'package:provider/provider.dart';
+import 'package:seyoni/src/pages/seeker/notifications/components/notification_model.dart';
 
 class GoogleMapsTrackPage extends StatefulWidget {
   final LatLng seekerLocation;
@@ -102,6 +105,17 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
       print(
           '-------------------------Generated OTP: $otp----------------------');
       _otpGenerated = true;
+
+      // Add notification
+      final notification = NotificationModel(
+        title: 'OTP Generated',
+        message: 'Your OTP is $otp',
+        timestamp: DateTime.now(),
+      );
+      Provider.of<NotificationProvider>(context, listen: false)
+          .addNotification(notification);
+
+      // Navigate to ServiceProcessPage
       Navigator.push(
         context,
         MaterialPageRoute(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:provider/provider.dart';
+import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart';
@@ -35,11 +37,20 @@ Future<void> main() async {
       'userType'); // Added to differentiate between seeker and provider
   bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
   bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false; // Check login state
-  runApp(MyApp(
-      token: token,
-      userType: userType,
-      hasSeenLaunchScreen: hasSeenLaunchScreen,
-      isLoggedIn: isLoggedIn)); // Pass login state to MyApp
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => NotificationProvider()),
+        // Add other providers here if needed
+      ],
+      child: MyApp(
+        token: token,
+        userType: userType,
+        hasSeenLaunchScreen: hasSeenLaunchScreen,
+        isLoggedIn: isLoggedIn,
+      ),
+    ),
+  ); // Pass login state to MyApp
 }
 
 Future<void> _requestPermissions() async {
@@ -62,12 +73,13 @@ class MyApp extends StatelessWidget {
   final bool hasSeenLaunchScreen;
   final bool isLoggedIn; // Add login state
 
-  const MyApp(
-      {super.key,
-      this.token,
-      this.userType,
-      required this.hasSeenLaunchScreen,
-      required this.isLoggedIn}); // Add login state
+  const MyApp({
+    super.key,
+    this.token,
+    this.userType,
+    required this.hasSeenLaunchScreen,
+    required this.isLoggedIn,
+  }); // Add login state
 
   @override
   Widget build(BuildContext context) {
