@@ -100,7 +100,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
       widget.seekerLocation.longitude,
     );
 
-    if (distance <= 0.5) {
+    if (distance <= 0.005) {
       final otp = _generateOtp();
       print(
           '-------------------------Generated OTP: $otp----------------------');
