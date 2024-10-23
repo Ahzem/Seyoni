@@ -44,11 +44,21 @@ class SignInPageState extends State<SignInPage> {
         _isLoading = true;
       });
       try {
+        // Perform the login
         await loginSeeker(
           context,
           emailController,
           passwordController,
         );
+
+        // Save login state
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setString(
+            'token', 'your_token_here'); // Replace with actual token
+        await prefs.setString('userType', 'seeker');
+
+        // Navigate to the home page
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -118,15 +128,7 @@ class SignInPageState extends State<SignInPage> {
                           ),
                           const SizedBox(height: 10),
                           SignInButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                loginSeeker(
-                                  context,
-                                  emailController,
-                                  passwordController,
-                                );
-                              }
-                            },
+                            onPressed: signIn,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

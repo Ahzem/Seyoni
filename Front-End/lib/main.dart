@@ -34,10 +34,12 @@ Future<void> main() async {
   String? userType = prefs.getString(
       'userType'); // Added to differentiate between seeker and provider
   bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false; // Check login state
   runApp(MyApp(
       token: token,
       userType: userType,
-      hasSeenLaunchScreen: hasSeenLaunchScreen));
+      hasSeenLaunchScreen: hasSeenLaunchScreen,
+      isLoggedIn: isLoggedIn)); // Pass login state to MyApp
 }
 
 Future<void> _requestPermissions() async {
@@ -58,12 +60,14 @@ class MyApp extends StatelessWidget {
   final String? token;
   final String? userType;
   final bool hasSeenLaunchScreen;
+  final bool isLoggedIn; // Add login state
 
   const MyApp(
       {super.key,
       this.token,
       this.userType,
-      required this.hasSeenLaunchScreen});
+      required this.hasSeenLaunchScreen,
+      required this.isLoggedIn}); // Add login state
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +104,7 @@ class MyApp extends StatelessWidget {
   Widget _getInitialPage() {
     if (!hasSeenLaunchScreen) {
       return LaunchScreen(onLaunchScreenComplete: _onLaunchScreenComplete);
-    } else if (token != null && !JwtDecoder.isExpired(token!)) {
+    } else if (isLoggedIn && token != null && !JwtDecoder.isExpired(token!)) {
       if (userType == 'provider') {
         return const ProviderHomePage();
       } else {

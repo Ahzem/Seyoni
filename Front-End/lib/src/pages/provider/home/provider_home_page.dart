@@ -182,12 +182,6 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     }
   }
 
-  Future<bool> _onWillPop() async {
-    // This will close the app
-    await SystemNavigator.pop();
-    return false;
-  }
-
   Future<void> _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
@@ -201,143 +195,153 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
 
-    return BackgroundWidget(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
+    return PopScope<Object?>(
+      canPop: true,
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
+        if (didPop) {
+          return;
+        }
+        await SystemNavigator.pop();
+      },
+      child: BackgroundWidget(
+        child: Scaffold(
           backgroundColor: Colors.transparent,
-          title: Image.asset(
-            'assets/images/logo.png',
-            height: height * 0.05,
-            fit: BoxFit.contain,
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout, color: kPrimaryColor),
-              onPressed: _logout,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            title: Image.asset(
+              'assets/images/logo.png',
+              height: height * 0.05,
+              fit: BoxFit.contain,
             ),
-          ],
-          automaticallyImplyLeading: false, // Remove back arrow
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              // Blurred Profile Card
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundImage: profileImageUrl.isNotEmpty
-                              ? NetworkImage(profileImageUrl)
-                              : const AssetImage('assets/images/profile-3.jpg')
-                                  as ImageProvider,
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Hello, $providerName',
-                                style: kSubtitleTextStyle,
-                              ),
-                              Text(
-                                '$proffession',
-                                style: kSubtitleTextStyle,
-                              )
-                            ],
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout, color: kPrimaryColor),
+                onPressed: _logout,
+              ),
+            ],
+            automaticallyImplyLeading: false, // Remove back arrow
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                // Blurred Profile Card
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage: profileImageUrl.isNotEmpty
+                                ? NetworkImage(profileImageUrl)
+                                : const AssetImage(
+                                        'assets/images/profile-3.jpg')
+                                    as ImageProvider,
                           ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Hello, $providerName',
+                                  style: kSubtitleTextStyle,
+                                ),
+                                Text(
+                                  '$proffession',
+                                  style: kSubtitleTextStyle,
+                                )
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: kPrimaryColor),
+                            onPressed: () {
+                              // Navigate to Notifications Page
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // Summary Card
+                Card(
+                  color: kPrimaryColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Total Reservations',
+                          style: kTitleTextStyle,
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: kPrimaryColor),
-                          onPressed: () {
-                            // Navigate to Notifications Page
-                          },
+                        Text(
+                          '${reservations.length}',
+                          style: kTitleTextStyleBold,
                         ),
                       ],
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              // Summary Card
-              Card(
-                color: kPrimaryColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                const SizedBox(height: 10),
+                // Profile and Settings Buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    PrimaryFilledButton(
+                      text: 'Profile',
+                      onPressed: () {
+                        // Navigate to Profile Page
+                      },
+                    ),
+                    PrimaryFilledButton(
+                      text: 'Settings',
+                      onPressed: () {
+                        // Navigate to Settings Page
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // GridView for Reservations
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 2,
                     children: [
-                      const Text(
-                        'Total Reservations',
-                        style: kTitleTextStyle,
+                      _buildBlurredContainer(
+                        context,
+                        'Accepted Reservations',
+                        Icons.check_circle,
+                        const AcceptedReservationsPage(),
+                        acceptedCount,
                       ),
-                      Text(
-                        '${reservations.length}',
-                        style: kTitleTextStyleBold,
+                      _buildBlurredContainer(
+                        context,
+                        'Rejected Reservations',
+                        Icons.cancel,
+                        const RejectedReservationsPage(),
+                        rejectedCount,
+                      ),
+                      _buildBlurredContainer(
+                        context,
+                        'New Requests',
+                        Icons.new_releases,
+                        const NewRequestsPage(),
+                        newRequestsCount,
                       ),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              // Profile and Settings Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  PrimaryFilledButton(
-                    text: 'Profile',
-                    onPressed: () {
-                      // Navigate to Profile Page
-                    },
-                  ),
-                  PrimaryFilledButton(
-                    text: 'Settings',
-                    onPressed: () {
-                      // Navigate to Settings Page
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              // GridView for Reservations
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  children: [
-                    _buildBlurredContainer(
-                      context,
-                      'Accepted Reservations',
-                      Icons.check_circle,
-                      const AcceptedReservationsPage(),
-                      acceptedCount,
-                    ),
-                    _buildBlurredContainer(
-                      context,
-                      'Rejected Reservations',
-                      Icons.cancel,
-                      const RejectedReservationsPage(),
-                      rejectedCount,
-                    ),
-                    _buildBlurredContainer(
-                      context,
-                      'New Requests',
-                      Icons.new_releases,
-                      const NewRequestsPage(),
-                      newRequestsCount,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

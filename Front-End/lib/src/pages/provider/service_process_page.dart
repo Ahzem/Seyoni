@@ -4,6 +4,7 @@ import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/pages/seeker/sign-pages/otp/components/input_field.dart';
 import 'package:seyoni/src/pages/seeker/sign-pages/otp/components/verify_button.dart';
+import 'package:seyoni/src/widgets/background_widget.dart';
 
 class ServiceProcessPage extends StatefulWidget {
   final String seekerName;
@@ -137,17 +138,19 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: kPrimaryColor,
-        title: Text('Service for ${widget.seekerName}'),
+        backgroundColor: Colors.transparent,
+        title: Text('Service for ${widget.seekerName}', style: kAppBarTitleTextStyle),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: _currentSection == 0
-              ? _buildOtpSection()
-              : _currentSection == 1
-                  ? _buildTimeLapseSection()
-                  : _buildPaymentSection(),
+      body: BackgroundWidget(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: _currentSection == 0
+                ? _buildOtpSection()
+                : _currentSection == 1
+                    ? _buildTimeLapseSection()
+                    : _buildPaymentSection(),
+          ),
         ),
       ),
     );
