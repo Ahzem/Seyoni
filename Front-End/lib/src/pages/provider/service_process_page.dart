@@ -139,7 +139,8 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
-        title: Text('Service for ${widget.seekerName}', style: kAppBarTitleTextStyle),
+        title: Text('Service for ${widget.seekerName}',
+            style: kAppBarTitleTextStyle),
       ),
       body: BackgroundWidget(
         child: Center(
@@ -245,41 +246,56 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            border: Border.all(color: kPrimaryColor, width: 2),
-            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: kPrimaryColor, width: 1),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             formatTime(_remainingTime),
             style: kBodyTextStyle.copyWith(
-              fontSize: 42,
+              fontSize: 58,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
         const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: _finishService,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green, // Success color
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-            textStyle:
-                const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 200, // Set a fixed width for the buttons
+                child: ElevatedButton(
+                  onPressed: _finishService,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green, // Success color
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  child: const Text('Finish',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: 200, // Set the same fixed width for the buttons
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Handle emergency
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red, // Emergency color
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  child: const Text('Emergency',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ],
           ),
-          child: const Text('Finish', style: TextStyle(color: Colors.white)),
-        ),
-        const SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: () {
-            // Handle emergency
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red, // Emergency color
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-            textStyle:
-                const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          child: const Text('Emergency', style: TextStyle(color: Colors.white)),
-        ),
+        )
       ],
     );
   }
@@ -297,23 +313,49 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
       children: [
         Text(
           'Service Time: ${formatTime(_elapsedTime)}',
-          style: kBodyTextStyle,
+          style: kBodyTextStyle.copyWith(
+              fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(height: 20),
         Container(
+          width: 300,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             border: Border.all(color: kPrimaryColor, width: 2),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(20),
           ),
-          child: TextField(
-            controller: _paymentController,
-            decoration: const InputDecoration(
-              labelText: 'Enter Amount',
-              labelStyle: TextStyle(color: kPrimaryColor),
-              border: InputBorder.none,
-            ),
-            keyboardType: TextInputType.number,
+          child: Row(
+            children: [
+              const SizedBox(width: 5),
+              Text(
+                'Rs',
+                style: TextStyle(
+                  fontSize: 38, // Adjust font size
+                  fontWeight: FontWeight.bold, // Make text bold
+                  color: Colors.white, // Set text color
+                ),
+              ),
+              Expanded(
+                child: TextField(
+                  cursorColor: Colors.white, // Set cursor color
+                  controller: _paymentController,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: '00.00',
+                    hintStyle: TextStyle(
+                      color: Colors.white38,
+                    ),
+                  ),
+                  style: TextStyle(
+                    fontSize: 44, // Adjust font size
+                    fontWeight: FontWeight.bold, // Make text bold
+                    color: Colors.white, // Set text color
+                  ),
+                  textAlign: TextAlign.center, // Center the text
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 20),
