@@ -73,13 +73,13 @@ class _RateUsPageState extends State<RateUsPage> {
                 children: [
                   Text(
                     'Love SEYONI? ❤️ Let Us Know!',
-                    style: kSubtitleTextStyle.copyWith(fontSize: 16.0),
+                    style: kSubtitleTextStyle.copyWith(fontSize: 18.0),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 8.0),
                   Text(
                     '🌟 Rate & Review Today!',
-                    style: kSubtitleTextStyle.copyWith(fontSize: 16.0),
+                    style: kSubtitleTextStyle.copyWith(fontSize: 18.0),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 20.0),
@@ -97,7 +97,7 @@ class _RateUsPageState extends State<RateUsPage> {
                         children: [
                           Text(
                             'Rate us with stars:',
-                            style: kSubtitleTextStyle.copyWith(fontSize: 14.0),
+                            style: kSubtitleTextStyle.copyWith(fontSize: 16.0),
                             textAlign: TextAlign.start,
                           ),
                           SizedBox(height: 8.0),
@@ -129,14 +129,15 @@ class _RateUsPageState extends State<RateUsPage> {
                         children: [
                           Text(
                             'We appreciate your feedback:',
-                            style: kSubtitleTextStyle.copyWith(fontSize: 14.0),
+                            style: kSubtitleTextStyle.copyWith(fontSize: 16.0),
                           ),
                           SizedBox(height: 20.0),
                           TextFormField(
                             controller: _feedbackController,
                             decoration: InputDecoration(
                               labelText: 'Feedback',
-                              labelStyle: kSubtitleTextStyle,
+                              labelStyle:
+                                  kSubtitleTextStyle.copyWith(fontSize: 16.0),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(color: kPrimaryColor),
                               ),
@@ -145,7 +146,7 @@ class _RateUsPageState extends State<RateUsPage> {
                                 color: kPrimaryColor,
                               ),
                             ),
-                            style: kSubtitleTextStyle,
+                            style: kSubtitleTextStyle.copyWith(fontSize: 16.0),
                             maxLines: 5,
                           ),
                         ],
@@ -189,7 +190,9 @@ class _RateUsPageState extends State<RateUsPage> {
                           ),
                           backgroundColor: Colors.transparent,
                         ),
-                        child: Text('Skip', style: TextStyle(color: kPrimaryColor)),
+                        child: Text('Skip',
+                            style: TextStyle(
+                                color: kPrimaryColor, fontSize: 16.0)),
                       ),
                       // Submit Button
                       PrimaryFilledButton(
@@ -198,15 +201,17 @@ class _RateUsPageState extends State<RateUsPage> {
                           if (_rating == 0) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Please rate us before submitting'),
+                                content:
+                                    Text('Please rate us before submitting'),
                               ),
                             );
-                            } else if (_feedbackController.text.isEmpty) {
-                               ScaffoldMessenger.of(context).showSnackBar(
-                               SnackBar(
-                                 content: Text('Please provide feedback before submitting'),
+                          } else if (_feedbackController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Please provide feedback before submitting'),
                               ),
-                              );
+                            );
                           } else {
                             Navigator.push(
                               context,
@@ -240,11 +245,10 @@ class _RateUsPageState extends State<RateUsPage> {
                         children: [
                           Text(
                             '💬 What Others Are Saying:',
-                            style: kSubtitleTextStyle.copyWith(fontSize: 14.0),
+                            style: kSubtitleTextStyle.copyWith(fontSize: 16.0),
                             textAlign: TextAlign.left,
                           ),
                           SizedBox(height: 10.0),
-
                           _reviews.isNotEmpty
                               ? ListView.builder(
                                   shrinkWrap: true,
@@ -255,37 +259,42 @@ class _RateUsPageState extends State<RateUsPage> {
                                     return Card(
                                       color: kContainerColor,
                                       elevation: 2,
-                                      margin: EdgeInsets.symmetric(vertical: 8.0),
+                                      margin:
+                                          EdgeInsets.symmetric(vertical: 8.0),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10.0),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(16.0),
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Row(
                                               children: [
-                                                
-                                                Text(
-                                                  review['username'],
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14.0,
+                                                Expanded(
+                                                  child: Text(
+                                                    review['username'],
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16.0,
+                                                    ),
                                                   ),
                                                 ),
-                                                Spacer(),
                                                 StarRating(
-                                                 rating: review['rating'].toDouble(),  // Ensure the rating is double
-                                                 onRatingChanged: null,
-                                                 ),
+                                                  rating: review['rating']
+                                                      .toDouble(), // Ensure the rating is double
+                                                  onRatingChanged: null,
+                                                ),
                                               ],
                                             ),
                                             SizedBox(height: 8.0),
                                             Text(
                                               review['feedback'],
                                               style: TextStyle(
-                                                fontSize: 14.0,
+                                                fontSize: 16.0,
                                                 color: kParagraphTextColor,
                                               ),
                                             ),
@@ -298,7 +307,8 @@ class _RateUsPageState extends State<RateUsPage> {
                               : Center(
                                   child: Text(
                                     'No reviews yet!',
-                                    style: kSubtitleTextStyle,
+                                    style: kSubtitleTextStyle.copyWith(
+                                        fontSize: 16.0),
                                   ),
                                 ),
                         ],
