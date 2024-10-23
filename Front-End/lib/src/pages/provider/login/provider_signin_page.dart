@@ -21,11 +21,11 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool isLoading = false;
+  bool _isLoading = false;
 
   Future<void> _signIn() async {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
 
     final email = _emailController.text;
@@ -48,7 +48,7 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
       );
 
       setState(() {
-        isLoading = false;
+        _isLoading = false;
       });
 
       if (response.statusCode == 200) {
@@ -72,8 +72,10 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
                     child: const Text('OK'),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      Navigator.pushReplacementNamed(
-                          context, AppRoutes.providerHomePage);
+                      Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          AppRoutes.providerHomePage,
+                          (Route<dynamic> route) => false);
                     },
                   ),
                 ],
@@ -113,96 +115,110 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: kTransparentColor,
-      body: BackgroundWidget(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'assets/images/logo-icon.png',
-                height: height * 0.15,
-                fit: BoxFit.contain,
-              ),
-              Image.asset(
-                'assets/images/logo-name.png',
-                height: height * 0.12,
-                fit: BoxFit.contain,
-              ),
-              Container(
-                margin: const EdgeInsets.all(30),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      CustomTextField(
-                        controller: _emailController,
-                        labelText: 'Email',
-                        keyboardType: TextInputType.emailAddress,
-                        validator: Validators.validateEmail,
-                      ),
-                      const SizedBox(height: 10),
-                      CustomTextField(
-                        controller: _passwordController,
-                        labelText: 'Password',
-                        obscureText: true,
-                        validator: Validators.validatePassword,
-                      ),
-                      const SizedBox(height: 20),
-                      PrimaryFilledButton(
-                        text: 'Sign In',
-                        onPressed: _signIn,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Don\'t have an account?',
-                            style: TextStyle(
-                              color: kParagraphTextColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                  context, AppRoutes.providerSignUp);
-                            },
-                            child: const Text('Sign Up',
-                                style: TextStyle(color: kPrimaryColor)),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Register as a service seeker',
-                            style: TextStyle(
-                              color: kParagraphTextColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.signUp);
-                            },
-                            child: const Text('Register Now',
-                                style: TextStyle(color: kPrimaryColor)),
-                          ),
-                        ],
-                      ),
-                    ],
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: kTransparentColor,
+          body: BackgroundWidget(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/images/logo-icon.png',
+                    height: height * 0.15,
+                    fit: BoxFit.contain,
                   ),
-                ),
+                  Image.asset(
+                    'assets/images/logo-name.png',
+                    height: height * 0.12,
+                    fit: BoxFit.contain,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(30),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          CustomTextField(
+                            controller: _emailController,
+                            labelText: 'Email',
+                            keyboardType: TextInputType.emailAddress,
+                            validator: Validators.validateEmail,
+                          ),
+                          const SizedBox(height: 10),
+                          CustomTextField(
+                            controller: _passwordController,
+                            labelText: 'Password',
+                            obscureText: true,
+                            validator: Validators.validatePassword,
+                          ),
+                          const SizedBox(height: 20),
+                          PrimaryFilledButton(
+                            text: 'Sign In',
+                            onPressed: _signIn,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Don\'t have an account?',
+                                style: TextStyle(
+                                  color: kParagraphTextColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.providerSignUp);
+                                },
+                                child: const Text('Sign Up',
+                                    style: TextStyle(color: kPrimaryColor)),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Register as a service seeker',
+                                style: TextStyle(
+                                  color: kParagraphTextColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.signUp);
+                                },
+                                child: const Text('Register Now',
+                                    style: TextStyle(color: kPrimaryColor)),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
-      ),
+        if (_isLoading)
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

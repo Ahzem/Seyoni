@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:seyoni/src/pages/provider/accepted/accepted_reservations_page.dart';
 import 'package:seyoni/src/pages/provider/new/new_requests_page.dart';
@@ -141,7 +142,6 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     }
   }
 
-
   Future<void> updateReservationStatus(
       String reservationId, String status) async {
     try {
@@ -180,6 +180,12 @@ class ProviderHomePageState extends State<ProviderHomePage> {
         errorMessage = 'Failed to update reservation: $e';
       });
     }
+  }
+
+  Future<bool> _onWillPop() async {
+    // This will close the app
+    await SystemNavigator.pop();
+    return false;
   }
 
   Future<void> _logout() async {
