@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:seyoni/src/config/route.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:seyoni/src/pages/seeker/menu/components/about_uspage.dart';
 import '../../../constants/constants_font.dart';
 import 'components/menu_item.dart';
+import 'components/rate_uspage.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -382,7 +384,11 @@ class MenuPageState extends State<MenuPage> {
                   iconPath: 'assets/icons/menu/about_us.png',
                   text: 'About Us',
                   onPressed: () {
-                    // Add your onPressed logic here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AboutUsPage()
+                      ),
+                      );// Add your onPressed logic here
                   },
                 ),
                 const SizedBox(height: 10),
@@ -411,18 +417,14 @@ class MenuPageState extends State<MenuPage> {
                 ),
                 const SizedBox(height: 10),
                 MenuItem(
-                  iconPath: 'assets/icons/menu/feedback.png',
-                  text: 'Feedback',
-                  onPressed: () {
-                    // Add your onPressed logic here
-                  },
-                ),
-                const SizedBox(height: 10),
-                MenuItem(
                   iconPath: 'assets/icons/menu/Star.png',
                   text: 'Rate Us',
                   onPressed: () {
-                    // Add your onPressed logic here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RateUsPage()
+                      ),
+                      );//// Add your onPressed logic here
                   },
                 ),
                 const SizedBox(height: 10),
