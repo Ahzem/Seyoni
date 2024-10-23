@@ -8,6 +8,7 @@ import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_font.dart';
 import '../category/category_page.dart';
 import '../chat/chat_page.dart';
+import '../home/home.dart';
 import '../menu/menupage.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,12 +34,7 @@ class HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const OrderHistoryPage(),
     const ChatScreen(),
-    const Center(
-      child: Text(
-        'Home Page Content',
-        style: kBodyTextStyle,
-      ),
-    ),
+    const HomePage(),
     const CategoryPage(),
     const MenuPage(),
   ];
