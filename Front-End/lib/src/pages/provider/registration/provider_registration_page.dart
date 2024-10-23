@@ -47,8 +47,13 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
   XFile? _nicImageBack;
 
   final ImagePicker _picker = ImagePicker();
+  bool _isLoading = false;
 
   void _nextStep() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     if (_formKey.currentState!.validate()) {
       if (_currentStep == 0) {
         // Send OTP
@@ -180,6 +185,9 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
             SnackBar(content: Text('Failed to register: $error')),
           );
         }
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -210,289 +218,209 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: kTransparentColor,
-      body: BackgroundWidget(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'assets/images/logo-icon.png',
-                height: height * 0.15,
-                fit: BoxFit.contain,
-              ),
-              Image.asset(
-                'assets/images/logo-name.png',
-                height: height * 0.12,
-                fit: BoxFit.contain,
-              ),
-              Container(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      if (_currentStep == 0) ...[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ShortCustomTextField(
-                              controller: _firstNameController,
-                              labelText: 'First Name',
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your first name';
-                                }
-                                return null;
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: kTransparentColor,
+          body: BackgroundWidget(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/images/logo-icon.png',
+                    height: height * 0.15,
+                    fit: BoxFit.contain,
+                  ),
+                  Image.asset(
+                    'assets/images/logo-name.png',
+                    height: height * 0.12,
+                    fit: BoxFit.contain,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 10),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          if (_currentStep == 0) ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ShortCustomTextField(
+                                  controller: _firstNameController,
+                                  labelText: 'First Name',
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your first name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                ShortCustomTextField(
+                                  controller: _lastNameController,
+                                  labelText: 'Last Name',
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your last name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            CustomTextField(
+                              controller: _emailController,
+                              labelText: 'Email',
+                              keyboardType: TextInputType.emailAddress,
+                              validator: Validators.validateEmail,
+                            ),
+                            const SizedBox(height: 10),
+                            CustomTextField(
+                              controller: _phoneController,
+                              labelText: 'Phone Number',
+                              keyboardType: TextInputType.phone,
+                              validator: Validators.validatePhoneNumber,
+                            ),
+                            const SizedBox(height: 10),
+                            LocationField(
+                              controller: _locationController,
+                              onSuggestionSelected: (suggestion) {
+                                setState(() {
+                                  _locationController.text = suggestion;
+                                });
                               },
                             ),
-                            ShortCustomTextField(
-                              controller: _lastNameController,
-                              labelText: 'Last Name',
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your last name';
-                                }
-                                return null;
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        CustomTextField(
-                          controller: _emailController,
-                          labelText: 'Email',
-                          keyboardType: TextInputType.emailAddress,
-                          validator: Validators.validateEmail,
-                        ),
-                        const SizedBox(height: 10),
-                        CustomTextField(
-                          controller: _phoneController,
-                          labelText: 'Phone Number',
-                          keyboardType: TextInputType.phone,
-                          validator: Validators.validatePhoneNumber,
-                        ),
-                        const SizedBox(height: 10),
-                        LocationField(
-                          controller: _locationController,
-                          onSuggestionSelected: (suggestion) {
-                            setState(() {
-                              _locationController.text = suggestion;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        DropdownButtonFormField<String>(
-                          dropdownColor: Colors.black.withOpacity(0.9),
-                          decoration: InputDecoration(
-                            labelStyle: kBodyTextStyle,
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                              borderSide: const BorderSide(
-                                  color: kPrimaryColor, width: 1),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                              borderSide: const BorderSide(
-                                  color: kPrimaryColor, width: 1),
-                            ),
-                            labelText: 'Select Category',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                              borderSide: const BorderSide(
-                                  color: kPrimaryColor, width: 1),
-                            ),
-                          ),
-                          style: kTextFieldStyle,
-                          items: categories.map((category) {
-                            return DropdownMenuItem<String>(
-                              value: category['name'],
-                              child: Text(category['name']!),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedCategory = value;
-                              _selectedSubCategories = [];
-                              _selectedSubCategoryValue = null;
-                              _formKey.currentState!.validate();
-                            });
-                          },
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Please select a category';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        DropdownButtonFormField<String>(
-                          dropdownColor: Colors.black.withOpacity(0.9),
-                          decoration: InputDecoration(
-                            labelStyle: kBodyTextStyle,
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                              borderSide: const BorderSide(
-                                  color: kPrimaryColor, width: 1),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                              borderSide: const BorderSide(
-                                  color: kPrimaryColor, width: 1),
-                            ),
-                            labelText: 'Select Sub Categories',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                              borderSide: const BorderSide(
-                                  color: kPrimaryColor, width: 1),
-                            ),
-                          ),
-                          style: kTextFieldStyle,
-                          value:
-                              _selectedSubCategoryValue, // Reset the value to null
-                          items: _selectedCategory == null
-                              ? []
-                              : subCategories[_selectedCategory]!
-                                  .map((subCategory) {
-                                  return DropdownMenuItem<String>(
-                                    value: subCategory,
-                                    child: Text(subCategory),
-                                  );
-                                }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value != null &&
-                                  !_selectedSubCategories.contains(value)) {
-                                _selectedSubCategories
-                                    .add(value); // Add subcategory
-                                _selectedSubCategoryValue = value;
-                              }
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 8.0,
-                          children: _selectedSubCategories.map((subCategory) {
-                            return Chip(
-                              backgroundColor: kPrimaryColor,
-                              labelStyle: const TextStyle(color: Colors.black),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                                side: const BorderSide(
-                                  color: Colors.black,
-                                  width: 1,
+                            const SizedBox(height: 10),
+                            DropdownButtonFormField<String>(
+                              dropdownColor: Colors.black.withOpacity(0.9),
+                              decoration: InputDecoration(
+                                labelStyle: kBodyTextStyle,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  borderSide: const BorderSide(
+                                      color: kPrimaryColor, width: 1),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  borderSide: const BorderSide(
+                                      color: kPrimaryColor, width: 1),
+                                ),
+                                labelText: 'Select Category',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  borderSide: const BorderSide(
+                                      color: kPrimaryColor, width: 1),
                                 ),
                               ),
-                              label: Text(subCategory),
-                              onDeleted: () {
+                              style: kTextFieldStyle,
+                              items: categories.map((category) {
+                                return DropdownMenuItem<String>(
+                                  value: category['name'],
+                                  child: Text(category['name']!),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
                                 setState(() {
-                                  _selectedSubCategories.remove(subCategory);
-                                  if (_selectedSubCategories.isEmpty) {
-                                    _selectedSubCategoryValue = null;
+                                  _selectedCategory = value;
+                                  _selectedSubCategories = [];
+                                  _selectedSubCategoryValue = null;
+                                  _formKey.currentState!.validate();
+                                });
+                              },
+                              validator: (value) {
+                                if (value == null) {
+                                  return 'Please select a category';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            DropdownButtonFormField<String>(
+                              dropdownColor: Colors.black.withOpacity(0.9),
+                              decoration: InputDecoration(
+                                labelStyle: kBodyTextStyle,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  borderSide: const BorderSide(
+                                      color: kPrimaryColor, width: 1),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  borderSide: const BorderSide(
+                                      color: kPrimaryColor, width: 1),
+                                ),
+                                labelText: 'Select Sub Categories',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  borderSide: const BorderSide(
+                                      color: kPrimaryColor, width: 1),
+                                ),
+                              ),
+                              style: kTextFieldStyle,
+                              value:
+                                  _selectedSubCategoryValue, // Reset the value to null
+                              items: _selectedCategory == null
+                                  ? []
+                                  : subCategories[_selectedCategory]!
+                                      .map((subCategory) {
+                                      return DropdownMenuItem<String>(
+                                        value: subCategory,
+                                        child: Text(subCategory),
+                                      );
+                                    }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  if (value != null &&
+                                      !_selectedSubCategories.contains(value)) {
+                                    _selectedSubCategories
+                                        .add(value); // Add subcategory
+                                    _selectedSubCategoryValue = value;
                                   }
                                 });
                               },
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            PrimaryOutlinedButton(
-                              text: "Back",
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
                             ),
-                            const SizedBox(width: 10),
-                            PrimaryFilledButton(
-                              text: 'Next',
-                              onPressed: _nextStep,
-                            ),
-                          ],
-                        ),
-                      ] else if (_currentStep == 1) ...[
-                        CustomTextField(
-                          controller: _otpController,
-                          labelText: 'Enter OTP',
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter the OTP';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            PrimaryOutlinedButton(
-                                text: "Back",
-                                onPressed: () {
-                                  setState(() {
-                                    _currentStep--;
-                                  });
-                                }),
-                            const SizedBox(width: 10),
-                            PrimaryFilledButton(
-                              text: 'Verify OTP',
-                              onPressed: _nextStep,
-                            ),
-                          ],
-                        ),
-                      ] else if (_currentStep == 2) ...[
-                        // Selfie Capture Step
-                        const Text(
-                          'Capture a Real-time Selfie',
-                          style: kSubtitleTextStyle,
-                        ),
-                        const SizedBox(height: 10),
-                        _profileImage == null
-                            ? IconButton(
-                                icon: const Icon(Icons.person_add_alt_1,
-                                    size: 100),
-                                onPressed: () => _pickImage('profile'),
-                              )
-                            : CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                radius: 100,
-                                backgroundImage:
-                                    FileImage(File(_profileImage!.path)),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: kPrimaryColor,
-                                      width: 4,
+                            const SizedBox(height: 10),
+                            Wrap(
+                              spacing: 8.0,
+                              children:
+                                  _selectedSubCategories.map((subCategory) {
+                                return Chip(
+                                  backgroundColor: kPrimaryColor,
+                                  labelStyle:
+                                      const TextStyle(color: Colors.black),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                    side: const BorderSide(
+                                      color: Colors.black,
+                                      width: 1,
                                     ),
                                   ),
-                                ),
-                              ),
-                        const SizedBox(height: 10),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            PrimaryFilledButtonTwo(
-                              text: _profileImage == null ? 'Take' : 'Retake',
-                              onPressed: () => _pickImage('profile'),
+                                  label: Text(subCategory),
+                                  onDeleted: () {
+                                    setState(() {
+                                      _selectedSubCategories
+                                          .remove(subCategory);
+                                      if (_selectedSubCategories.isEmpty) {
+                                        _selectedSubCategoryValue = null;
+                                      }
+                                    });
+                                  },
+                                );
+                              }).toList(),
                             ),
                             const SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 PrimaryOutlinedButton(
-                                  text: 'Back',
+                                  text: "Back",
                                   onPressed: () {
-                                    setState(() {
-                                      _currentStep--;
-                                    });
+                                    Navigator.pop(context);
                                   },
                                 ),
                                 const SizedBox(width: 10),
@@ -502,199 +430,302 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ] else if (_currentStep == 3) ...[
-                        // NIC/Driving License Capture Step
-                        const Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            textAlign: TextAlign.center,
-                            'Capture NIC/Driving License FrontSide',
-                            style: kSubtitleTextStyle,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        _nicImageFront == null
-                            ? IconButton(
-                                icon: const Icon(Icons.add_a_photo, size: 100),
-                                onPressed: () => _pickImage('nicFront'),
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.file(
-                                  File(_nicImageFront!.path),
-                                  width: 240,
-                                  height: 160,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                        const SizedBox(height: 10),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            PrimaryFilledButtonTwo(
-                              text: _nicImageFront == null ? 'Take' : 'Retake',
-                              onPressed: () => _pickImage('nicFront'),
+                          ] else if (_currentStep == 1) ...[
+                            CustomTextField(
+                              controller: _otpController,
+                              labelText: 'Enter OTP',
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter the OTP';
+                                }
+                                return null;
+                              },
                             ),
                             const SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 PrimaryOutlinedButton(
-                                  text: 'Back',
-                                  onPressed: () {
-                                    setState(() {
-                                      _currentStep--;
-                                    });
-                                  },
-                                ),
+                                    text: "Back",
+                                    onPressed: () {
+                                      setState(() {
+                                        _currentStep--;
+                                      });
+                                    }),
                                 const SizedBox(width: 10),
                                 PrimaryFilledButton(
-                                  text: 'Next',
+                                  text: 'Verify OTP',
                                   onPressed: _nextStep,
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ] else if (_currentStep == 4) ...[
-                        // NIC/Driving License Capture Step
-                        const Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            textAlign: TextAlign.center,
-                            'Capture NIC/Driving License BackSide',
-                            style: kSubtitleTextStyle,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        _nicImageBack == null
-                            ? IconButton(
-                                icon: const Icon(Icons.add_a_photo, size: 100),
-                                onPressed: () => _pickImage('nicBack'),
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.file(
-                                  File(_nicImageBack!.path),
-                                  width: 240,
-                                  height: 160,
-                                  fit: BoxFit.cover,
+                          ] else if (_currentStep == 2) ...[
+                            // Selfie Capture Step
+                            const Text(
+                              'Capture a Real-time Selfie',
+                              style: kSubtitleTextStyle,
+                            ),
+                            const SizedBox(height: 10),
+                            _profileImage == null
+                                ? IconButton(
+                                    icon: const Icon(Icons.person_add_alt_1,
+                                        size: 100),
+                                    onPressed: () => _pickImage('profile'),
+                                  )
+                                : CircleAvatar(
+                                    backgroundColor: Colors.transparent,
+                                    radius: 100,
+                                    backgroundImage:
+                                        FileImage(File(_profileImage!.path)),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: kPrimaryColor,
+                                          width: 4,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                            const SizedBox(height: 10),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                PrimaryFilledButtonTwo(
+                                  text:
+                                      _profileImage == null ? 'Take' : 'Retake',
+                                  onPressed: () => _pickImage('profile'),
                                 ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    PrimaryOutlinedButton(
+                                      text: 'Back',
+                                      onPressed: () {
+                                        setState(() {
+                                          _currentStep--;
+                                        });
+                                      },
+                                    ),
+                                    const SizedBox(width: 10),
+                                    PrimaryFilledButton(
+                                      text: 'Next',
+                                      onPressed: _nextStep,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ] else if (_currentStep == 3) ...[
+                            // NIC/Driving License Capture Step
+                            const Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                'Capture NIC/Driving License FrontSide',
+                                style: kSubtitleTextStyle,
                               ),
-                        const SizedBox(height: 10),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            PrimaryFilledButtonTwo(
-                              text: _nicImageBack == null ? 'Take' : 'Retake',
-                              onPressed: () => _pickImage('nicBack'),
+                            ),
+                            const SizedBox(height: 10),
+                            _nicImageFront == null
+                                ? IconButton(
+                                    icon: const Icon(Icons.add_a_photo,
+                                        size: 100),
+                                    onPressed: () => _pickImage('nicFront'),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      File(_nicImageFront!.path),
+                                      width: 240,
+                                      height: 160,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                            const SizedBox(height: 10),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                PrimaryFilledButtonTwo(
+                                  text: _nicImageFront == null
+                                      ? 'Take'
+                                      : 'Retake',
+                                  onPressed: () => _pickImage('nicFront'),
+                                ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    PrimaryOutlinedButton(
+                                      text: 'Back',
+                                      onPressed: () {
+                                        setState(() {
+                                          _currentStep--;
+                                        });
+                                      },
+                                    ),
+                                    const SizedBox(width: 10),
+                                    PrimaryFilledButton(
+                                      text: 'Next',
+                                      onPressed: _nextStep,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ] else if (_currentStep == 4) ...[
+                            // NIC/Driving License Capture Step
+                            const Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                'Capture NIC/Driving License BackSide',
+                                style: kSubtitleTextStyle,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            _nicImageBack == null
+                                ? IconButton(
+                                    icon: const Icon(Icons.add_a_photo,
+                                        size: 100),
+                                    onPressed: () => _pickImage('nicBack'),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      File(_nicImageBack!.path),
+                                      width: 240,
+                                      height: 160,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                            const SizedBox(height: 10),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                PrimaryFilledButtonTwo(
+                                  text:
+                                      _nicImageBack == null ? 'Take' : 'Retake',
+                                  onPressed: () => _pickImage('nicBack'),
+                                ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    PrimaryOutlinedButton(
+                                      text: 'Back',
+                                      onPressed: () {
+                                        setState(() {
+                                          _currentStep--;
+                                        });
+                                      },
+                                    ),
+                                    const SizedBox(width: 10),
+                                    PrimaryFilledButton(
+                                      text: 'Next',
+                                      onPressed: _nextStep,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ] else if (_currentStep == 5) ...[
+                            CustomTextField(
+                              controller: _passwordController,
+                              labelText: 'New Password',
+                              obscureText: true,
+                              validator: Validators.validatePassword,
+                            ),
+                            const SizedBox(height: 10),
+                            CustomTextField(
+                              controller: _confirmPasswordController,
+                              labelText: 'Confirm Password',
+                              obscureText: true,
+                              validator: (value) =>
+                                  Validators.validateConfirmPassword(
+                                      value, _passwordController.text),
                             ),
                             const SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 PrimaryOutlinedButton(
-                                  text: 'Back',
-                                  onPressed: () {
-                                    setState(() {
-                                      _currentStep--;
-                                    });
-                                  },
-                                ),
+                                    text: "Back",
+                                    onPressed: () {
+                                      setState(() {
+                                        _currentStep--;
+                                      });
+                                    }),
                                 const SizedBox(width: 10),
                                 PrimaryFilledButton(
-                                  text: 'Next',
-                                  onPressed: _nextStep,
-                                ),
+                                    text: 'Register',
+                                    onPressed: () {
+                                      _nextStep();
+                                    }),
                               ],
                             ),
                           ],
-                        ),
-                      ] else if (_currentStep == 5) ...[
-                        CustomTextField(
-                          controller: _passwordController,
-                          labelText: 'New Password',
-                          obscureText: true,
-                          validator: Validators.validatePassword,
-                        ),
-                        const SizedBox(height: 10),
-                        CustomTextField(
-                          controller: _confirmPasswordController,
-                          labelText: 'Confirm Password',
-                          obscureText: true,
-                          validator: (value) =>
-                              Validators.validateConfirmPassword(
-                                  value, _passwordController.text),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            PrimaryOutlinedButton(
-                                text: "Back",
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Already have an account?',
+                                style: TextStyle(
+                                  color: kParagraphTextColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              TextButton(
                                 onPressed: () {
-                                  setState(() {
-                                    _currentStep--;
-                                  });
-                                }),
-                            const SizedBox(width: 10),
-                            PrimaryFilledButton(
-                                text: 'Register',
-                                onPressed: () {
-                                  _nextStep();
-                                }),
-                          ],
-                        ),
-                      ],
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Already have an account?',
-                            style: TextStyle(
-                              color: kParagraphTextColor,
-                              fontSize: 14,
-                            ),
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.providerSignIn);
+                                },
+                                child: const Text('Sign In',
+                                    style: TextStyle(color: kPrimaryColor)),
+                              ),
+                            ],
                           ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                  context, AppRoutes.providerSignIn);
-                            },
-                            child: const Text('Sign In',
-                                style: TextStyle(color: kPrimaryColor)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Register as a service seeker',
+                                style: TextStyle(
+                                  color: kParagraphTextColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.signUp);
+                                },
+                                child: const Text('Register Now',
+                                    style: TextStyle(color: kPrimaryColor)),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Register as a service seeker',
-                            style: TextStyle(
-                              color: kParagraphTextColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.signUp);
-                            },
-                            child: const Text('Register Now',
-                                style: TextStyle(color: kPrimaryColor)),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
-      ),
+        if (_isLoading)
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

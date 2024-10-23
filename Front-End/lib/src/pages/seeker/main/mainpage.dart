@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission handler package
 import 'package:seyoni/src/pages/seeker/order-history/order_history_page.dart';
 import '../../../widgets/custom_appbar.dart';
@@ -89,31 +90,40 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        const Positioned.fill(
-          child: BackgroundWidget(child: SizedBox.expand()),
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: const CustomAppBar(),
-          body: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _pages[
-                      _currentIndex], // Display the page based on _currentIndex
-                ],
+    return PopScope<Object?>(
+      canPop: true,
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
+        if (didPop) {
+          return;
+        }
+        await SystemNavigator.pop();
+      },
+      child: Stack(
+        children: [
+          const Positioned.fill(
+            child: BackgroundWidget(child: SizedBox.expand()),
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: const CustomAppBar(),
+            body: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _pages[
+                        _currentIndex], // Display the page based on _currentIndex
+                  ],
+                ),
               ),
             ),
+            bottomNavigationBar: CustomBottomNavBar(
+              currentIndex: _currentIndex,
+              onTap: _onNavBarTapped,
+            ),
           ),
-          bottomNavigationBar: CustomBottomNavBar(
-            currentIndex: _currentIndex,
-            onTap: _onNavBarTapped,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

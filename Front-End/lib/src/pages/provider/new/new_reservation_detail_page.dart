@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
+import 'package:seyoni/src/widgets/alertbox/reservation_accept_reject.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -188,25 +189,16 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirm $action'),
-          content: Text('Are you sure you want to $action this reservation?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _updateReservationStatus(
-                    action == 'accept' ? 'accepted' : 'rejected');
-              },
-            ),
-          ],
+        return ReservationAcceptReject(
+          action: action,
+          onCancel: () {
+            Navigator.of(context).pop();
+          },
+          onConfirm: () {
+            Navigator.of(context).pop();
+            _updateReservationStatus(
+                action == 'accept' ? 'accepted' : 'rejected');
+          },
         );
       },
     );
