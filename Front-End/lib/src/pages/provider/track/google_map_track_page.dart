@@ -90,8 +90,9 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
   }
 
   void _checkProximity() {
-    if (currentPosition == null || _otpGenerated)
+    if (currentPosition == null || _otpGenerated) {
       return; // Check if OTP is already generated
+    }
 
     final distance = _calculateDistance(
       currentPosition!.latitude,
