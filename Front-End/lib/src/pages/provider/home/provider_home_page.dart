@@ -253,7 +253,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                                   style: kSubtitleTextStyle,
                                 ),
                                 Text(
-                                  '$proffession',
+                                  proffession,
                                   style: kSubtitleTextStyle,
                                 )
                               ],
