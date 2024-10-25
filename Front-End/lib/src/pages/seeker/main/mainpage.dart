@@ -6,7 +6,6 @@ import 'package:seyoni/src/pages/seeker/order-history/order_history_page.dart';
 import '../../../widgets/custom_appbar.dart';
 import '../../../widgets/customNavBar/custom_navbar.dart';
 import '../../../widgets/background_widget.dart';
-import '../../../constants/constants_font.dart';
 import '../category/category_page.dart';
 import '../chat/chat_page.dart';
 import '../menu/menupage.dart';
@@ -82,7 +81,7 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  void _onNavBarTapped(int index) {
+  void onNavBarTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
@@ -119,7 +118,7 @@ class HomePageState extends State<HomePage> {
             ),
             bottomNavigationBar: CustomBottomNavBar(
               currentIndex: _currentIndex,
-              onTap: _onNavBarTapped,
+              onTap: onNavBarTapped,
             ),
           ),
         ],

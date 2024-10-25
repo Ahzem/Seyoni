@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/background_widget.dart';
 import '../../../constants/constants_color.dart';
 import '../../../constants/constants_font.dart';
 import '../category/category_page.dart';
