@@ -109,7 +109,7 @@ class _HomeCenterPageState extends State<HomeCenterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(_recentWorkers.length, (index) {
                   return Padding(
-                    padding: EdgeInsets.only(right: spacing),
+                    padding: EdgeInsets.only(right: 5),
                     child: buildWorker(_recentWorkers[index]['name']!,
                         _recentWorkers[index]['image']!),
                   );

@@ -49,6 +49,7 @@ class SignInPageState extends State<SignInPage> {
           emailController,
           passwordController,
         );
+        await prefs.setBool('isLoggedIn', true); // Save login state
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -118,15 +119,7 @@ class SignInPageState extends State<SignInPage> {
                           ),
                           const SizedBox(height: 10),
                           SignInButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                loginSeeker(
-                                  context,
-                                  emailController,
-                                  passwordController,
-                                );
-                              }
-                            },
+                            onPressed: signIn,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
