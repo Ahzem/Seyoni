@@ -26,100 +26,52 @@ import './src/config/route.dart';
 import 'src/pages/seeker/sign-pages/otp/otp_screen.dart';
 import 'src/pages/seeker/forgot-password/forgot_password_page.dart';
 import 'src/pages/seeker/notifications/internal/notification_page.dart';
-import 'src/widgets/draggable_button.dart'; // Import the DraggableFloatingActionButton
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(AppInitializer());
+  await dotenv.load(fileName: ".env");
+  await _requestPermissions();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('token');
+  String? userType = prefs.getString(
+      'userType'); // Added to differentiate between seeker and provider
+  bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false; // Check login state
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => NotificationProvider()),
+        // Add other providers here if needed
+      ],
+      child: MyApp(
+        token: token,
+        userType: userType,
+        hasSeenLaunchScreen: hasSeenLaunchScreen,
+        isLoggedIn: isLoggedIn,
+      ),
+    ),
+  ); // Pass login state to MyApp
 }
 
-class AppInitializer extends StatefulWidget {
-  @override
-  _AppInitializerState createState() => _AppInitializerState();
-}
+Future<void> _requestPermissions() async {
+  final permissions = [
+    Permission.camera,
+    Permission.location,
+  ];
 
-class _AppInitializerState extends State<AppInitializer> {
-  late Future<Map<String, dynamic>> _initializationFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializationFuture = _initializeApp();
+  if (!kIsWeb) {
+    permissions.add(Permission.photos);
+    permissions.add(Permission.storage);
   }
 
-  Future<Map<String, dynamic>> _initializeApp() async {
-    await dotenv.load(fileName: ".env");
-    await _requestPermissions();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String? userType = prefs.getString('userType');
-    bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
-    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    return {
-      'token': token,
-      'userType': userType,
-      'hasSeenLaunchScreen': hasSeenLaunchScreen,
-      'isLoggedIn': isLoggedIn,
-    };
-  }
-
-  Future<void> _requestPermissions() async {
-    final permissions = [
-      Permission.camera,
-      Permission.location,
-    ];
-
-    if (!kIsWeb) {
-      permissions.add(Permission.photos);
-      permissions.add(Permission.storage);
-    }
-
-    await permissions.request();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: _initializationFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return MaterialApp(
-            home: Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return MaterialApp(
-            home: Scaffold(
-              body: Center(child: Text('Error: ${snapshot.error}')),
-            ),
-          );
-        } else {
-          final data = snapshot.data!;
-          return MultiProvider(
-            providers: [
-              ChangeNotifierProvider(
-                  create: (context) => NotificationProvider()),
-              // Add other providers here if needed
-            ],
-            child: MyApp(
-              token: data['token'],
-              userType: data['userType'],
-              hasSeenLaunchScreen: data['hasSeenLaunchScreen'],
-              isLoggedIn: data['isLoggedIn'],
-            ),
-          );
-        }
-      },
-    );
-  }
+  await permissions.request();
 }
 
 class MyApp extends StatelessWidget {
   final String? token;
   final String? userType;
   final bool hasSeenLaunchScreen;
-  final bool isLoggedIn;
+  final bool isLoggedIn; // Add login state
 
   const MyApp({
     super.key,
@@ -127,14 +79,11 @@ class MyApp extends StatelessWidget {
     this.userType,
     required this.hasSeenLaunchScreen,
     required this.isLoggedIn,
-  });
+  }); // Add login state
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
     return MaterialApp(
-      navigatorKey: navigatorKey,
       onGenerateRoute: generateRoute,
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
@@ -160,15 +109,6 @@ class MyApp extends StatelessWidget {
             const ListOfRegistrationRequests(),
         AppRoutes.listOfSeekers: (context) => const ListOfSeekers(),
         AppRoutes.listOfProviders: (context) => const ListOfProviders(),
-      },
-      builder: (context, child) {
-        return Stack(
-          children: [
-            child!,
-            if (isLoggedIn && userType == 'seeker')
-              DraggableFloatingActionButton(navigatorKey: navigatorKey),
-          ],
-        );
       },
     );
   }
