@@ -89,126 +89,140 @@ class AcceptedReservationsPageState extends State<AcceptedReservationsPage> {
                 color: kPrimaryColor,
               ))
             : errorMessage.isNotEmpty
-                ? Center(child: Text(errorMessage))
+                ? Center(
+                    child: Text(
+                      errorMessage,
+                      style: const TextStyle(color: Colors.redAccent, fontSize: 16),
+                    ),
+                  )
                 : reservations.isEmpty
                     ? const NoReservationsWidget(
                         message: 'No accepted reservations')
-                    : GridView.builder(
-                        padding: const EdgeInsets.all(10),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                        ),
-                        itemCount: reservations.length,
-                        itemBuilder: (context, index) {
-                          final reservation = reservations[index];
-                          final seeker = reservation['seeker'];
-                          final seekerLastName = seeker['lastName'] ?? 'N/A';
-                          final description = reservation['description']
-                              .toString()
-                              .split(' ')
-                              .take(8)
-                              .join(' ');
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListView.builder(
+                          itemCount: reservations.length,
+                          itemBuilder: (context, index) {
+                            final reservation = reservations[index];
+                            final seeker = reservation['seeker'];
+                            final seekerLastName = seeker['lastName'] ?? 'N/A';
+                            final description = reservation['description']
+                                .toString()
+                                .split(' ')
+                                .take(8)
+                                .join(' ');
 
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 8,
+                                          offset: const Offset(4, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
                                           CircleAvatar(
                                             backgroundImage: NetworkImage(
                                               seeker['profileImageUrl'] ??
                                                   'https://via.placeholder.com/150',
                                             ),
-                                            radius: 30,
+                                            radius: 28,
                                           ),
-                                          const SizedBox(width: 5),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                seekerLastName,
-                                                style: kCardTitleTextStyle,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  seekerLastName,
+                                                  style: kCardTitleTextStyle.copyWith(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Text(
+                                                  reservation['serviceType']
+                                                      .toString()
+                                                      .substring(0, 12),
+                                                  style: kCardTextStyle.copyWith(
+                                                    color: Colors.grey.shade400,
+                                                    fontSize: 14,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  description,
+                                                  style: kBodyTextStyle.copyWith(
+                                                    color:
+                                                        Colors.white.withOpacity(0.9),
+                                                    fontSize: 14,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              final result = await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AcceptedReservationDetailPage(
+                                                    reservationId: reservation['_id'],
+                                                  ),
+                                                ),
+                                              );
+                                              if (result == true) {
+                                                _fetchReservations();
+                                              }
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 5),
+                                              decoration: BoxDecoration(
+                                                color: kPrimaryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
                                               ),
-                                              const SizedBox(height: 5),
-                                              Text(
-                                                reservation['serviceType']
-                                                    .toString()
-                                                    .substring(0, 12),
-                                                style: kCardTextStyle,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
+                                              child: const Text(
+                                                'View',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
-                                            ],
+                                            ),
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        description,
-                                        style: kBodyTextStyle,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                      const Spacer(),
-                                      Center(
-                                        child: TextButton(
-                                          onPressed: () async {
-                                            final result = await Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AcceptedReservationDetailPage(
-                                                  reservationId:
-                                                      reservation['_id'],
-                                                ),
-                                              ),
-                                            );
-                                            if (result == true) {
-                                              _fetchReservations();
-                                            }
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 5),
-                                            decoration: BoxDecoration(
-                                              color: kPrimaryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                            ),
-                                            child: const Text('View Request',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 14)),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
       ),
     );
