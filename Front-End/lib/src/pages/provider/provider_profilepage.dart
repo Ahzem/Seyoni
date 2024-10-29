@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/widgets/background_widget.dart';
-import 'package:seyoni/src/widgets/custom_button.dart';
 
 class ProviderProfilepage extends StatelessWidget {
   const ProviderProfilepage({super.key});
@@ -11,12 +9,7 @@ class ProviderProfilepage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Profile'),
       ),
-      body: const Center(
-      
-      ),
+      body: const Center(),
     );
   }
 }
-
-
-
