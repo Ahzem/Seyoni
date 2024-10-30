@@ -131,3 +131,18 @@ exports.rejectReservation = async (req, res) => {
     res.status(400).send({ error: "Failed to reject reservation" });
   }
 };
+
+exports.finishedReservation = async (req, res) => {
+  try {
+    const { reservationId } = req.params;
+    const reservation = await Reservation.findByIdAndUpdate(
+      reservationId,
+      { status: "finished" },
+      { new: true }
+    );
+    res.status(200).send(reservation);
+  } catch (error) {
+    console.error("Error finishing reservation:", error);
+    res.status(400).send({ error: "Failed to finish reservation" });
+  }
+};

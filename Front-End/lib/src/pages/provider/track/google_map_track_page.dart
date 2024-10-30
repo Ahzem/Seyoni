@@ -102,6 +102,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     );
 
     if (distance <= 0.5) {
+      // Change the range of distance
       final otp = _generateOtp();
       print(
           '-------------------------Generated OTP: $otp----------------------');

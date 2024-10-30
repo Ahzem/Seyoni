@@ -33,4 +33,10 @@ router.patch(
   reservationController.rejectReservation
 );
 
+router.patch(
+  "/:reservationId/finish",
+  authMiddleware,
+  reservationController.finishedReservation
+);
+
 module.exports = router;

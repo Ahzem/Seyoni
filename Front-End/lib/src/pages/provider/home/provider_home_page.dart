@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:seyoni/src/pages/provider/accepted/accepted_reservations_page.dart';
 import 'package:seyoni/src/pages/provider/new/new_requests_page.dart';
@@ -56,15 +55,130 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   }
 
   Future<void> _fetchReservations() async {
-    // ... Your existing code for fetching reservations remains unchanged
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? providerId = prefs.getString('providerId');
+
+      if (providerId == null || providerId.isEmpty) {
+        setState(() {
+          errorMessage = 'User not logged in';
+          isLoading = false;
+        });
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse(getReservationsUrl),
+        headers: {
+          'provider-id': providerId,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> allReservations = json.decode(response.body);
+        setState(() {
+          reservations = allReservations.where((reservation) {
+            return reservation['providerId'] == providerId;
+          }).toList();
+          acceptedCount = reservations
+              .where((reservation) => reservation['status'] == 'accepted')
+              .length;
+          rejectedCount = reservations
+              .where((reservation) => reservation['status'] == 'rejected')
+              .length;
+          newRequestsCount = reservations
+              .where((reservation) => reservation['status'] == 'pending')
+              .length;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errorMessage = 'Failed to load reservations: ${response.body}';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to load reservations: $e';
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> _fetchProviderDetails() async {
-    // ... Your existing code for fetching provider details remains unchanged
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? providerId = prefs.getString('providerId');
+
+      if (providerId == null || providerId.isEmpty) {
+        setState(() {
+          errorMessage = 'User not logged in';
+          isLoading = false;
+        });
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse('$url/api/providers/$providerId'),
+      );
+
+      if (response.statusCode == 200) {
+        final provider = json.decode(response.body);
+        setState(() {
+          providerName = provider['lastName'];
+          profileImageUrl = provider['profileImageUrl'];
+          profession = provider['proffession'];
+        });
+      } else {
+        setState(() {
+          errorMessage = 'Failed to load provider details: ${response.body}';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to load provider details: $e';
+      });
+    }
   }
 
-  Future<void> updateReservationStatus(String reservationId, String status) async {
-    // ... Your existing code for updating reservation status remains unchanged
+  Future<void> updateReservationStatus(
+      String reservationId, String status) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? providerId = prefs.getString('providerId');
+      if (providerId == null || providerId.isEmpty) {
+        setState(() {
+          errorMessage = 'User not logged in';
+        });
+        return;
+      }
+
+      final response = await http.patch(
+        Uri.parse('$url/api/reservations/$reservationId/$status'),
+        headers: {
+          'Content-Type': 'application/json',
+          'provider-id': providerId,
+        },
+      );
+      if (response.statusCode == 200) {
+        setState(() {
+          reservations = reservations.map((reservation) {
+            if (reservation['_id'] == reservationId) {
+              reservation['status'] = status;
+            }
+            return reservation;
+          }).toList();
+        });
+      } else {
+        setState(() {
+          errorMessage = 'Failed to update reservation: ${response.body}';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to update reservation: $e';
+      });
+    }
   }
 
   Future<void> _logout() async {
@@ -79,7 +193,6 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
 
     return BackgroundWidget(
       child: Scaffold(
@@ -115,45 +228,46 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                     text: 'Profile',
                     onPressed: () {
                       Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ProviderProfilepage()),
-                      );// Navigate to Profile Page
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ProviderProfilepage()),
+                      );
                     },
                   ),
                   PrimaryOutlinedButton(
                     text: 'Settings',
-                    onPressed: () {
-                      // Navigate to Settings Page
-                    },
+                    onPressed: () {},
                   ),
                 ],
               ),
               const SizedBox(height: 20),
               Expanded(
-                child: Column(
-                  children: [
-                    _buildReservationCard(
-                      context,
-                      'Accepted Reservations',
-                      Icons.check_circle,
-                      const AcceptedReservationsPage(),
-                      acceptedCount,
-                    ),
-                    _buildReservationCard(
-                      context,
-                      'Rejected Reservations',
-                      Icons.cancel,
-                      const RejectedReservationsPage(),
-                      rejectedCount,
-                    ),
-                    _buildReservationCard(
-                      context,
-                      'New Requests',
-                      Icons.new_releases,
-                      const NewRequestsPage(),
-                      newRequestsCount,
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildReservationCard(
+                        context,
+                        'Accepted Reservations',
+                        Icons.check_circle,
+                        const AcceptedReservationsPage(),
+                        acceptedCount,
+                      ),
+                      _buildReservationCard(
+                        context,
+                        'Rejected Reservations',
+                        Icons.cancel,
+                        const RejectedReservationsPage(),
+                        rejectedCount,
+                      ),
+                      _buildReservationCard(
+                        context,
+                        'New Requests',
+                        Icons.new_releases,
+                        const NewRequestsPage(),
+                        newRequestsCount,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -176,8 +290,8 @@ class ProviderHomePageState extends State<ProviderHomePage> {
           padding: const EdgeInsets.all(16),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
                 radius: 45,
@@ -204,7 +318,6 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                   ],
                 ),
               ),
-            
             ],
           ),
         ),
@@ -213,108 +326,111 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   }
 
   Widget _buildSummaryCard() {
-      return Container(
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.white, width: 1), // Border color and width
-      borderRadius: BorderRadius.circular(12), // Same radius as the Card
-    ),
-    child: Card(
-      color: kContainerColor.withOpacity(0.2),
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    return Container(
+      decoration: BoxDecoration(
+        border:
+            Border.all(color: Colors.white, width: 1), // Border color and width
+        borderRadius: BorderRadius.circular(12), // Same radius as the Card
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      child: Card(
+        color: kContainerColor.withOpacity(0.2),
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Total Reservations',
+                style: kTitleTextStyle,
+              ),
+              Text(
+                '${reservations.length}',
+                style: kTitleTextStyleBold.copyWith(fontSize: 24),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReservationCard(BuildContext context, String title,
+      IconData icon, Widget page, int count) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => page),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        decoration: BoxDecoration(
+          border: Border.all(color: kAccentColor, width: 0.8),
+          color: kPrimaryColor.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(15),
+        ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Total Reservations',
-              style: kTitleTextStyle,
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: kAccentColor,
+              child: Icon(
+                icon,
+                size: 30,
+                color: title == 'Accepted Reservations'
+                    ? Colors.green
+                    : title == 'Rejected Reservations'
+                        ? Colors.red
+                        : Colors.yellow,
+              ),
             ),
-            
-            Text(
-              '${reservations.length}',
-              style: kTitleTextStyleBold.copyWith(fontSize: 24),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: kSubtitleTextStyle.copyWith(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'You have $count ${title.toLowerCase()}',
+                    style: kSubtitleTextStyle.copyWith(
+                        fontSize: 14, color: Colors.white70),
+                  ),
+                ],
+              ),
             ),
+            if (count > 0)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: kAccentColor,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.white, width: 0.2),
+                ),
+                child: Text(
+                  '$count',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
           ],
         ),
       ),
-    ),
-      );
+    );
   }
-
-  Widget _buildReservationCard(BuildContext context, String title, IconData icon, Widget page, int count) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => page),
-      );
-    },
-    child: Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-      decoration: BoxDecoration(
-        border: Border.all(color: kAccentColor, width: 0.8),
-        color: kPrimaryColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(15),
-  
-      ),
-      child: Row(
-        
-        children: [
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: kAccentColor,
-            child: Icon(icon,
-             size: 30, 
-             color: title == 'Accepted Reservations'
-                  ? Colors.green
-                  : title == 'Rejected Reservations'
-                      ? Colors.red
-                      : Colors.yellow,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: kSubtitleTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'You have $count ${title.toLowerCase()}',
-                  style: kSubtitleTextStyle.copyWith(fontSize: 14, color: Colors.white70),
-                ),
-              ],
-            ),
-          ),
-          if (count > 0)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: kAccentColor,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white, width: 0.2),
-              ),
-              child: Text(
-                '$count',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-        ],
-      ),
-    ),
-  );
-}
 }
