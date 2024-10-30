@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:seyoni/src/pages/provider/accepted/accepted_reservations_page.dart';
 import 'package:seyoni/src/pages/provider/new/new_requests_page.dart';

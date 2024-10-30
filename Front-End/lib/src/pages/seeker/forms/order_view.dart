@@ -246,6 +246,27 @@ class OrderViewState extends State<OrderView> {
                                             ],
                                           ),
                                         ),
+                                      ] else if (widget.status == 'finished') ...[
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue.withOpacity(0.3),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                          child: const Row(
+                                            children: [
+                                              Text('Service has been completed',
+                                                  style:
+                                                      kReservationsTitleTextStyle),
+                                              SizedBox(width: 10),
+                                              Icon(Icons.check_circle,
+                                                  size: 26,
+                                                  color: kPrimaryColor),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ],
                                   ),

@@ -64,6 +64,8 @@ class HistoryCard extends StatelessWidget {
         return Icons.cancel;
       case 'pending':
         return Icons.hourglass_empty;
+      case 'finished':
+        return Icons.done;
       default:
         return Icons.help;
     }
@@ -77,6 +79,8 @@ class HistoryCard extends StatelessWidget {
         return Colors.red.withOpacity(0.6);
       case 'pending':
         return Colors.orange.withOpacity(0.6);
+      case 'finished':
+        return Colors.blue.withOpacity(0.6);
       default:
         return Colors.grey.withOpacity(0.6);
     }
@@ -90,6 +94,8 @@ class HistoryCard extends StatelessWidget {
         return 'Rejected';
       case 'pending':
         return 'Pending';
+      case 'finished':
+        return 'Finished';
       default:
         return 'Unknown';
     }
@@ -103,6 +109,8 @@ class HistoryCard extends StatelessWidget {
         return Colors.red;
       case 'pending':
         return Colors.orange;
+      case 'finished':
+        return Colors.blue;
       default:
         return Colors.grey;
     }
