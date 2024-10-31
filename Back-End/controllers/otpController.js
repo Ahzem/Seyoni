@@ -22,7 +22,7 @@ exports.generateOtp = async (req, res) => {
   }
 };
 
-exports.sendOtpToSeeker = (req, res) => {
+exports.sendOtpToSeeker = async (req, res) => {
   const { seekerId, otp } = req.body;
   if (!seekerId || !otp) {
     return res.status(400).json({ error: "Seeker ID and OTP are required" });
