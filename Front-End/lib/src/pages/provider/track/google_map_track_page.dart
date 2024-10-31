@@ -139,7 +139,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
-          'seekerId': widget.seekerId, // Pass the seeker's ID
+          'seekerId': widget.seekerId,
           'otp': otp,
         }),
       );
