@@ -23,8 +23,13 @@ wss.on("connection", (ws) => {
   ws.on("message", (message) => {
     const data = JSON.parse(message);
     if (data.type === "send_otp") {
-      const otp = generateOtp(data.seeker_id);
-      ws.send(JSON.stringify({ type: "otp", otp }));
+      const otp = data.otp;
+      // Broadcast OTP to all connected clients
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({ type: "otp", otp }));
+        }
+      });
     }
   });
 });

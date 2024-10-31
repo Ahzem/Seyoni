@@ -8,8 +8,8 @@ class NotificationProvider with ChangeNotifier {
 
   List<String> get notifications => _notifications;
 
-  void setOtp(String otp) {
-    _otp = otp;
+  void setOtp(String newOtp) {
+    _otp = newOtp;
     notifyListeners();
   }
 
