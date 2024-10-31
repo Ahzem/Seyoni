@@ -4,9 +4,7 @@ import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 
 class DraggableOtpButton extends StatefulWidget {
-  final String otp;
-
-  const DraggableOtpButton({required this.otp, super.key});
+  const DraggableOtpButton({super.key});
 
   @override
   DraggableOtpButtonState createState() => DraggableOtpButtonState();
@@ -33,6 +31,7 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
 
   @override
   Widget build(BuildContext context) {
+    final otp = Provider.of<NotificationProvider>(context).otp;
     if (!isVisible) return SizedBox.shrink();
 
     return Stack(
@@ -58,7 +57,7 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
                       width: 300,
                       height: 500,
                       color: Colors.white,
-                      child: Center(child: Text('Your OTP is ${widget.otp}')),
+                      child: Center(child: Text('Your OTP is $otp')),
                     ),
                   );
                 },
