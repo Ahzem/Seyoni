@@ -31,11 +31,11 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
     final email = _emailController.text;
     final password = _passwordController.text;
 
+    // print('Attempting to sign in with email: $email and password: $password');
+
     if (email == 'seyoni@admin.com' && password == 'Seyoni@1234') {
-      // Navigate to admin home page
       Navigator.pushReplacementNamed(context, AppRoutes.adminHomePage);
     } else {
-      // Normal provider sign-in logic
       try {
         final response = await http.post(
           Uri.parse(loginProvidersUrl),
@@ -47,6 +47,9 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
             'password': password,
           }),
         );
+
+        // print('Response status: ${response.statusCode}');
+        // print('Response body: ${response.body}');
 
         setState(() {
           _isLoading = false;

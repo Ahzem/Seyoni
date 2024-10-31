@@ -63,6 +63,7 @@ exports.createReservation = async (req, res) => {
 
 exports.getReservations = async (req, res) => {
   try {
+    console.log("Fetching reservations..."); // Add this line
     const seekerId = req.headers["seeker-id"];
     const providerId = req.headers["provider-id"];
 

@@ -168,7 +168,7 @@ Future<bool> resendOtp(String? phone, BuildContext context) async {
 Future<void> saveTempUser(String phone, Map<String, String> userData) async {
   try {
     final response = await http.post(
-      Uri.parse('$url/api/otp/saveTempUser'),
+      Uri.parse('$url/api/saveTempUser'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -189,7 +189,7 @@ Future<void> saveTempUser(String phone, Map<String, String> userData) async {
 Future<void> generateOtp(String phone) async {
   try {
     final response = await http.post(
-      Uri.parse('$url/api/otp/generateOtp'),
+      Uri.parse('$url/api/generateOtp'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

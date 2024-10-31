@@ -60,10 +60,12 @@ class ProviderHomePageState extends State<ProviderHomePage> {
       String? providerId = prefs.getString('providerId');
 
       if (providerId == null || providerId.isEmpty) {
-        setState(() {
-          errorMessage = 'User not logged in';
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            errorMessage = 'User not logged in';
+            isLoading = false;
+          });
+        }
         return;
       }
 
@@ -76,32 +78,38 @@ class ProviderHomePageState extends State<ProviderHomePage> {
 
       if (response.statusCode == 200) {
         List<dynamic> allReservations = json.decode(response.body);
-        setState(() {
-          reservations = allReservations.where((reservation) {
-            return reservation['providerId'] == providerId;
-          }).toList();
-          acceptedCount = reservations
-              .where((reservation) => reservation['status'] == 'accepted')
-              .length;
-          rejectedCount = reservations
-              .where((reservation) => reservation['status'] == 'rejected')
-              .length;
-          newRequestsCount = reservations
-              .where((reservation) => reservation['status'] == 'pending')
-              .length;
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            reservations = allReservations.where((reservation) {
+              return reservation['providerId'] == providerId;
+            }).toList();
+            acceptedCount = reservations
+                .where((reservation) => reservation['status'] == 'accepted')
+                .length;
+            rejectedCount = reservations
+                .where((reservation) => reservation['status'] == 'rejected')
+                .length;
+            newRequestsCount = reservations
+                .where((reservation) => reservation['status'] == 'pending')
+                .length;
+            isLoading = false;
+          });
+        }
       } else {
+        if (mounted) {
+          setState(() {
+            errorMessage = 'Failed to load reservations: ${response.body}';
+            isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
         setState(() {
-          errorMessage = 'Failed to load reservations: ${response.body}';
+          errorMessage = 'Failed to load reservations: $e';
           isLoading = false;
         });
       }
-    } catch (e) {
-      setState(() {
-        errorMessage = 'Failed to load reservations: $e';
-        isLoading = false;
-      });
     }
   }
 
@@ -111,33 +119,41 @@ class ProviderHomePageState extends State<ProviderHomePage> {
       String? providerId = prefs.getString('providerId');
 
       if (providerId == null || providerId.isEmpty) {
-        setState(() {
-          errorMessage = 'User not logged in';
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            errorMessage = 'User not logged in';
+            isLoading = false;
+          });
+        }
         return;
       }
 
       final response = await http.get(
-        Uri.parse('$url/api/providers/$providerId'),
+        Uri.parse('$url/api/provider/$providerId'),
       );
 
       if (response.statusCode == 200) {
         final provider = json.decode(response.body);
-        setState(() {
-          providerName = provider['lastName'];
-          profileImageUrl = provider['profileImageUrl'];
-          profession = provider['proffession'];
-        });
+        if (mounted) {
+          setState(() {
+            providerName = provider['lastName'];
+            profileImageUrl = provider['profileImageUrl'];
+            profession = provider['profession'];
+          });
+        }
       } else {
-        setState(() {
-          errorMessage = 'Failed to load provider details: ${response.body}';
-        });
+        if (mounted) {
+          setState(() {
+            errorMessage = 'Failed to load provider details: ${response.body}';
+          });
+        }
       }
     } catch (e) {
-      setState(() {
-        errorMessage = 'Failed to load provider details: $e';
-      });
+      if (mounted) {
+        setState(() {
+          errorMessage = 'Failed to load provider details: $e';
+        });
+      }
     }
   }
 
@@ -147,9 +163,11 @@ class ProviderHomePageState extends State<ProviderHomePage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? providerId = prefs.getString('providerId');
       if (providerId == null || providerId.isEmpty) {
-        setState(() {
-          errorMessage = 'User not logged in';
-        });
+        if (mounted) {
+          setState(() {
+            errorMessage = 'User not logged in';
+          });
+        }
         return;
       }
 
@@ -161,23 +179,29 @@ class ProviderHomePageState extends State<ProviderHomePage> {
         },
       );
       if (response.statusCode == 200) {
-        setState(() {
-          reservations = reservations.map((reservation) {
-            if (reservation['_id'] == reservationId) {
-              reservation['status'] = status;
-            }
-            return reservation;
-          }).toList();
-        });
+        if (mounted) {
+          setState(() {
+            reservations = reservations.map((reservation) {
+              if (reservation['_id'] == reservationId) {
+                reservation['status'] = status;
+              }
+              return reservation;
+            }).toList();
+          });
+        }
       } else {
-        setState(() {
-          errorMessage = 'Failed to update reservation: ${response.body}';
-        });
+        if (mounted) {
+          setState(() {
+            errorMessage = 'Failed to update reservation: ${response.body}';
+          });
+        }
       }
     } catch (e) {
-      setState(() {
-        errorMessage = 'Failed to update reservation: $e';
-      });
+      if (mounted) {
+        setState(() {
+          errorMessage = 'Failed to update reservation: $e';
+        });
+      }
     }
   }
 
@@ -290,7 +314,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
           padding: const EdgeInsets.all(16),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(

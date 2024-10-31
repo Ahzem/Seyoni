@@ -13,6 +13,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Your existing routes
 app.use("/api", require("./routes/otpRoutes"));
 app.use("/api/provider", require("./routes/providerRoutes")); // Ensure this line exists
+app.use("/api/reservations", require("./routes/reservationRoutes")); // Add this line
+app.use("/api/seeker", require("./routes/seekerRoutes")); // Add this line
 
 // Create an HTTP server
 const server = http.createServer(app);

@@ -90,10 +90,11 @@ exports.registerStep1 = async (req, res) => {
       return res.status(400).json({ error: "Provider already exists" });
     }
 
-    const otp = generateOtp(phone);
-    saveTempUser(phone, { email, phone });
-    res.status(200).json({ message: "OTP sent", otp }); // In production, don't send OTP in response
+    const otp = await generateOtp(phone); // Ensure OTP is generated
+    await saveTempUser(phone, { email, phone }); // Ensure temporary user data is saved
+    res.status(200).json({ message: "OTP sent" }); // Do not send OTP in response in production
   } catch (error) {
+    console.error("Error in registerStep1:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
