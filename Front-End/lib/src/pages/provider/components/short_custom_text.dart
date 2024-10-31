@@ -26,6 +26,7 @@ class ShortCustomTextField extends StatelessWidget {
     return SizedBox(
       width: width * 0.4,
       child: TextFormField(
+        cursorColor: kPrimaryColor,
         controller: controller,
         style: kTextFieldStyle,
         decoration: InputDecoration(

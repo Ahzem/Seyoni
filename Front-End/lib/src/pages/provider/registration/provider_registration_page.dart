@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import 'package:seyoni/src/services/location_service.dart';
 import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/config/route.dart';
@@ -14,7 +16,6 @@ import '../../seeker/category/components/categories.dart';
 import '../../seeker/category/components/subcategories.dart';
 import '../../seeker/sign-pages/components/constants.dart';
 import '../components/custom_text_field.dart';
-import '../components/location_field.dart';
 import '../components/short_custom_text.dart';
 import 'package:http/http.dart' as http;
 
@@ -37,6 +38,8 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  String? _selectedCity;
+  final TextEditingController _typeAheadController = TextEditingController();
 
   int _currentStep = 0;
   String? _selectedCategory;
@@ -300,12 +303,55 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                               validator: Validators.validatePhoneNumber,
                             ),
                             const SizedBox(height: 10),
-                            LocationField(
-                              controller: _locationController,
-                              onSuggestionSelected: (suggestion) {
+                            TypeAheadField(
+                              suggestionsCallback: (pattern) async {
+                                if (pattern.isEmpty) {
+                                  return [];
+                                }
+                                return await LocationService
+                                    .fetchLocationSuggestions(pattern);
+                              },
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  title: Text(suggestion),
+                                );
+                              },
+                              onSelected: (suggestion) {
+                                _typeAheadController.text = suggestion;
                                 setState(() {
-                                  _locationController.text = suggestion;
+                                  _selectedCity = suggestion;
                                 });
+                              },
+                              builder: (context, controller, focusNode) {
+                                return TextField(
+                                  cursorColor: kPrimaryColor,
+                                  controller: controller,
+                                  focusNode: focusNode,
+                                  decoration: InputDecoration(
+                                    label: const Text('Select Nearest City',
+                                        style: kBodyTextStyle),
+                                    filled: true,
+                                    helperStyle:
+                                        const TextStyle(color: kPrimaryColor),
+                                    fillColor: Colors.transparent,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: const BorderSide(
+                                          color: kPrimaryColor, width: 1),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: const BorderSide(
+                                          color: kPrimaryColor, width: 1),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: const BorderSide(
+                                          color: kPrimaryColor, width: 1),
+                                    ),
+                                  ),
+                                  style: const TextStyle(color: Colors.white),
+                                );
                               },
                             ),
                             const SizedBox(height: 10),

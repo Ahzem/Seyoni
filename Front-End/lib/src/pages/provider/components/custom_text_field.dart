@@ -28,6 +28,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      cursorColor: kPrimaryColor,
       controller: controller,
       style: kTextFieldStyle,
       decoration: InputDecoration(
