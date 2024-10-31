@@ -1,23 +1,25 @@
-const { generateOtp, saveTempUser } = require("../services/otpService");
+const { saveTempUser, generateOtp } = require("../services/otpService");
 
-exports.generateOtp = (req, res) => {
-  const { phone } = req.body;
-  if (!phone) {
-    return res.status(400).json({ error: "Phone number is required" });
+exports.saveTempUser = async (req, res) => {
+  try {
+    const { phone, userData } = req.body;
+    await saveTempUser(phone, userData);
+    res.status(200).send("Temporary user data saved successfully");
+  } catch (error) {
+    console.error("Error saving temporary user data:", error);
+    res.status(500).json({ error: "Failed to save temporary user data" });
   }
-  const otp = generateOtp(phone);
-  res.status(200).json({ otp });
 };
 
-exports.saveTempUser = (req, res) => {
-  const { phone, userData } = req.body;
-  if (!phone || !userData) {
-    return res
-      .status(400)
-      .json({ error: "Phone number and user data are required" });
+exports.generateOtp = async (req, res) => {
+  try {
+    const { phone } = req.body;
+    const otp = await generateOtp(phone);
+    res.status(200).send("OTP generated successfully");
+  } catch (error) {
+    console.error("Error generating OTP:", error);
+    res.status(500).json({ error: "Failed to generate OTP" });
   }
-  saveTempUser(phone, userData);
-  res.status(200).json({ message: "Temporary user data saved" });
 };
 
 exports.sendOtpToSeeker = (req, res) => {
