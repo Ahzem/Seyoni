@@ -76,6 +76,8 @@ class ProviderHomePageState extends State<ProviderHomePage> {
         },
       );
 
+      if (!mounted) return;
+
       if (response.statusCode == 200) {
         List<dynamic> allReservations = json.decode(response.body);
         if (mounted) {
