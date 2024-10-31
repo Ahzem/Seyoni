@@ -18,15 +18,25 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   @override
   void initState() {
     super.initState();
-    // Listen for OTP notifications
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<NotificationProvider>(context, listen: false)
+          .addListener(_onNotificationReceived);
+    });
+  }
+
+  @override
+  void dispose() {
     Provider.of<NotificationProvider>(context, listen: false)
-        .addListener(_onNotificationReceived);
+        .removeListener(_onNotificationReceived);
+    super.dispose();
   }
 
   void _onNotificationReceived() {
-    setState(() {
-      isVisible = true;
-    });
+    if (mounted) {
+      setState(() {
+        isVisible = true;
+      });
+    }
   }
 
   @override

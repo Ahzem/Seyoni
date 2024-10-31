@@ -28,8 +28,9 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Call the function to check permissions
-    _checkPermissions();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkPermissions();
+    });
   }
 
   final List<Widget> _pages = [
