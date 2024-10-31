@@ -60,7 +60,13 @@ exports.getAllProviders = async (req, res) => {
 
 exports.getProviderDetails = async (req, res) => {
   try {
-    const providerId = new mongoose.Types.ObjectId(req.params.id); // Correct usage of ObjectId
+    const providerId = req.params.id;
+
+    // Validate the providerId
+    if (!mongoose.Types.ObjectId.isValid(providerId)) {
+      return res.status(400).json({ message: "Invalid provider ID" });
+    }
+
     const provider = await Provider.findById(providerId);
     if (!provider) {
       return res.status(404).json({ message: "Provider not found" });
@@ -265,16 +271,19 @@ exports.registerStep5 = async (req, res) => {
 
 exports.signInProvider = async (req, res) => {
   const { email, password } = req.body;
+  // console.log("Request body:", req.body); // Log the request body
   try {
     // Check if the provider exists
     const provider = await Provider.findOne({ email });
     if (!provider) {
+      // console.log("Provider not found");
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
     // Verify the password
     const isMatch = await bcrypt.compare(password, provider.password);
     if (!isMatch) {
+      // console.log("Password does not match");
       return res.status(400).json({ error: "Invalid email or password" });
     }
 

@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Your existing routes
 app.use("/api", require("./routes/otpRoutes"));
+app.use("/api/provider", require("./routes/providerRoutes")); // Ensure this line exists
 
 // Create an HTTP server
 const server = http.createServer(app);

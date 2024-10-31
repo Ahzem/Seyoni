@@ -36,58 +36,65 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
       Navigator.pushReplacementNamed(context, AppRoutes.adminHomePage);
     } else {
       // Normal provider sign-in logic
-      final response = await http.post(
-        Uri.parse(loginProvidersUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'email': email,
-          'password': password,
-        }),
-      );
+      try {
+        final response = await http.post(
+          Uri.parse(loginProvidersUrl),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'email': email,
+            'password': password,
+          }),
+        );
 
-      setState(() {
-        _isLoading = false;
-      });
+        setState(() {
+          _isLoading = false;
+        });
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        final token = responseData['token'];
-        final providerId = responseData['providerId'];
+        if (response.statusCode == 200) {
+          final responseData = jsonDecode(response.body);
+          final token = responseData['token'];
+          final providerId = responseData['providerId'];
 
-        if (token != null && providerId != null) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', token);
-          await prefs.setString('providerId', providerId);
+          if (token != null && providerId != null) {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('token', token);
+            await prefs.setString('providerId', providerId);
 
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Success'),
-                content: const Text('Sign-in successful!'),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          AppRoutes.providerHomePage,
-                          (Route<dynamic> route) => false);
-                    },
-                  ),
-                ],
-              );
-            },
-          );
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Success'),
+                  content: const Text('Sign-in successful!'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            AppRoutes.providerHomePage,
+                            (Route<dynamic> route) => false);
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            _showErrorDialog('Invalid response from server');
+          }
         } else {
-          _showErrorDialog('Invalid response from server');
+          final error = jsonDecode(response.body)['error'];
+          _showErrorDialog('Error: $error');
         }
-      } else {
-        final error = jsonDecode(response.body)['error'];
-        _showErrorDialog('Error: $error');
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
+        _showErrorDialog('An error occurred: $e');
       }
     }
   }
