@@ -5,19 +5,23 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import 'package:seyoni/src/pages/provider/service_process_page.dart';
 import 'package:provider/provider.dart';
 import 'package:seyoni/src/pages/seeker/notifications/components/notification_model.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class GoogleMapsTrackPage extends StatefulWidget {
   final LatLng seekerLocation;
   final String seekerName;
+  final String seekerId;
 
   const GoogleMapsTrackPage({
     required this.seekerLocation,
     required this.seekerName,
+    required this.seekerId,
     super.key,
   });
 
@@ -38,6 +42,24 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     super.initState();
     _initializeMarkers();
     _fetchLocationUpdates();
+    _sendOtpToSeeker();
+  }
+
+  @override
+  void dispose() {
+    locationController.onLocationChanged.drain();
+    mapController?.dispose();
+    super.dispose();
+  }
+
+  void _sendOtpToSeeker() {
+    final channel = WebSocketChannel.connect(
+      Uri.parse('ws://$url/ws/notification/'), // Ensure this URL is correct
+    );
+    channel.sink.add(jsonEncode({
+      'type': 'send_otp',
+      'seeker_id': widget.seekerId,
+    }));
   }
 
   void _initializeMarkers() {
@@ -72,6 +94,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     }
 
     final currentLocation = await locationController.getLocation();
+    if (!mounted) return;
     setState(() {
       currentPosition =
           LatLng(currentLocation.latitude!, currentLocation.longitude!);
@@ -80,6 +103,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
 
     locationController.onLocationChanged
         .listen((loc.LocationData currentLocation) {
+      if (!mounted) return;
       setState(() {
         currentPosition =
             LatLng(currentLocation.latitude!, currentLocation.longitude!);
@@ -89,7 +113,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     });
   }
 
-  void _checkProximity() {
+  void _checkProximity() async {
     if (currentPosition == null || _otpGenerated) {
       return; // Check if OTP is already generated
     }
@@ -108,25 +132,40 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
           '-------------------------Generated OTP: $otp----------------------');
       _otpGenerated = true;
 
-      // Add notification
-      final notification = NotificationModel(
-        title: 'OTP Generated',
-        message: 'Your OTP is $otp',
-        timestamp: DateTime.now(),
+      // Send OTP to seeker
+      final response = await http.post(
+        Uri.parse('$url/api/otp/sendOtpToSeeker'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'seekerId': widget.seekerId, // Pass the seeker's ID
+          'otp': otp,
+        }),
       );
-      Provider.of<NotificationProvider>(context, listen: false)
-          .addNotification(notification);
 
-      // Navigate to ServiceProcessPage
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ServiceProcessPage(
-            seekerName: widget.seekerName,
-            otp: otp,
+      if (response.statusCode == 200) {
+        if (!mounted) return; // Check if the widget is still mounted
+        setState(() {
+          // Update your state here
+          _otpGenerated = true;
+        });
+
+        // Ensure the widget is still mounted before navigating
+        if (!mounted) return;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ServiceProcessPage(
+              seekerName: widget.seekerName, // Pass the seeker's name
+              otp: otp, // Pass the generated OTP
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        print('Failed to send OTP: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
     }
   }
 
@@ -149,6 +188,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     List<LatLng> route =
         await _getRouteBetweenPoints(currentPosition!, widget.seekerLocation);
 
+    if (!mounted) return;
     setState(() {
       polylines.clear();
       polylines.add(
