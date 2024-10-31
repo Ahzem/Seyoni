@@ -49,7 +49,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
 
-  void _nextStep() async {
+  Future<void> _nextStep() async {
     setState(() {
       _isLoading = true;
     });
@@ -71,7 +71,10 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
             _currentStep++;
           });
         } else {
-          // Handle error
+          final error = jsonDecode(response.body)['error'];
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to send OTP: $error')),
+          );
         }
       } else if (_currentStep == 1) {
         // Verify OTP
@@ -89,7 +92,10 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
             _currentStep++;
           });
         } else {
-          // Handle error
+          final error = jsonDecode(response.body)['error'];
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to verify OTP: $error')),
+          );
         }
       } else if (_currentStep == 2) {
         // Upload profile image
@@ -108,7 +114,9 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
               _currentStep++;
             });
           } else {
-            // Handle error
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to upload profile image')),
+            );
           }
         }
       } else if (_currentStep == 3) {
@@ -128,7 +136,9 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
               _currentStep++;
             });
           } else {
-            // Handle error
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to upload NIC front image')),
+            );
           }
         }
       } else if (_currentStep == 4) {
@@ -148,7 +158,9 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
               _currentStep++;
             });
           } else {
-            // Handle error
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to upload NIC back image')),
+            );
           }
         }
       } else if (_currentStep == 5) {
@@ -185,11 +197,12 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
             SnackBar(content: Text('Failed to register: $error')),
           );
         }
-        setState(() {
-          _isLoading = false;
-        });
       }
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _pickImage(String imageType) async {
