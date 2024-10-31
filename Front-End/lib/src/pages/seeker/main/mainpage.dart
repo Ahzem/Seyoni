@@ -116,8 +116,7 @@ class HomePageState extends State<HomePage> {
                         _currentIndex], // Display the page based on _currentIndex
                     Consumer<NotificationProvider>(
                       builder: (context, notificationProvider, child) {
-                        return DraggableOtpButton(
-                            otp: notificationProvider.otp);
+                        return DraggableOtpButton();
                       },
                     ),
                   ],

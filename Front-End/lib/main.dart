@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,6 +9,7 @@ import 'src/pages/admin/admin_home_page.dart';
 import 'src/pages/admin/list_of_providers.dart';
 import 'src/pages/admin/list_of_reg_requests.dart';
 import 'src/pages/admin/list_of_seekers.dart';
+import 'src/pages/provider/notification/notification_provider.dart';
 import 'src/pages/provider/provider_entry_page.dart';
 import 'src/pages/seeker/forgot-password/new_password.page.dart';
 import 'src/pages/seeker/forgot-password/verify_code_page.dart';

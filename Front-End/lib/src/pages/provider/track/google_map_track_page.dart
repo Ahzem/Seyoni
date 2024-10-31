@@ -54,12 +54,19 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
 
   void _sendOtpToSeeker() {
     final channel = WebSocketChannel.connect(
-      Uri.parse('ws://$url/ws/notification/'), // Ensure this URL is correct
+      Uri.parse('ws://localhost:3000'), // Ensure this URL is correct
     );
+    final otp = _generateOtp();
+    print('-------------------------Generated OTP: $otp----------------------');
     channel.sink.add(jsonEncode({
       'type': 'send_otp',
       'seeker_id': widget.seekerId,
+      'otp': otp,
     }));
+    channel.sink.close();
+
+    // Update the NotificationProvider with the new OTP
+    Provider.of<NotificationProvider>(context, listen: false).setOtp(otp);
   }
 
   void _initializeMarkers() {
