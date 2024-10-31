@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 
-class DraggableFloatingActionButton extends StatefulWidget {
-  final GlobalKey<NavigatorState> navigatorKey;
+class DraggableOtpButton extends StatefulWidget {
+  final String otp;
 
-  const DraggableFloatingActionButton({super.key, required this.navigatorKey});
+  const DraggableOtpButton({required this.otp, super.key});
 
   @override
-  DraggableFloatingActionButtonState createState() =>
-      DraggableFloatingActionButtonState();
+  DraggableOtpButtonState createState() => DraggableOtpButtonState();
 }
 
-class DraggableFloatingActionButtonState
-    extends State<DraggableFloatingActionButton> {
+class DraggableOtpButtonState extends State<DraggableOtpButton> {
   double posX = 100;
   double posY = 100;
+  bool isVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen for OTP notifications
+    Provider.of<NotificationProvider>(context, listen: false)
+        .addListener(_onNotificationReceived);
+  }
+
+  void _onNotificationReceived() {
+    setState(() {
+      isVisible = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (!isVisible) return SizedBox.shrink();
+
     return Stack(
       children: [
         Positioned(
@@ -32,7 +49,7 @@ class DraggableFloatingActionButtonState
             },
             onTap: () {
               showDialog(
-                context: widget.navigatorKey.currentContext!,
+                context: context,
                 builder: (BuildContext context) {
                   return Dialog(
                     backgroundColor: Colors.transparent,
@@ -41,7 +58,7 @@ class DraggableFloatingActionButtonState
                       width: 300,
                       height: 500,
                       color: Colors.white,
-                      child: Center(child: Text('Popup Content Here')),
+                      child: Center(child: Text('Your OTP is ${widget.otp}')),
                     ),
                   );
                 },
@@ -50,7 +67,7 @@ class DraggableFloatingActionButtonState
             child: FloatingActionButton(
               onPressed: null,
               backgroundColor: kPrimaryColor,
-              child: Icon(Icons.add),
+              child: Icon(Icons.lock),
             ),
           ),
         ),

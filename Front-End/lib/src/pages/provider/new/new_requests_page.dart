@@ -99,7 +99,8 @@ class NewRequestsPageState extends State<NewRequestsPage> {
                 ? Center(
                     child: Text(
                       errorMessage,
-                      style: const TextStyle(color: Colors.redAccent, fontSize: 16),
+                      style: const TextStyle(
+                          color: Colors.redAccent, fontSize: 16),
                     ),
                   )
                 : reservations.isEmpty
@@ -119,11 +120,13 @@ class NewRequestsPageState extends State<NewRequestsPage> {
                                 .join(' ');
 
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 5.0),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: Colors.white.withOpacity(0.2),
@@ -139,7 +142,8 @@ class NewRequestsPageState extends State<NewRequestsPage> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(12),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           CircleAvatar(
                                             backgroundImage: NetworkImage(
@@ -151,35 +155,43 @@ class NewRequestsPageState extends State<NewRequestsPage> {
                                           const SizedBox(width: 10),
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   seekerLastName,
-                                                  style: kCardTitleTextStyle.copyWith(
+                                                  style: kCardTitleTextStyle
+                                                      .copyWith(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w600,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                                 const SizedBox(height: 5),
                                                 Text(
                                                   reservation['serviceType']
                                                       .toString()
                                                       .substring(0, 12),
-                                                  style: kCardTextStyle.copyWith(
+                                                  style:
+                                                      kCardTextStyle.copyWith(
                                                     color: Colors.grey.shade400,
                                                     fontSize: 14,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                                 const SizedBox(height: 8),
                                                 Text(
                                                   description,
-                                                  style: kBodyTextStyle.copyWith(
-                                                    color: Colors.white.withOpacity(0.9),
+                                                  style:
+                                                      kBodyTextStyle.copyWith(
+                                                    color: Colors.white
+                                                        .withOpacity(0.9),
                                                     fontSize: 14,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   maxLines: 1,
                                                 ),
                                               ],
@@ -187,12 +199,13 @@ class NewRequestsPageState extends State<NewRequestsPage> {
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              final result = await Navigator.push(
+                                              final result =
+                                                  await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       NewReservationDetailPage(
-                                                    reservationId: reservation['_id'],
+                                                    reservation: reservation,
                                                   ),
                                                 ),
                                               );
@@ -201,11 +214,14 @@ class NewRequestsPageState extends State<NewRequestsPage> {
                                               }
                                             },
                                             child: Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 10, vertical: 5),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
                                               decoration: BoxDecoration(
                                                 color: kPrimaryColor,
-                                                borderRadius: BorderRadius.circular(50),
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
                                               ),
                                               child: const Text(
                                                 'View',

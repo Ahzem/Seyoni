@@ -1,18 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/pages/seeker/sign-pages/otp/components/input_field.dart';
 import 'package:seyoni/src/pages/seeker/sign-pages/otp/components/verify_button.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
+import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 
 class ServiceProcessPage extends StatefulWidget {
   final String seekerName;
-  final String otp;
+  final String otp; // Add this line
 
   const ServiceProcessPage({
     required this.seekerName,
-    required this.otp,
+    required this.otp, // Add this line
     super.key,
   });
 
@@ -52,6 +54,15 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
     _otpController4.addListener(_checkInputFields);
     _otpController5.addListener(_checkInputFields);
     _otpController6.addListener(_checkInputFields);
+
+    // Refresh the page every 10 seconds
+    Timer.periodic(Duration(seconds: 10), (timer) {
+      setState(() {});
+    });
+
+    // Listen for OTP notifications
+    Provider.of<NotificationProvider>(context, listen: false)
+        .addListener(_onOtpReceived);
   }
 
   @override
@@ -71,6 +82,12 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
     _focusNode5.dispose();
     _focusNode6.dispose();
     super.dispose();
+  }
+
+  void _onOtpReceived() {
+    setState(() {
+      // Update the state when OTP is received
+    });
   }
 
   void _startTimer() {
@@ -111,7 +128,7 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
         _otpController5.text +
         _otpController6.text;
 
-    if (otp == widget.otp) {
+    if (otp == Provider.of<NotificationProvider>(context, listen: false).otp) {
       setState(() {
         _currentSection = 1;
         _startTimer();

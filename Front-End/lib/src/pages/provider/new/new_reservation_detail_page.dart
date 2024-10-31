@@ -11,9 +11,9 @@ import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 
 class NewReservationDetailPage extends StatefulWidget {
-  final String reservationId;
+  final Map<String, dynamic> reservation;
 
-  const NewReservationDetailPage({required this.reservationId, super.key});
+  const NewReservationDetailPage({required this.reservation, super.key});
 
   @override
   NewReservationDetailPageState createState() =>
@@ -49,7 +49,7 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
       }
 
       final response = await http.get(
-        Uri.parse('$getReservationsUrl/${widget.reservationId}'),
+        Uri.parse('$getReservationsUrl/${widget.reservation['_id']}'),
         headers: {
           'Content-Type': 'application/json',
           'provider-id': providerId,
@@ -125,24 +125,25 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
   }
 
   Future<void> _updateReservationStatus(String status) async {
+    final url = status == 'accept'
+        ? '$acceptReservationUrl/${widget.reservation['_id']}/accept'
+        : '$rejectReservationUrl/${widget.reservation['_id']}/reject';
+
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? providerId = prefs.getString('providerId');
+
       if (providerId == null || providerId.isEmpty) {
-        if (mounted) {
+        setState(() {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('User not logged in'),
               backgroundColor: kErrorColor,
             ),
           );
-        }
+        });
         return;
       }
-
-      final url = status == 'accepted'
-          ? '$acceptReservationUrl/${widget.reservationId}/accept'
-          : '$rejectReservationUrl/${widget.reservationId}/reject';
 
       final response = await http.patch(
         Uri.parse(url),
@@ -156,9 +157,10 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
         if (mounted) {
           setState(() {
             reservation?['status'] = status;
-            if (status == 'accepted') {
+            if (status == 'accept') {
               isAccepted = true;
-            } else if (status == 'rejected') {
+              Navigator.pop(context, true); // Pass true to indicate acceptance
+            } else if (status == 'reject') {
               Navigator.pop(context, true); // Pass true to indicate rejection
             }
           });
@@ -188,19 +190,14 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
   void _showConfirmationDialog(String action) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return ReservationAcceptReject(
-          action: action,
-          onCancel: () {
-            Navigator.of(context).pop();
-          },
-          onConfirm: () {
-            Navigator.of(context).pop();
-            _updateReservationStatus(
-                action == 'accept' ? 'accepted' : 'rejected');
-          },
-        );
-      },
+      builder: (ctx) => ReservationAcceptReject(
+        action: action,
+        onCancel: () => Navigator.of(ctx).pop(),
+        onConfirm: () {
+          Navigator.of(ctx).pop();
+          _updateReservationStatus(action);
+        },
+      ),
     );
   }
 
@@ -332,20 +329,18 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     PrimaryOutlinedButton(
-                        text: 'Cancel',
-                        onPressed: () {
-                          _showConfirmationDialog('reject');
-                        }),
+                      text: 'Cancel',
+                      onPressed: () {
+                        _showConfirmationDialog('reject');
+                      },
+                    ),
                     const SizedBox(width: 10),
                     PrimaryFilledButton(
-                        text: isAccepted ? 'Track' : 'Accept',
-                        onPressed: () {
-                          if (isAccepted) {
-                            // Logic for tracking
-                          } else {
-                            _showConfirmationDialog('accept');
-                          }
-                        }),
+                      text: 'Accept',
+                      onPressed: () {
+                        _showConfirmationDialog('accept');
+                      },
+                    ),
                   ],
                 ),
               ],

@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/pages/seeker/notifications/components/notification_model.dart';
 
 class NotificationProvider with ChangeNotifier {
-  final List<NotificationModel> _notifications = [];
+  String _otp = '';
+  List<String> _notifications = [];
 
-  List<NotificationModel> get notifications => _notifications;
+  String get otp => _otp;
 
-  void addNotification(NotificationModel notification) {
+  List<String> get notifications => _notifications;
+
+  void setOtp(String otp) {
+    _otp = otp;
+    notifyListeners();
+  }
+
+  void addNotification(String notification) {
     _notifications.add(notification);
+    notifyListeners();
+  }
+
+  void clearNotifications() {
+    _notifications.clear();
     notifyListeners();
   }
 }

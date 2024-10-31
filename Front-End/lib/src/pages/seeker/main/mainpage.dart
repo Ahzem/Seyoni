@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission handler package
+import 'package:provider/provider.dart';
 import 'package:seyoni/src/pages/seeker/home/home.dart';
 import 'package:seyoni/src/pages/seeker/order-history/order_history_page.dart';
+import 'package:seyoni/src/widgets/draggable_button.dart';
 import '../../../widgets/custom_appbar.dart';
 import '../../../widgets/customNavBar/custom_navbar.dart';
 import '../../../widgets/background_widget.dart';
 import '../category/category_page.dart';
 import '../chat/chat_page.dart';
 import '../menu/menupage.dart';
+import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -25,7 +28,6 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
     // Call the function to check permissions
     _checkPermissions();
   }
@@ -112,6 +114,12 @@ class HomePageState extends State<HomePage> {
                   children: [
                     _pages[
                         _currentIndex], // Display the page based on _currentIndex
+                    Consumer<NotificationProvider>(
+                      builder: (context, notificationProvider, child) {
+                        return DraggableOtpButton(
+                            otp: notificationProvider.otp);
+                      },
+                    ),
                   ],
                 ),
               ),
