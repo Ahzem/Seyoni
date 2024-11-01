@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
@@ -13,7 +14,11 @@ class DraggableOtpButton extends StatefulWidget {
 class DraggableOtpButtonState extends State<DraggableOtpButton> {
   double posX = 100;
   double posY = 100;
-  bool isVisible = false;
+  bool isVisible = true;
+  int _currentSection = 0;
+  int _remainingTime = 0;
+  int _elapsedTime = 0;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -28,6 +33,7 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   void dispose() {
     Provider.of<NotificationProvider>(context, listen: false)
         .removeListener(_onNotificationReceived);
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -39,48 +45,222 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
     }
   }
 
+  void _startTimer(StateSetter updateDialogState) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      updateDialogState(() {
+        _remainingTime++;
+      });
+    });
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     final otp = Provider.of<NotificationProvider>(context).otp;
     if (!isVisible) return SizedBox.shrink();
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: Stack(
+        children: [
+          Positioned(
+            left: posX,
+            top: posY,
+            child: GestureDetector(
+              onPanUpdate: (details) {
+                setState(() {
+                  posX += details.delta.dx;
+                  posY += details.delta.dy;
+                });
+              },
+              onPanEnd: (details) {
+                setState(() {
+                  final screenWidth = MediaQuery.of(context).size.width;
+                  final screenHeight = MediaQuery.of(context).size.height;
+                  final buttonWidth = 56.0; // Width of the FloatingActionButton
+                  final buttonHeight =
+                      56.0; // Height of the FloatingActionButton
 
-    return Stack(
-      children: [
-        Positioned(
-          left: posX,
-          top: posY,
-          child: GestureDetector(
-            onPanUpdate: (details) {
-              setState(() {
-                posX += details.delta.dx;
-                posY += details.delta.dy;
-              });
-            },
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    backgroundColor: Colors.transparent,
-                    insetPadding: EdgeInsets.all(0),
-                    child: Container(
-                      width: 300,
-                      height: 500,
-                      color: Colors.white,
-                      child: Center(child: Text('Your OTP is $otp')),
+                  // Calculate the nearest edge
+                  if (posX < screenWidth / 2) {
+                    posX = 0; // Stick to the left edge
+                  } else {
+                    posX = screenWidth - buttonWidth; // Stick to the right edge
+                  }
+
+                  if (posY < 0) {
+                    posY = 0; // Stick to the top edge
+                  } else if (posY > screenHeight - buttonHeight) {
+                    posY =
+                        screenHeight - buttonHeight; // Stick to the bottom edge
+                  }
+                });
+              },
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Dialog(
+                      backgroundColor: Colors.transparent,
+                      insetPadding: EdgeInsets.all(0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: StatefulBuilder(
+                          builder:
+                              (BuildContext context, StateSetter setState) {
+                            return Container(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              color: kPrimaryColor,
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (_currentSection == 0) ...[
+                                      Text(
+                                        'Your OTP is',
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        // otp,
+                                        '123456',
+                                        style: TextStyle(
+                                          fontSize: 48,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 10,
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _currentSection = 1;
+                                            _startTimer(setState);
+                                          });
+                                        },
+                                        child: Text('Next'),
+                                      ),
+                                    ] else if (_currentSection == 1) ...[
+                                      Text(
+                                        'Timer',
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        _formatTime(_remainingTime),
+                                        style: TextStyle(
+                                          fontSize: 48,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 20),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          // Handle emergency
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.red,
+                                        ),
+                                        child: Text('Emergency'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _currentSection = 2;
+                                            _elapsedTime = _remainingTime;
+                                            _stopTimer();
+                                          });
+                                        },
+                                        child: Text('Done'),
+                                      ),
+                                    ] else if (_currentSection == 2) ...[
+                                      Text(
+                                        'Service Time: ${_formatTime(_elapsedTime)}',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        'Rs 100.00', // Replace with actual amount
+                                        style: TextStyle(
+                                          fontSize: 48,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          DropdownButton<String>(
+                                            value: 'Card',
+                                            items: <String>['Card', 'Cash']
+                                                .map((String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                            onChanged: (String? newValue) {
+                                              // Handle payment method change
+                                            },
+                                          ),
+                                          SizedBox(width: 20),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              // Handle payment submission
+                                            },
+                                            child: Text('Pay'),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ).then((_) {
+                  _stopTimer();
+                });
+              },
+              child: Opacity(
+                opacity: 0.8,
+                child: CircleAvatar(
+                  radius: 28,
+                  backgroundImage: AssetImage('assets/images/profile-3.jpg'),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: kPrimaryColor,
+                        width: 3.0,
+                      ),
                     ),
-                  );
-                },
-              );
-            },
-            child: FloatingActionButton(
-              onPressed: null,
-              backgroundColor: kPrimaryColor,
-              child: Icon(Icons.lock),
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
+  }
+
+  String _formatTime(int seconds) {
+    final hours = (seconds ~/ 3600).toString().padLeft(2, '0');
+    final minutes = ((seconds % 3600) ~/ 60).toString().padLeft(2, '0');
+    final secs = (seconds % 60).toString().padLeft(2, '0');
+    return '$hours:$minutes:$secs';
   }
 }

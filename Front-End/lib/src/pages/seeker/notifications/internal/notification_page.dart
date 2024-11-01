@@ -1,10 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import '../../../../widgets/background_widget.dart';
 import '../../../../constants/constants_font.dart';
-import '../../../../constants/constants_color.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
