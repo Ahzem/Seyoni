@@ -115,11 +115,6 @@ class HomePageState extends State<HomePage> {
                   children: [
                     _pages[
                         _currentIndex], // Display the page based on _currentIndex
-                    Consumer<NotificationProvider>(
-                      builder: (context, notificationProvider, child) {
-                        return DraggableOtpButton();
-                      },
-                    ),
                   ],
                 ),
               ),
@@ -128,6 +123,12 @@ class HomePageState extends State<HomePage> {
               currentIndex: _currentIndex,
               onTap: onNavBarTapped,
             ),
+          ),
+          // const DraggableOtpButton(),
+          Consumer<NotificationProvider>(
+            builder: (context, notificationProvider, child) {
+              return DraggableOtpButton();
+            },
           ),
         ],
       ),
