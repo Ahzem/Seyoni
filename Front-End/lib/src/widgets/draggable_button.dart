@@ -16,9 +16,11 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   double posY = 100;
   bool isVisible = true;
   int _currentSection = 0;
-  int _remainingTime = 0;
+  // int _remainingTime = 0;
+  ValueNotifier<int> _remainingTimeNotifier = ValueNotifier<int>(0);
   int _elapsedTime = 0;
   Timer? _timer;
+  bool _isDialogOpen = false;
 
   @override
   void initState() {
@@ -45,12 +47,22 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
     }
   }
 
-  void _startTimer(StateSetter updateDialogState) {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      updateDialogState(() {
-        _remainingTime++;
+  // void _startTimer() {
+  //   if (_timer == null || !_timer!.isActive) {
+  //     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+  //       setState(() {
+  //         _remainingTime++;
+  //       });
+  //     });
+  //   }
+  // }
+
+  void _startTimer() {
+    if (_timer == null || !_timer!.isActive) {
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        _remainingTimeNotifier.value++;
       });
-    });
+    }
   }
 
   void _stopTimer() {
@@ -102,6 +114,8 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
               onTap: () {
                 showDialog(
                   context: context,
+                  barrierDismissible:
+                      true, // Allow dismissing by tapping outside
                   builder: (BuildContext context) {
                     return Dialog(
                       backgroundColor: Colors.transparent,
@@ -139,7 +153,7 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
                                         onPressed: () {
                                           setState(() {
                                             _currentSection = 1;
-                                            _startTimer(setState);
+                                            _startTimer();
                                           });
                                         },
                                         child: Text('Next'),
@@ -150,12 +164,17 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
                                         style: TextStyle(fontSize: 18),
                                       ),
                                       SizedBox(height: 20),
-                                      Text(
-                                        _formatTime(_remainingTime),
-                                        style: TextStyle(
-                                          fontSize: 48,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      ValueListenableBuilder<int>(
+                                        valueListenable: _remainingTimeNotifier,
+                                        builder: (context, value, child) {
+                                          return Text(
+                                            _formatTime(value),
+                                            style: TextStyle(
+                                              fontSize: 48,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          );
+                                        },
                                       ),
                                       SizedBox(height: 20),
                                       ElevatedButton(
@@ -171,12 +190,16 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
                                         onPressed: () {
                                           setState(() {
                                             _currentSection = 2;
-                                            _elapsedTime = _remainingTime;
                                             _stopTimer();
+                                            _elapsedTime =
+                                                _remainingTimeNotifier.value;
                                           });
+                                          // Navigator.of(context)
+                                          //     .pop(); // Close the dialog
                                         },
-                                        child: Text('Done'),
+                                        child: Text('Finish'),
                                       ),
+                                      SizedBox(height: 10),
                                     ] else if (_currentSection == 2) ...[
                                       Text(
                                         'Service Time: ${_formatTime(_elapsedTime)}',
@@ -214,7 +237,9 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
                                           SizedBox(width: 20),
                                           ElevatedButton(
                                             onPressed: () {
-                                              // Handle payment submission
+                                              _stopTimer(); // Stop the timer when done
+                                              Navigator.of(context)
+                                                  .pop(); // Close the dialog
                                             },
                                             child: Text('Pay'),
                                           ),
@@ -231,7 +256,8 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
                     );
                   },
                 ).then((_) {
-                  _stopTimer();
+                  // Do nothing here to keep the timer running
+                  _isDialogOpen = false;
                 });
               },
               child: Opacity(
