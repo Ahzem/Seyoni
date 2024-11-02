@@ -54,6 +54,9 @@ class NotificationProvider with ChangeNotifier {
           case 'payment_update':
             _handlePaymentUpdate(data);
             break;
+          case 'timer_status_update':
+            _handleTimerStatusUpdate(data);
+            break;
         }
       }
     } catch (e) {
@@ -72,6 +75,10 @@ class NotificationProvider with ChangeNotifier {
 
   void _handleTimerUpdate(Map<String, dynamic> data) {
     updateTimer(data['value']);
+  }
+
+  void _handleTimerStatusUpdate(Map<String, dynamic> data) {
+    setIsTimerActive(data['isActive']);
   }
 
   void _handlePaymentUpdate(Map<String, dynamic> data) {
@@ -93,35 +100,53 @@ class NotificationProvider with ChangeNotifier {
     _reservationId = reservationId;
     _isVisible = true;
     _currentSection = 0;
+    _isTimerActive = false;
+    _timerValue = 0;
     notifyListeners();
   }
 
   // Section Management
   void setSection(int section) {
     if (section < 0 || section > 2) return;
+    if (_currentSection == section) return;
+    
+    _currentSection = section;
     _webSocket.sendMessage({
       'type': 'section_update',
       'section': section,
     });
-    _currentSection = section;
+    // Force immediate notification
     notifyListeners();
   }
 
   // Timer Management
   void updateTimer(int value) {
-    if (value < 0) return;
+    if (value < 0 || _timerValue == value) return;
+    _timerValue = value;
     _webSocket.sendMessage({
       'type': 'timer_update',
       'value': value,
     });
-    _timerValue = value;
-    _isTimerActive = true;
     notifyListeners();
   }
 
-  void stopTimer() {
-    _isTimerActive = false;
+  void setIsTimerActive(bool value) {
+    _isTimerActive = value;
+    _webSocket.sendMessage({
+      'type': 'timer_status_update',
+      'isActive': value,
+    });
     notifyListeners();
+  }
+
+  void startTimer() {
+    setIsTimerActive(true);
+    setSection(1);
+  }
+
+  void stopTimer() {
+    setIsTimerActive(false);
+    setSection(2);
   }
 
   // Payment Management
