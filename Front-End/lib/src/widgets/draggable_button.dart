@@ -128,7 +128,7 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text('Your OTP is', style: TextStyle(color: Colors.white)),
+        const Text('Your OTP is', style: TextStyle(color: Colors.black)),
         const SizedBox(height: 20),
         Text(
           provider.otp,
@@ -136,8 +136,14 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
             fontSize: 48,
             fontWeight: FontWeight.bold,
             letterSpacing: 10,
-            color: Colors.white,
+            color: Colors.black,
           ),
+        ),
+        const SizedBox(height: 30),
+        const Text(
+          'Please show this to the service provider',
+          style: TextStyle(color: Colors.black),
+          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -147,15 +153,21 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text('Timer', style: TextStyle(color: Colors.white)),
+        const Text('Timer', style: TextStyle(color: Colors.black)),
         const SizedBox(height: 20),
         Text(
           _formatTime(provider.timerValue),
           style: const TextStyle(
             fontSize: 48,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
+        ),
+        const SizedBox(height: 30),
+        const Text(
+          'Please wait for the service provider',
+          style: TextStyle(color: Colors.black),
+          textAlign: TextAlign.center,
         ),
       ],
     );
