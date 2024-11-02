@@ -61,6 +61,7 @@ class HiringFormState extends State<HiringForm> {
     String? firstName = prefs.getString('firstName');
     String? lastName = prefs.getString('lastName');
     String? email = prefs.getString('email');
+    String? profileImageUrl = prefs.getString('profileImageUrl');
 
     // Debug prints to verify field values
 
@@ -110,6 +111,7 @@ class HiringFormState extends State<HiringForm> {
         'firstName': firstName,
         'lastName': lastName,
         'email': email,
+        'profileImageUrl': profileImageUrl,
       },
       'providerId': widget.providerId,
     };

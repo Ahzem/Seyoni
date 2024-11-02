@@ -92,7 +92,8 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
                 ? Center(
                     child: Text(
                       errorMessage,
-                      style: const TextStyle(color: Colors.redAccent, fontSize: 16),
+                      style: const TextStyle(
+                          color: Colors.redAccent, fontSize: 16),
                     ),
                   )
                 : reservations.isEmpty
@@ -113,11 +114,13 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
                                 .join(' ');
 
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 5.0),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: Colors.white.withOpacity(0.1),
@@ -126,14 +129,29 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                              seeker['profileImageUrl'] ??
-                                                  'https://via.placeholder.com/150',
-                                            ),
                                             radius: 28,
+                                            backgroundImage: seeker[
+                                                            'profileImageUrl'] !=
+                                                        null &&
+                                                    seeker['profileImageUrl']
+                                                        .toString()
+                                                        .isNotEmpty &&
+                                                    seeker['profileImageUrl'] !=
+                                                        "N/A"
+                                                ? NetworkImage(
+                                                    seeker['profileImageUrl'])
+                                                : const AssetImage(
+                                                        'assets/images/profile-1.jpg')
+                                                    as ImageProvider,
+                                            backgroundColor: Colors.grey[300],
+                                            onBackgroundImageError: (e, s) {
+                                              debugPrint(
+                                                  'Error loading profile image: $e');
+                                            },
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
@@ -143,31 +161,38 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
                                               children: [
                                                 Text(
                                                   seekerLastName,
-                                                  style: kCardTitleTextStyle.copyWith(
+                                                  style: kCardTitleTextStyle
+                                                      .copyWith(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w600,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                                 const SizedBox(height: 5),
                                                 Text(
                                                   reservation['serviceType']
                                                       .toString()
                                                       .substring(0, 12),
-                                                  style: kCardTextStyle.copyWith(
+                                                  style:
+                                                      kCardTextStyle.copyWith(
                                                     color: Colors.grey.shade400,
                                                     fontSize: 14,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                                 const SizedBox(height: 8),
                                                 Text(
                                                   description,
-                                                  style: kBodyTextStyle.copyWith(
-                                                    color: Colors.white.withOpacity(0.9),
+                                                  style:
+                                                      kBodyTextStyle.copyWith(
+                                                    color: Colors.white
+                                                        .withOpacity(0.9),
                                                     fontSize: 14,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   maxLines: 1,
                                                 ),
                                               ],
@@ -175,12 +200,14 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              final result = await Navigator.push(
+                                              final result =
+                                                  await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       RejectedReservationDetailPage(
-                                                    reservationId: reservation['_id'],
+                                                    reservationId:
+                                                        reservation['_id'],
                                                   ),
                                                 ),
                                               );
@@ -189,8 +216,10 @@ class RejectedReservationsPageState extends State<RejectedReservationsPage> {
                                               }
                                             },
                                             child: Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 10, vertical: 5),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
                                               decoration: BoxDecoration(
                                                 color: kPrimaryColor,
                                                 borderRadius:

@@ -35,7 +35,7 @@ exports.uploadImages = upload.array("images", 3);
 exports.createReservation = async (req, res) => {
   try {
     const reservationData = req.body;
-    const seekerId = req.user._id; // Assuming you have middleware to set req.user
+    const seekerId = req.user._id;
     const seeker = await Seeker.findById(seekerId);
 
     if (req.files) {
@@ -47,7 +47,7 @@ exports.createReservation = async (req, res) => {
       firstName: seeker.firstName,
       lastName: seeker.lastName,
       email: seeker.email,
-      profileImageUrl: seeker.profileImageUrl,
+      profileImageUrl: seeker.profileImageUrl || null,
     };
     reservationData.providerId = req.body.providerId; // Ensure providerId is set
 

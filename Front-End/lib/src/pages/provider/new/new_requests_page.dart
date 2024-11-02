@@ -146,11 +146,25 @@ class NewRequestsPageState extends State<NewRequestsPage> {
                                             CrossAxisAlignment.center,
                                         children: [
                                           CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                              seeker['profileImageUrl'] ??
-                                                  'https://via.placeholder.com/150',
-                                            ),
                                             radius: 28,
+                                            backgroundImage: seeker[
+                                                            'profileImageUrl'] !=
+                                                        null &&
+                                                    seeker['profileImageUrl']
+                                                        .toString()
+                                                        .isNotEmpty &&
+                                                    seeker['profileImageUrl'] !=
+                                                        "N/A"
+                                                ? NetworkImage(
+                                                    seeker['profileImageUrl'])
+                                                : const AssetImage(
+                                                        'assets/images/profile-1.jpg')
+                                                    as ImageProvider,
+                                            backgroundColor: Colors.grey[300],
+                                            onBackgroundImageError: (e, s) {
+                                              debugPrint(
+                                                  'Error loading profile image: $e');
+                                            },
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
