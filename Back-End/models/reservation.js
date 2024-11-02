@@ -56,6 +56,7 @@ const reservationSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    
   },
   providerId: {
     type: mongoose.Schema.Types.ObjectId,
