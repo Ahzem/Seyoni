@@ -56,9 +56,6 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
   @override
   void initState() {
     super.initState();
-    _notificationProvider =
-        Provider.of<NotificationProvider>(context, listen: false);
-    _notificationProvider.setReservationId(widget.reservationId);
     _otpController1.addListener(_checkInputFields);
     _otpController2.addListener(_checkInputFields);
     _otpController3.addListener(_checkInputFields);
@@ -68,7 +65,9 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
 
     // Refresh the page every 10 seconds
     Timer.periodic(Duration(seconds: 10), (timer) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 

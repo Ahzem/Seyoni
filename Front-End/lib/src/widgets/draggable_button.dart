@@ -99,7 +99,10 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   Widget build(BuildContext context) {
     return Consumer<NotificationProvider>(
         builder: (context, notificationProvider, child) {
-      if (!notificationProvider.isVisible) return SizedBox.shrink();
+      // Only show when provider has OTP and is visible
+      if (!notificationProvider.isVisible || notificationProvider.otp.isEmpty) {
+        return SizedBox.shrink();
+      }
       return SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,

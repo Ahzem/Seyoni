@@ -119,6 +119,11 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
       print('======================OTP: $otp=================');
       _otpGenerated = true;
 
+      // Initialize NotificationProvider before navigation
+      if (!mounted) return;
+      Provider.of<NotificationProvider>(context, listen: false)
+          .initializeService(otp, widget.reservationId);
+
       // Send OTP to seeker
       final response = await http.post(
         Uri.parse('$url/api/otp/sendOtpToSeeker'),
@@ -145,13 +150,6 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
             ),
           ),
         );
-
-        // Then update the NotificationProvider after navigation
-        if (mounted) {
-          Provider.of<NotificationProvider>(context, listen: false).setOtp(otp);
-          Provider.of<NotificationProvider>(context, listen: false)
-              .setSection(0);
-        }
       }
     }
   }
