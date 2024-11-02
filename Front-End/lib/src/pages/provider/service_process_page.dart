@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seyoni/src/config/url.dart';
+import 'package:http/http.dart' as http;
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
 import 'package:seyoni/src/pages/seeker/sign-pages/otp/components/input_field.dart';
@@ -10,11 +13,13 @@ import 'package:seyoni/src/pages/provider/notification/notification_provider.dar
 
 class ServiceProcessPage extends StatefulWidget {
   final String seekerName;
-  final String otp; // Add this line
+  final String otp;
+  final String reservationId;
 
   const ServiceProcessPage({
     required this.seekerName,
-    required this.otp, // Add this line
+    required this.otp,
+    required this.reservationId,
     super.key,
   });
 
@@ -23,7 +28,6 @@ class ServiceProcessPage extends StatefulWidget {
 }
 
 class ServiceProcessPageState extends State<ServiceProcessPage> {
-  int _currentSection = 0;
   final TextEditingController _otpController1 = TextEditingController();
   final TextEditingController _otpController2 = TextEditingController();
   final TextEditingController _otpController3 = TextEditingController();
@@ -31,12 +35,6 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
   final TextEditingController _otpController5 = TextEditingController();
   final TextEditingController _otpController6 = TextEditingController();
   final TextEditingController _paymentController = TextEditingController();
-  Timer? _timer;
-  int _remainingTime = 0;
-  int _elapsedTime = 0;
-  bool _isVerifyButtonActive = false;
-  bool _isErrorVisible = false;
-  String _errorMessage = '';
 
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
@@ -45,9 +43,22 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
   final FocusNode _focusNode5 = FocusNode();
   final FocusNode _focusNode6 = FocusNode();
 
+  Timer? _timer;
+  int _currentSection = 0;
+  int _remainingTime = 0;
+  int _elapsedTime = 0;
+  bool _isVerifyButtonActive = false;
+  bool _isErrorVisible = false;
+  String _errorMessage = '';
+  bool _disposed = false;
+  late final NotificationProvider _notificationProvider;
+
   @override
   void initState() {
     super.initState();
+    _notificationProvider =
+        Provider.of<NotificationProvider>(context, listen: false);
+    _notificationProvider.setReservationId(widget.reservationId);
     _otpController1.addListener(_checkInputFields);
     _otpController2.addListener(_checkInputFields);
     _otpController3.addListener(_checkInputFields);
@@ -59,14 +70,11 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
     Timer.periodic(Duration(seconds: 10), (timer) {
       setState(() {});
     });
-
-    // Listen for OTP notifications
-    Provider.of<NotificationProvider>(context, listen: false)
-        .addListener(_onOtpReceived);
   }
 
   @override
   void dispose() {
+    _disposed = true;
     _timer?.cancel();
     _otpController1.dispose();
     _otpController2.dispose();
@@ -84,26 +92,36 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
     super.dispose();
   }
 
-  void _onOtpReceived() {
-    setState(() {
-      // Update the state when OTP is received
-    });
+  void _safeSetState(VoidCallback fn) {
+    if (!_disposed && mounted) {
+      setState(fn);
+    }
   }
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
+      _safeSetState(() {
         _remainingTime++;
       });
+      if (!_disposed) {
+        _notificationProvider.updateTimer(_remainingTime);
+      }
     });
   }
 
   void _stopTimer() {
     _timer?.cancel();
+    if (!_disposed) {
+      _safeSetState(() {
+        _elapsedTime = _remainingTime;
+        _currentSection = 2;
+      });
+      _notificationProvider.setSection(2);
+    }
   }
 
   void _checkInputFields() {
-    setState(() {
+    _safeSetState(() {
       _isVerifyButtonActive = _otpController1.text.isNotEmpty &&
           _otpController2.text.isNotEmpty &&
           _otpController3.text.isNotEmpty &&
@@ -121,32 +139,58 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
   }
 
   void _verifyOtp() {
-    final otp = _otpController1.text +
+    final enteredOtp = _otpController1.text +
         _otpController2.text +
         _otpController3.text +
         _otpController4.text +
         _otpController5.text +
         _otpController6.text;
 
-    if (otp == Provider.of<NotificationProvider>(context, listen: false).otp) {
-      setState(() {
+    if (enteredOtp == widget.otp) {
+      _safeSetState(() {
         _currentSection = 1;
         _startTimer();
       });
+      _notificationProvider.setSection(1);
     } else {
-      setState(() {
+      _safeSetState(() {
         _errorMessage = 'The code you entered is incorrect. Please try again.';
         _isErrorVisible = true;
       });
     }
   }
 
-  void _finishService() {
+  void _finishService() async {
     setState(() {
       _stopTimer();
       _elapsedTime = _remainingTime;
       _currentSection = 2;
     });
+    Provider.of<NotificationProvider>(context, listen: false).setSection(2);
+  }
+
+  void handlePaymentSubmission() async {
+    final amount = double.tryParse(_paymentController.text) ?? 0.0;
+
+    try {
+      final response = await http.patch(
+        Uri.parse('$url/api/reservations/${widget.reservationId}/finish'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'serviceTime': _elapsedTime,
+          'amount': amount,
+        }),
+      );
+
+      if (response.statusCode == 200 && !_disposed) {
+        _notificationProvider.setAmount(amount);
+        if (!_disposed && mounted) {
+          Navigator.pop(context);
+        }
+      }
+    } catch (e) {
+      print('Error updating reservation: $e');
+    }
   }
 
   @override
@@ -378,7 +422,7 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
         const SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
-            // Handle payment submission
+            handlePaymentSubmission();
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: kPrimaryColor,

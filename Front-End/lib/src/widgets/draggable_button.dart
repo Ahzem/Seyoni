@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 
@@ -14,13 +17,9 @@ class DraggableOtpButton extends StatefulWidget {
 class DraggableOtpButtonState extends State<DraggableOtpButton> {
   double posX = 100;
   double posY = 100;
-  bool isVisible = true;
-  int _currentSection = 0;
-  // int _remainingTime = 0;
-  ValueNotifier<int> _remainingTimeNotifier = ValueNotifier<int>(0);
-  int _elapsedTime = 0;
+  bool isVisible = false;
+  ValueNotifier<int> remainingTimeNotifier = ValueNotifier<int>(0);
   Timer? _timer;
-  bool _isDialogOpen = false;
 
   @override
   void initState() {
@@ -47,240 +46,237 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
     }
   }
 
-  // void _startTimer() {
-  //   if (_timer == null || !_timer!.isActive) {
-  //     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-  //       setState(() {
-  //         _remainingTime++;
-  //       });
-  //     });
-  //   }
-  // }
-
-  void _startTimer() {
+  void startTimer() {
     if (_timer == null || !_timer!.isActive) {
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        _remainingTimeNotifier.value++;
+        remainingTimeNotifier.value++;
       });
     }
   }
 
-  void _stopTimer() {
+  void stopTimer() {
     _timer?.cancel();
+  }
+
+  Future<void> _handlePayment(
+      String paymentMethod, double amount, BuildContext context) async {
+    final reservationId =
+        Provider.of<NotificationProvider>(context, listen: false).reservationId;
+
+    try {
+      final response = await http.patch(
+        Uri.parse('$url/api/reservations/$reservationId/payment'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'paymentMethod': paymentMethod,
+          'paymentStatus': 'paid',
+          'amount': amount,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.of(context).pop(); // Close dialog
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Payment processed successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error processing payment: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to process payment'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final otp = Provider.of<NotificationProvider>(context).otp;
-    if (!isVisible) return SizedBox.shrink();
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: Stack(
-        children: [
-          Positioned(
-            left: posX,
-            top: posY,
-            child: GestureDetector(
-              onPanUpdate: (details) {
-                setState(() {
-                  posX += details.delta.dx;
-                  posY += details.delta.dy;
-                });
-              },
-              onPanEnd: (details) {
-                setState(() {
-                  final screenWidth = MediaQuery.of(context).size.width;
-                  final screenHeight = MediaQuery.of(context).size.height;
-                  final buttonWidth = 56.0; // Width of the FloatingActionButton
-                  final buttonHeight =
-                      56.0; // Height of the FloatingActionButton
+    return Consumer<NotificationProvider>(
+        builder: (context, notificationProvider, child) {
+      if (!notificationProvider.isVisible) return SizedBox.shrink();
+      return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Stack(
+          children: [
+            Positioned(
+              left: posX,
+              top: posY,
+              child: GestureDetector(
+                onPanUpdate: (details) {
+                  setState(() {
+                    posX += details.delta.dx;
+                    posY += details.delta.dy;
+                  });
+                },
+                onPanEnd: (details) {
+                  setState(() {
+                    final screenWidth = MediaQuery.of(context).size.width;
+                    final screenHeight = MediaQuery.of(context).size.height;
+                    final buttonWidth =
+                        56.0; // Width of the FloatingActionButton
+                    final buttonHeight =
+                        56.0; // Height of the FloatingActionButton
 
-                  // Calculate the nearest edge
-                  if (posX < screenWidth / 2) {
-                    posX = 0; // Stick to the left edge
-                  } else {
-                    posX = screenWidth - buttonWidth; // Stick to the right edge
-                  }
+                    // Calculate the nearest edge
+                    if (posX < screenWidth / 2) {
+                      posX = 0; // Stick to the left edge
+                    } else {
+                      posX =
+                          screenWidth - buttonWidth; // Stick to the right edge
+                    }
 
-                  if (posY < 0) {
-                    posY = 0; // Stick to the top edge
-                  } else if (posY > screenHeight - buttonHeight) {
-                    posY =
-                        screenHeight - buttonHeight; // Stick to the bottom edge
-                  }
-                });
-              },
-              onTap: () {
-                showDialog(
-                  context: context,
-                  barrierDismissible:
-                      true, // Allow dismissing by tapping outside
-                  builder: (BuildContext context) {
-                    return Dialog(
-                      backgroundColor: Colors.transparent,
-                      insetPadding: EdgeInsets.all(0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: StatefulBuilder(
-                          builder:
-                              (BuildContext context, StateSetter setState) {
-                            return Container(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              height: MediaQuery.of(context).size.height * 0.6,
-                              color: kPrimaryColor,
-                              child: Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    if (_currentSection == 0) ...[
-                                      Text(
-                                        'Your OTP is',
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                      SizedBox(height: 20),
-                                      Text(
-                                        // otp,
-                                        '123456',
-                                        style: TextStyle(
-                                          fontSize: 48,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 10,
+                    if (posY < 0) {
+                      posY = 0; // Stick to the top edge
+                    } else if (posY > screenHeight - buttonHeight) {
+                      posY = screenHeight -
+                          buttonHeight; // Stick to the bottom edge
+                    }
+                  });
+                },
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        insetPadding: EdgeInsets.all(0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            color: kPrimaryColor,
+                            child: Center(
+                              child: Consumer<NotificationProvider>(
+                                builder: (context, provider, child) {
+                                  if (provider.currentSection == 0) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text('Your OTP is'),
+                                        SizedBox(height: 20),
+                                        Text(
+                                          provider.otp,
+                                          style: TextStyle(
+                                            fontSize: 48,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 10,
+                                          ),
                                         ),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _currentSection = 1;
-                                            _startTimer();
-                                          });
-                                        },
-                                        child: Text('Next'),
-                                      ),
-                                    ] else if (_currentSection == 1) ...[
-                                      Text(
-                                        'Timer',
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                      SizedBox(height: 20),
-                                      ValueListenableBuilder<int>(
-                                        valueListenable: _remainingTimeNotifier,
-                                        builder: (context, value, child) {
-                                          return Text(
-                                            _formatTime(value),
+                                      ],
+                                    );
+                                  } else if (provider.currentSection == 1) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text('Timer'),
+                                        SizedBox(height: 20),
+                                        Text(
+                                          _formatTime(provider.timerValue),
+                                          style: TextStyle(
+                                            fontSize: 48,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text('Amount',
                                             style: TextStyle(
-                                              fontSize: 48,
-                                              fontWeight: FontWeight.bold,
+                                                fontSize: 24,
+                                                color: Colors.white)),
+                                        SizedBox(height: 20),
+                                        Text(
+                                          'Rs ${provider.amount.toStringAsFixed(2)}',
+                                          style: TextStyle(
+                                            fontSize: 48,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(height: 30),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () => _handlePayment(
+                                                  'cash',
+                                                  provider.amount,
+                                                  context),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.green,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 30,
+                                                    vertical: 15),
+                                              ),
+                                              child: Text('Pay Cash',
+                                                  style: TextStyle(
+                                                      color: Colors.white)),
                                             ),
-                                          );
-                                        },
-                                      ),
-                                      SizedBox(height: 20),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          // Handle emergency
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red,
+                                            SizedBox(width: 20),
+                                            ElevatedButton(
+                                              onPressed: () => _handlePayment(
+                                                  'card',
+                                                  provider.amount,
+                                                  context),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.blue,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 30,
+                                                    vertical: 15),
+                                              ),
+                                              child: Text('Pay Card',
+                                                  style: TextStyle(
+                                                      color: Colors.white)),
+                                            ),
+                                          ],
                                         ),
-                                        child: Text('Emergency'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _currentSection = 2;
-                                            _stopTimer();
-                                            _elapsedTime =
-                                                _remainingTimeNotifier.value;
-                                          });
-                                          // Navigator.of(context)
-                                          //     .pop(); // Close the dialog
-                                        },
-                                        child: Text('Finish'),
-                                      ),
-                                      SizedBox(height: 10),
-                                    ] else if (_currentSection == 2) ...[
-                                      Text(
-                                        'Service Time: ${_formatTime(_elapsedTime)}',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 20),
-                                      Text(
-                                        'Rs 100.00', // Replace with actual amount
-                                        style: TextStyle(
-                                          fontSize: 48,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 20),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          DropdownButton<String>(
-                                            value: 'Card',
-                                            items: <String>['Card', 'Cash']
-                                                .map((String value) {
-                                              return DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(value),
-                                              );
-                                            }).toList(),
-                                            onChanged: (String? newValue) {
-                                              // Handle payment method change
-                                            },
-                                          ),
-                                          SizedBox(width: 20),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              _stopTimer(); // Stop the timer when done
-                                              Navigator.of(context)
-                                                  .pop(); // Close the dialog
-                                            },
-                                            child: Text('Pay'),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ],
-                                ),
+                                      ],
+                                    );
+                                  }
+                                },
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ).then((_) {
-                  // Do nothing here to keep the timer running
-                  _isDialogOpen = false;
-                });
-              },
-              child: Opacity(
-                opacity: 0.8,
-                child: CircleAvatar(
-                  radius: 28,
-                  backgroundImage: AssetImage('assets/images/profile-3.jpg'),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: kPrimaryColor,
-                        width: 3.0,
+                      );
+                    },
+                  );
+                },
+                child: Opacity(
+                  opacity: 0.8,
+                  child: CircleAvatar(
+                    radius: 28,
+                    backgroundImage: AssetImage('assets/images/profile-3.jpg'),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: kPrimaryColor,
+                          width: 3.0,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   String _formatTime(int seconds) {
