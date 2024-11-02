@@ -24,6 +24,13 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
   bool _isLoading = false;
 
   Future<void> _signIn() async {
+    if (!mounted) return;
+
+    // Validate form first
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -31,31 +38,35 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
     final email = _emailController.text;
     final password = _passwordController.text;
 
-    // print('Attempting to sign in with email: $email and password: $password');
-
     if (email == 'seyoni@admin.com' && password == 'Seyoni@1234') {
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, AppRoutes.adminHomePage);
-    } else {
-      try {
-        final response = await http.post(
-          Uri.parse(loginProvidersUrl),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode(<String, String>{
-            'email': email,
-            'password': password,
-          }),
-        );
+      return;
+    }
 
-        // print('Response status: ${response.statusCode}');
-        // print('Response body: ${response.body}');
+    try {
+      final response = await http.post(
+        Uri.parse(loginProvidersUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'email': email,
+          'password': password,
+        }),
+      );
 
-        setState(() {
-          _isLoading = false;
-        });
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
 
-        if (response.statusCode == 200) {
+      // Debug log
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
           final responseData = jsonDecode(response.body);
           final token = responseData['token'];
           final providerId = responseData['providerId'];
@@ -65,44 +76,40 @@ class ProviderSignInPageState extends State<ProviderSignInPage> {
             await prefs.setString('token', token);
             await prefs.setString('providerId', providerId);
 
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Success'),
-                  content: const Text('Sign-in successful!'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            AppRoutes.providerHomePage,
-                            (Route<dynamic> route) => false);
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
+            if (!mounted) return;
+            await Navigator.pushReplacementNamed(
+                context, AppRoutes.providerHomePage);
           } else {
-            _showErrorDialog('Invalid response from server');
+            _showErrorDialog('Invalid credentials or server response');
           }
-        } else {
+        } catch (e) {
+          _showErrorDialog(
+              'Server response format error: ${response.body.substring(0, 100)}');
+        }
+      } else if (response.statusCode == 520) {
+        _showErrorDialog(
+            'Server is currently unavailable. Please try again later.');
+      } else {
+        try {
           final error = jsonDecode(response.body)['error'];
           _showErrorDialog('Error: $error');
+        } catch (e) {
+          _showErrorDialog(
+              'Server error (${response.statusCode}): Please try again later');
         }
-      } catch (e) {
-        setState(() {
-          _isLoading = false;
-        });
-        _showErrorDialog('An error occurred: $e');
       }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+      _showErrorDialog(
+          'Connection error: Please check your internet connection');
     }
   }
 
   void _showErrorDialog(String message) {
+    if (!mounted) return;
     showDialog(
       context: context,
       builder: (BuildContext context) {

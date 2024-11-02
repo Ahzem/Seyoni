@@ -35,18 +35,19 @@ exports.uploadImages = upload.array("images", 3);
 exports.createReservation = async (req, res) => {
   try {
     const reservationData = req.body;
+    const seekerId = req.user._id;
+    const seeker = await Seeker.findById(seekerId);
 
     if (req.files) {
       reservationData.images = req.files.map((file) => file.location); // S3 URL
     }
 
-    const seekerId = req.user._id; // Assuming you have middleware to set req.user
-    const seeker = await Seeker.findById(seekerId);
     reservationData.seeker = {
       id: seeker._id,
       firstName: seeker.firstName,
       lastName: seeker.lastName,
       email: seeker.email,
+      profileImageUrl: seeker.profileImageUrl || null,
     };
     reservationData.providerId = req.body.providerId; // Ensure providerId is set
 
@@ -136,14 +137,102 @@ exports.rejectReservation = async (req, res) => {
 exports.finishedReservation = async (req, res) => {
   try {
     const { reservationId } = req.params;
+    const { serviceTime, amount } = req.body;
+
+    // Validate inputs
+    if (!serviceTime || !amount) {
+      return res.status(400).json({
+        error: "Service time and amount are required",
+      });
+    }
+
     const reservation = await Reservation.findByIdAndUpdate(
       reservationId,
-      { status: "finished" },
+      {
+        status: "finished",
+        serviceTime: serviceTime,
+        amount: amount,
+        paymentStatus: "completed",
+        completedAt: new Date(),
+      },
       { new: true }
     );
-    res.status(200).send(reservation);
+
+    if (!reservation) {
+      return res.status(404).json({
+        error: "Reservation not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: reservation,
+    });
   } catch (error) {
     console.error("Error finishing reservation:", error);
-    res.status(400).send({ error: "Failed to finish reservation" });
+    res.status(500).json({
+      error: "Failed to finish reservation",
+      details: error.message,
+    });
+  }
+};
+
+exports.getPaymentDetails = async (req, res) => {
+  try {
+    const { reservationId } = req.params;
+    const reservation = await Reservation.findById(reservationId).select(
+      "serviceTime amount paymentMethod paymentStatus completedAt"
+    );
+
+    if (!reservation) {
+      return res.status(404).json({
+        error: "Reservation not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: reservation,
+    });
+  } catch (error) {
+    console.error("Error fetching payment details:", error);
+    res.status(500).json({
+      error: "Failed to fetch payment details",
+      details: error.message,
+    });
+  }
+};
+
+exports.updatePayment = async (req, res) => {
+  try {
+    const { reservationId } = req.params;
+    const { paymentMethod, paymentStatus, amount } = req.body;
+
+    const reservation = await Reservation.findByIdAndUpdate(
+      reservationId,
+      {
+        paymentMethod: paymentMethod,
+        paymentStatus: paymentStatus,
+        amount: amount,
+      },
+      { new: true }
+    );
+
+    if (!reservation) {
+      return res.status(404).json({
+        error: "Reservation not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: reservation,
+    });
+  } catch (error) {
+    console.error("Error updating payment:", error);
+    res.status(500).json({
+      error: "Failed to update payment",
+      details: error.message,
+    });
   }
 };

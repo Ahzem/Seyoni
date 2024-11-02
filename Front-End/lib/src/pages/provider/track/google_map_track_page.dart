@@ -15,11 +15,13 @@ class GoogleMapsTrackPage extends StatefulWidget {
   final LatLng seekerLocation;
   final String seekerName;
   final String seekerId;
+  final String reservationId;
 
   const GoogleMapsTrackPage({
     required this.seekerLocation,
     required this.seekerName,
     required this.seekerId,
+    required this.reservationId,
     super.key,
   });
 
@@ -113,11 +115,14 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     );
 
     if (distance <= 0.5) {
-      // Change the range of distance
       final otp = _generateOtp();
-      print(
-          '-------------------------Generated OTP: $otp----------------------');
+      print('======================OTP: $otp=================');
       _otpGenerated = true;
+
+      // Initialize NotificationProvider before navigation
+      if (!mounted) return;
+      Provider.of<NotificationProvider>(context, listen: false)
+          .initializeService(otp, widget.reservationId);
 
       // Send OTP to seeker
       final response = await http.post(
@@ -132,29 +137,19 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
       );
 
       if (response.statusCode == 200) {
-        if (!mounted) return; // Check if the widget is still mounted
-        setState(() {
-          // Update your state here
-          _otpGenerated = true;
-        });
-
-        // Update the NotificationProvider with the new OTP
-        Provider.of<NotificationProvider>(context, listen: false).setOtp(otp);
-
-        // Ensure the widget is still mounted before navigating
         if (!mounted) return;
-        Navigator.push(
+
+        // First navigate to new page
+        await Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => ServiceProcessPage(
-              seekerName: widget.seekerName, // Pass the seeker's name
-              otp: otp, // Pass the generated OTP
+              seekerName: widget.seekerName,
+              otp: otp,
+              reservationId: widget.reservationId,
             ),
           ),
         );
-      } else {
-        print('Failed to send OTP: ${response.statusCode}');
-        print('Response body: ${response.body}');
       }
     }
   }
