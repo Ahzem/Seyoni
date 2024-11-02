@@ -39,4 +39,16 @@ router.patch(
   reservationController.finishedReservation
 );
 
+router.get(
+  "/:reservationId/payment",
+  authMiddleware,
+  reservationController.getPaymentDetails
+);
+
+router.patch(
+  "/:reservationId/payment",
+  authMiddleware,
+  reservationController.updatePayment
+);
+
 module.exports = router;
