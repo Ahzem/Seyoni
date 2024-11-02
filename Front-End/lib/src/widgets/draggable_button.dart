@@ -17,55 +17,212 @@ class DraggableOtpButton extends StatefulWidget {
 class DraggableOtpButtonState extends State<DraggableOtpButton> {
   double posX = 100;
   double posY = 100;
-  bool isVisible = false;
-  ValueNotifier<int> remainingTimeNotifier = ValueNotifier<int>(0);
   Timer? _timer;
+  bool _dialogVisible = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<NotificationProvider>(context, listen: false)
-          .addListener(_onNotificationReceived);
+      final provider =
+          Provider.of<NotificationProvider>(context, listen: false);
+      provider.addListener(_onProviderUpdate);
     });
   }
 
   @override
   void dispose() {
+    _stopTimer();
     Provider.of<NotificationProvider>(context, listen: false)
-        .removeListener(_onNotificationReceived);
-    _timer?.cancel();
+        .removeListener(_onProviderUpdate);
     super.dispose();
   }
 
-  void _onNotificationReceived() {
-    if (mounted) {
-      setState(() {
-        isVisible = true;
-      });
+  void _onProviderUpdate() {
+    if (!mounted) return;
+
+    final provider = Provider.of<NotificationProvider>(context, listen: false);
+    if (provider.isTimerActive && provider.currentSection == 1) {
+      _startTimer();
+    } else {
+      _stopTimer();
+    }
+
+    if (_dialogVisible) {
+      _updateDialog();
     }
   }
 
-  void startTimer() {
-    if (_timer == null || !_timer!.isActive) {
-      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        remainingTimeNotifier.value++;
-      });
-    }
+  void _startTimer() {
+    if (_timer != null) return;
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) return;
+
+      final provider =
+          Provider.of<NotificationProvider>(context, listen: false);
+      if (provider.isTimerActive && provider.currentSection == 1) {
+        provider.updateTimer(provider.timerValue + 1);
+      } else {
+        _stopTimer();
+      }
+    });
   }
 
-  void stopTimer() {
+  void _stopTimer() {
     _timer?.cancel();
+    _timer = null;
   }
 
-  Future<void> _handlePayment(
-      String paymentMethod, double amount, BuildContext context) async {
-    final reservationId =
-        Provider.of<NotificationProvider>(context, listen: false).reservationId;
+  void _updateDialog() {
+    if (!mounted) return;
+    Navigator.of(context).pop();
+    _showDialog();
+  }
 
+  void _showDialog() {
+    _dialogVisible = true;
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) => _buildDialog(),
+    ).then((_) => _dialogVisible = false);
+  }
+
+  Widget _buildDialog() {
+    return Consumer<NotificationProvider>(
+      builder: (context, provider, _) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.zero,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              height: MediaQuery.of(context).size.height * 0.6,
+              color: kPrimaryColor,
+              child: Center(
+                child: _buildDialogContent(provider),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDialogContent(NotificationProvider provider) {
+    switch (provider.currentSection) {
+      case 0:
+        return _buildOtpSection(provider);
+      case 1:
+        return _buildTimerSection(provider);
+      case 2:
+        return _buildPaymentSection(provider);
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildOtpSection(NotificationProvider provider) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Your OTP is', style: TextStyle(color: Colors.black)),
+        const SizedBox(height: 20),
+        Text(
+          provider.otp,
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 10,
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(height: 30),
+        const Text(
+          'Please show this to the service provider',
+          style: TextStyle(color: Colors.black),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimerSection(NotificationProvider provider) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Timer', style: TextStyle(color: Colors.black)),
+        const SizedBox(height: 20),
+        Text(
+          _formatTime(provider.timerValue),
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(height: 30),
+        const Text(
+          'Please wait for the service provider',
+          style: TextStyle(color: Colors.black),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPaymentSection(NotificationProvider provider) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Amount', style: TextStyle(color: Colors.white)),
+        const SizedBox(height: 20),
+        Text(
+          'Rs ${provider.amount.toStringAsFixed(2)}',
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 30),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => _handlePayment('cash', provider.amount),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              ),
+              child:
+                  const Text('Pay Cash', style: TextStyle(color: Colors.white)),
+            ),
+            const SizedBox(width: 20),
+            ElevatedButton(
+              onPressed: () => _handlePayment('card', provider.amount),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              ),
+              child:
+                  const Text('Pay Card', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Future<void> _handlePayment(String paymentMethod, double amount) async {
+    final provider = Provider.of<NotificationProvider>(context, listen: false);
     try {
       final response = await http.patch(
-        Uri.parse('$url/api/reservations/$reservationId/payment'),
+        Uri.parse('$url/api/reservations/${provider.reservationId}/payment'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'paymentMethod': paymentMethod,
@@ -74,212 +231,89 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
         }),
       );
 
-      if (response.statusCode == 200) {
-        Navigator.of(context).pop(); // Close dialog
-        // Show success message
+      if (response.statusCode == 200 && mounted) {
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Payment processed successfully!'),
             backgroundColor: Colors.green,
           ),
         );
       }
     } catch (e) {
-      print('Error processing payment: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to process payment'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      debugPrint('Error processing payment: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to process payment'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<NotificationProvider>(
-        builder: (context, notificationProvider, child) {
-      // Only show when provider has OTP and is visible
-      if (!notificationProvider.isVisible || notificationProvider.otp.isEmpty) {
-        return SizedBox.shrink();
-      }
-      return SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: Stack(
-          children: [
-            Positioned(
-              left: posX,
-              top: posY,
-              child: GestureDetector(
-                onPanUpdate: (details) {
-                  setState(() {
-                    posX += details.delta.dx;
-                    posY += details.delta.dy;
-                  });
-                },
-                onPanEnd: (details) {
-                  setState(() {
-                    final screenWidth = MediaQuery.of(context).size.width;
-                    final screenHeight = MediaQuery.of(context).size.height;
-                    final buttonWidth =
-                        56.0; // Width of the FloatingActionButton
-                    final buttonHeight =
-                        56.0; // Height of the FloatingActionButton
+      builder: (context, provider, _) {
+        if (!provider.isVisible || provider.otp.isEmpty) {
+          return const SizedBox.shrink();
+        }
 
-                    // Calculate the nearest edge
-                    if (posX < screenWidth / 2) {
-                      posX = 0; // Stick to the left edge
-                    } else {
-                      posX =
-                          screenWidth - buttonWidth; // Stick to the right edge
-                    }
+        return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Stack(
+            children: [
+              Positioned(
+                left: posX,
+                top: posY,
+                child: GestureDetector(
+                  onPanUpdate: (details) {
+                    setState(() {
+                      posX += details.delta.dx;
+                      posY += details.delta.dy;
+                    });
+                  },
+                  onPanEnd: (details) {
+                    setState(() {
+                      final screenWidth = MediaQuery.of(context).size.width;
+                      final screenHeight = MediaQuery.of(context).size.height;
+                      const buttonWidth = 56.0;
+                      const buttonHeight = 56.0;
 
-                    if (posY < 0) {
-                      posY = 0; // Stick to the top edge
-                    } else if (posY > screenHeight - buttonHeight) {
-                      posY = screenHeight -
-                          buttonHeight; // Stick to the bottom edge
-                    }
-                  });
-                },
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        backgroundColor: Colors.transparent,
-                        insetPadding: EdgeInsets.all(0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.height * 0.6,
+                      posX = posX < screenWidth / 2
+                          ? 0
+                          : screenWidth - buttonWidth;
+                      posY = posY.clamp(0.0, screenHeight - buttonHeight);
+                    });
+                  },
+                  onTap: _showDialog,
+                  child: Opacity(
+                    opacity: 0.8,
+                    child: CircleAvatar(
+                      radius: 28,
+                      backgroundImage:
+                          const AssetImage('assets/images/profile-3.jpg'),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
                             color: kPrimaryColor,
-                            child: Center(
-                              child: Consumer<NotificationProvider>(
-                                builder: (context, provider, child) {
-                                  if (provider.currentSection == 0) {
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text('Your OTP is'),
-                                        SizedBox(height: 20),
-                                        Text(
-                                          provider.otp,
-                                          style: TextStyle(
-                                            fontSize: 48,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 10,
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  } else if (provider.currentSection == 1) {
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text('Timer'),
-                                        SizedBox(height: 20),
-                                        Text(
-                                          _formatTime(provider.timerValue),
-                                          style: TextStyle(
-                                            fontSize: 48,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text('Amount',
-                                            style: TextStyle(
-                                                fontSize: 24,
-                                                color: Colors.white)),
-                                        SizedBox(height: 20),
-                                        Text(
-                                          'Rs ${provider.amount.toStringAsFixed(2)}',
-                                          style: TextStyle(
-                                            fontSize: 48,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        SizedBox(height: 30),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            ElevatedButton(
-                                              onPressed: () => _handlePayment(
-                                                  'cash',
-                                                  provider.amount,
-                                                  context),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.green,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 30,
-                                                    vertical: 15),
-                                              ),
-                                              child: Text('Pay Cash',
-                                                  style: TextStyle(
-                                                      color: Colors.white)),
-                                            ),
-                                            SizedBox(width: 20),
-                                            ElevatedButton(
-                                              onPressed: () => _handlePayment(
-                                                  'card',
-                                                  provider.amount,
-                                                  context),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.blue,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 30,
-                                                    vertical: 15),
-                                              ),
-                                              child: Text('Pay Card',
-                                                  style: TextStyle(
-                                                      color: Colors.white)),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
+                            width: 3.0,
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                child: Opacity(
-                  opacity: 0.8,
-                  child: CircleAvatar(
-                    radius: 28,
-                    backgroundImage: AssetImage('assets/images/profile-3.jpg'),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: kPrimaryColor,
-                          width: 3.0,
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    });
+            ],
+          ),
+        );
+      },
+    );
   }
 
   String _formatTime(int seconds) {

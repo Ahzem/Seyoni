@@ -102,8 +102,11 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
       _safeSetState(() {
         _remainingTime++;
       });
+      // Update provider with new timer value
       if (!_disposed) {
-        _notificationProvider.updateTimer(_remainingTime);
+        Provider.of<NotificationProvider>(context, listen: false)
+          ..updateTimer(_remainingTime)
+          ..setSection(1); // Ensure section is updated
       }
     });
   }
@@ -148,9 +151,18 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
     if (enteredOtp == widget.otp) {
       _safeSetState(() {
         _currentSection = 1;
-        _startTimer();
       });
-      _notificationProvider.setSection(1);
+
+      // Update provider first
+      final provider =
+          Provider.of<NotificationProvider>(context, listen: false);
+      provider
+        ..setSection(1)
+        ..setIsTimerActive(true)
+        ..updateTimer(0); // Reset timer to 0
+
+      // Then start the timer
+      _startTimer();
     } else {
       _safeSetState(() {
         _errorMessage = 'The code you entered is incorrect. Please try again.';
@@ -160,12 +172,16 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
   }
 
   void _finishService() async {
-    setState(() {
-      _stopTimer();
+    _timer?.cancel(); // Stop the timer
+    _safeSetState(() {
       _elapsedTime = _remainingTime;
       _currentSection = 2;
     });
-    Provider.of<NotificationProvider>(context, listen: false).setSection(2);
+    // Update provider
+    Provider.of<NotificationProvider>(context, listen: false)
+      ..setSection(2)
+      ..setIsTimerActive(false)
+      ..updateTimer(_elapsedTime);
   }
 
   void handlePaymentSubmission() async {
