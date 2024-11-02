@@ -137,7 +137,7 @@ exports.rejectReservation = async (req, res) => {
 exports.finishedReservation = async (req, res) => {
   try {
     const { reservationId } = req.params;
-    const { serviceTime, amount } = req.body;
+    const { serviceTime, amount, paymentStatus, paymentMethode } = req.body;
 
     // Validate inputs
     if (!serviceTime || !amount) {
@@ -152,7 +152,8 @@ exports.finishedReservation = async (req, res) => {
         status: "finished",
         serviceTime: serviceTime,
         amount: amount,
-        paymentStatus: "completed",
+        paymentStatus: paymentStatus || "pending",
+        paymentMethod: paymentMethod || "pending",
         completedAt: new Date(),
       },
       { new: true }
