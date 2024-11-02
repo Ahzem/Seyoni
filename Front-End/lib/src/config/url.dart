@@ -1,4 +1,5 @@
 const url = 'https://seyoni.onrender.com';
+const wsUrl = 'wss://seyoni.onrender.com/ws';
 // const url = 'http://localhost:3000';
 const registerSeekersUrl = '$url/api/seeker/signup';
 const loginSeekersUrl = '$url/api/seeker/signin';

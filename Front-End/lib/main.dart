@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seyoni/src/services/websocket_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -31,6 +32,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await _requestPermissions();
+  // Initialize WebSocket
+  final webSocketService = WebSocketService();
+  await webSocketService.connect();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
   String? userType = prefs.getString(
