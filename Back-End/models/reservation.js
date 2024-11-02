@@ -71,6 +71,27 @@ const reservationSchema = new mongoose.Schema({
     enum: ["pending", "accepted", "rejected", "finished"],
     default: "pending",
   },
+  serviceTime: {
+    type: Number,
+    default: 0,
+  },
+  amount: {
+    type: Number,
+    default: 0,
+  },
+  paymentMethod: {
+    type: String,
+    enum: ["cash", "card"],
+    default: "cash",
+  },
+  paymentStatus: {
+    type: String,
+    enum: ["pending", "paid"],
+    default: "pending",
+  },
+  completedAt: {
+    type: Date,
+  },
 });
 
 module.exports = mongoose.model("Reservation", reservationSchema);
