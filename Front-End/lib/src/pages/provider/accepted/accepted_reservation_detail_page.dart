@@ -216,7 +216,7 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
     }
 
     final seeker = reservation?['seeker'] ?? {};
-    final profileImage = seeker['profileImage'] ?? '';
+    final profileImage = seeker['profileImageUrl'] ?? '';
     final name = '${seeker['firstName']} ${seeker['lastName']}';
     final lastName = seeker['lastName'] ?? '';
     final seekerId = seeker['id'] ?? '';
@@ -244,12 +244,16 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                 // Display seeker's profile picture
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: profileImage.isNotEmpty
+                  backgroundImage: profileImage != null &&
+                          profileImage.isNotEmpty &&
+                          profileImage != "N/A"
                       ? NetworkImage(profileImage)
-                      : null,
-                  child: profileImage.isEmpty
-                      ? const Icon(Icons.person, size: 40)
-                      : null,
+                      : const AssetImage('assets/images/profile-1.jpg')
+                          as ImageProvider,
+                  backgroundColor: Colors.grey[300],
+                  onBackgroundImageError: (e, s) {
+                    debugPrint('Error loading profile image: $e');
+                  },
                 ),
                 const SizedBox(height: 16),
                 // Display reservation details with icons
