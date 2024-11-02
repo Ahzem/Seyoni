@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import '../../../../constants/constants_color.dart';
 import '../../../../constants/constants_font.dart';
@@ -22,7 +23,24 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
   LatLng? markerPosition;
   final TextEditingController _searchController = TextEditingController();
 
+  StreamSubscription<loc.LocationData>? _locationSubscription;
+
   static const LatLng colombo = LatLng(6.925921399443209, 79.85997663648692);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) async => await fetchLocationUpdates());
+  }
+
+  @override
+  void dispose() {
+    _locationSubscription?.cancel();
+    _searchController.dispose();
+    mapController?.dispose();
+    super.dispose();
+  }
 
   Future<void> fetchLocationUpdates() async {
     bool serviceEnabled;
@@ -31,30 +49,29 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
     serviceEnabled = await locationController.serviceEnabled();
     if (!serviceEnabled) {
       serviceEnabled = await locationController.requestService();
-      if (!serviceEnabled) {
-        return;
-      }
+      if (!serviceEnabled) return;
     }
 
     permissionGranted = await locationController.hasPermission();
     if (permissionGranted == loc.PermissionStatus.denied) {
       permissionGranted = await locationController.requestPermission();
-      if (permissionGranted != loc.PermissionStatus.granted) {
-        return;
-      }
+      if (permissionGranted != loc.PermissionStatus.granted) return;
     }
 
-    locationController.onLocationChanged.listen((currentLocation) {
-      if (currentLocation.latitude != null &&
-          currentLocation.longitude != null) {
-        setState(() {
-          currentPosition = LatLng(
-            currentLocation.latitude ?? 0.0,
-            currentLocation.longitude ?? 0.0,
-          );
-        });
-      }
-    });
+    _locationSubscription = locationController.onLocationChanged.listen(
+      (currentLocation) {
+        if (currentLocation.latitude != null &&
+            currentLocation.longitude != null &&
+            mounted) {
+          setState(() {
+            currentPosition = LatLng(
+              currentLocation.latitude!,
+              currentLocation.longitude!,
+            );
+          });
+        }
+      },
+    );
   }
 
   void _goToCurrentLocation() async {
@@ -62,18 +79,16 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
     if (currentLocation.latitude != null && currentLocation.longitude != null) {
       setState(() {
         currentPosition = LatLng(
-          currentLocation.latitude ?? 0.0,
-          currentLocation.longitude ?? 0.0,
+          currentLocation.latitude!,
+          currentLocation.longitude!,
         );
         markerPosition = currentPosition;
       });
-      if (mapController != null) {
-        mapController!.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(target: currentPosition!, zoom: 15),
-          ),
-        );
-      }
+      mapController!.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: currentPosition!, zoom: 15),
+        ),
+      );
     }
   }
 
@@ -94,8 +109,7 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
         );
       }
     } catch (e) {
-      // Handle the error, e.g., show a message to the user
-      print('Error occurred while searching for location: $e');
+      debugPrint('Error occurred while searching for location: $e');
     }
   }
 
@@ -107,20 +121,14 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
       );
       if (placemarks.isNotEmpty) {
         final placemark = placemarks.first;
-        return '${placemark.street}, ${placemark.locality}, ${placemark.country}';
+        return '${placemark.street}, ${placemark.locality}, ${placemark.country}'
+            .replaceAll('null', '')
+            .replaceAll(', null', '');
       }
     } catch (e) {
-      print('Error occurred while getting address from coordinates: $e');
+      debugPrint('Error occurred while getting address from coordinates: $e');
     }
-    // Return latitude and longitude as a fallback
     return '${position.latitude},${position.longitude}';
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) async => await fetchLocationUpdates());
   }
 
   @override
@@ -162,9 +170,7 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
                       ),
                     ),
                   ),
-                  onSubmitted: (value) {
-                    _searchLocation(value);
-                  },
+                  onSubmitted: _searchLocation,
                 ),
               ),
               Expanded(
@@ -236,13 +242,12 @@ class _GoogleMapsBottomSheetState extends State<GoogleMapsBottomSheet> {
                         if (markerPosition != null) {
                           final address =
                               await _getAddressFromLatLng(markerPosition!);
+                          if (!mounted) return;
                           Navigator.pop(context, {
                             'address': address,
                             'latitude': markerPosition!.latitude,
                             'longitude': markerPosition!.longitude,
                           });
-                        } else {
-                          print('Marker position is null');
                         }
                       },
                     ),
