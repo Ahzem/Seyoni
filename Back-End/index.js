@@ -79,7 +79,11 @@ const clients = new Map();
 // Message validation schemas
 const messageSchemas = {
   identify: (data) => data.userId && data.userType,
-  otp_update: (data) => data.otp && data.reservationId && data.seekerId,
+  otp_update: (data) =>
+    data.type === "otp_update" &&
+    data.seekerId &&
+    data.otp &&
+    data.reservationId,
   section_update: (data) =>
     typeof data.section === "number" && data.reservationId,
   timer_update: (data) => typeof data.value === "number" && data.reservationId,
