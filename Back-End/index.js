@@ -162,19 +162,36 @@ wss.on("connection", (ws) => {
           break;
 
         case "otp_update":
+          if (!data.seekerId || !data.otp || !data.reservationId) {
+            throw new Error("Missing required OTP update data");
+          }
           const targetSeeker = Array.from(clients.values()).find(
             (client) =>
               client.userType === "seeker" && client.ws.userId === data.seekerId
           );
 
-          if (targetSeeker) {
-            targetSeeker.ws.send(
+          if (targetClient) {
+            // Send OTP only to the specific seeker
+            targetClient.ws.send(
               JSON.stringify({
                 type: "otp_update",
                 otp: data.otp,
                 reservationId: data.reservationId,
               })
             );
+
+            // Add the reservation ID to both provider and seeker clients
+            if (ws.userId) {
+              const providerClient = clients.get(ws.userId);
+              if (providerClient) {
+                providerClient.reservations.push(data.reservationId);
+              }
+
+              const seekerClientInfo = clients.get(data.seekerId);
+              if (seekerClientInfo) {
+                seekerClientInfo.reservations.push(data.reservationId);
+              }
+            }
           }
           break;
 
