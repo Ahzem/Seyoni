@@ -68,27 +68,21 @@ app.use("/api/seeker", require("./routes/seekerRoutes"));
 const server = http.createServer(app);
 
 // WebSocket Server Setup with custom header handling
+// In index.js, update the WebSocket server setup
 const wss = new WebSocket.Server({
   server,
   path: "/ws",
   clientTracking: true,
-  handleProtocols: () => "seyoni-protocol",
   verifyClient: (info, cb) => {
     const userId = info.req.headers["user-id"];
     const userType = info.req.headers["user-type"];
-    const origin = info.origin || info.req.headers.origin;
 
-    const isAllowedOrigin = corsOptions.origin.some(
-      (allowed) => origin === allowed || origin?.startsWith(allowed)
-    );
-
-    if (isAllowedOrigin && userId && userType) {
+    if (userId && userType) {
       info.req.userId = userId;
       info.req.userType = userType;
       cb(true);
     } else {
       console.log("WebSocket connection rejected:", {
-        origin,
         userId,
         userType,
       });
