@@ -7,9 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
-import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import 'package:seyoni/src/pages/provider/service_process_page.dart';
-import 'package:provider/provider.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class GoogleMapsTrackPage extends StatefulWidget {
   final LatLng seekerLocation;
@@ -40,6 +39,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     super.initState();
     _initializeMarkers();
     _fetchLocationUpdates();
+    _sendOtpToSeeker();
   }
 
   @override
@@ -47,6 +47,16 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     locationController.onLocationChanged.drain();
     mapController?.dispose();
     super.dispose();
+  }
+
+  void _sendOtpToSeeker() {
+    final channel = WebSocketChannel.connect(
+      Uri.parse('ws://$url/ws/notification/'), // Ensure this URL is correct
+    );
+    channel.sink.add(jsonEncode({
+      'type': 'send_otp',
+      'seeker_id': widget.seekerId,
+    }));
   }
 
   void _initializeMarkers() {
@@ -137,9 +147,6 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
           // Update your state here
           _otpGenerated = true;
         });
-
-        // Update the NotificationProvider with the new OTP
-        Provider.of<NotificationProvider>(context, listen: false).setOtp(otp);
 
         // Ensure the widget is still mounted before navigating
         if (!mounted) return;

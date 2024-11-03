@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class NotificationProvider with ChangeNotifier {
   String _otp = '';
-  List<String> _notifications = [];
+  final List<String> _notifications = [];
 
   String get otp => _otp;
 
   List<String> get notifications => _notifications;
 
-  void setOtp(String newOtp) {
-    _otp = newOtp;
+  void setOtp(String otp) {
+    _otp = otp;
     notifyListeners();
   }
 
