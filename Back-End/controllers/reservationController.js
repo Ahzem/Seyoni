@@ -134,33 +134,40 @@ exports.rejectReservation = async (req, res) => {
   }
 };
 
+// In reservationController.js
 exports.finishedReservation = async (req, res) => {
   try {
     const { reservationId } = req.params;
-    const { serviceTime, amount } = req.body;
+    const providerId = req.headers["provider-id"];
 
-    // Validate inputs
-    if (!serviceTime || !amount) {
-      return res.status(400).json({
-        error: "Service time and amount are required",
+    if (!providerId) {
+      return res.status(401).json({
+        error: "Provider ID is required",
       });
     }
 
-    const reservation = await Reservation.findByIdAndUpdate(
-      reservationId,
+    const updateData = {
+      status: "finished",
+      serviceTime: req.body.serviceTime,
+      amount: req.body.amount,
+      completedAt: new Date(),
+    };
+
+    const reservation = await Reservation.findOneAndUpdate(
       {
-        status: "finished",
-        serviceTime: serviceTime,
-        amount: amount,
-        paymentStatus: "completed",
-        completedAt: new Date(),
+        _id: reservationId,
+        providerId: providerId,
       },
-      { new: true }
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
     );
 
     if (!reservation) {
       return res.status(404).json({
-        error: "Reservation not found",
+        error: "Reservation not found or unauthorized",
       });
     }
 

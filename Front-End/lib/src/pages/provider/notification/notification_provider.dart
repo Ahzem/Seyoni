@@ -14,6 +14,8 @@ class NotificationProvider with ChangeNotifier {
   bool _isTimerActive = false;
   String _paymentMethod = 'cash';
   String _paymentStatus = 'pending';
+  DateTime? _lastMessageTime;
+  static const _minMessageInterval = Duration(seconds: 1);
   final WebSocketService _webSocket = WebSocketService();
 
   // Getters
@@ -122,7 +124,17 @@ class NotificationProvider with ChangeNotifier {
   // Timer Management
   void updateTimer(int value) {
     if (value < 0 || _timerValue == value) return;
+
+    // Check message rate limiting
+    final now = DateTime.now();
+    if (_lastMessageTime != null &&
+        now.difference(_lastMessageTime!) < _minMessageInterval) {
+      return;
+    }
+
     _timerValue = value;
+    _lastMessageTime = now;
+
     _webSocket.sendMessage({
       'type': 'timer_update',
       'value': value,
@@ -131,11 +143,13 @@ class NotificationProvider with ChangeNotifier {
   }
 
   void setIsTimerActive(bool value) {
+    if (_isTimerActive == value) return;
     _isTimerActive = value;
-    _webSocket.sendMessage({
-      'type': 'timer_status_update',
-      'isActive': value,
-    });
+
+    if (!value) {
+      _timerValue = 0;
+    }
+
     notifyListeners();
   }
 
@@ -161,15 +175,30 @@ class NotificationProvider with ChangeNotifier {
     required String status,
     required double amount,
   }) {
+    if (_amount == amount &&
+        _paymentMethod == method &&
+        _paymentStatus == status) {
+      return;
+    }
+
+    _amount = amount;
+    _paymentMethod = method;
+    _paymentStatus = status;
+
+    // Debounce WebSocket message
+    final now = DateTime.now();
+    if (_lastMessageTime != null &&
+        now.difference(_lastMessageTime!) < _minMessageInterval) {
+      return;
+    }
+
+    _lastMessageTime = now;
     _webSocket.sendMessage({
       'type': 'payment_update',
       'method': method,
       'status': status,
       'amount': amount,
     });
-    _paymentMethod = method;
-    _paymentStatus = status;
-    _amount = amount;
     notifyListeners();
   }
 
@@ -223,6 +252,8 @@ class NotificationProvider with ChangeNotifier {
 
   @override
   void dispose() {
+    _isTimerActive = false;
+    _timerValue = 0;
     _webSocket.removeMessageListener(_handleWebSocketMessage);
     _webSocket.dispose();
     super.dispose();
