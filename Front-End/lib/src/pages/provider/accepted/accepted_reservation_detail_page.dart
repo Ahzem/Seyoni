@@ -216,7 +216,7 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
     }
 
     final seeker = reservation?['seeker'] ?? {};
-    final profileImage = seeker['profileImage'] ?? '';
+    final profileImage = seeker['profileImageUrl'] ?? '';
     final name = '${seeker['firstName']} ${seeker['lastName']}';
     final lastName = seeker['lastName'] ?? '';
     final seekerId = seeker['id'] ?? '';
@@ -244,12 +244,16 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                 // Display seeker's profile picture
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: profileImage.isNotEmpty
+                  backgroundImage: profileImage != null &&
+                          profileImage.isNotEmpty &&
+                          profileImage != "N/A"
                       ? NetworkImage(profileImage)
-                      : null,
-                  child: profileImage.isEmpty
-                      ? const Icon(Icons.person, size: 40)
-                      : null,
+                      : const AssetImage('assets/images/profile-1.jpg')
+                          as ImageProvider,
+                  backgroundColor: Colors.grey[300],
+                  onBackgroundImageError: (e, s) {
+                    debugPrint('Error loading profile image: $e');
+                  },
                 ),
                 const SizedBox(height: 16),
                 // Display reservation details with icons
@@ -344,14 +348,14 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                           final latLng = locationString
                               .substring(startIndex + 1, endIndex)
                               .split(', ');
-                          print('Parsed LatLng: $latLng'); // Debug print
+                          // print('Parsed LatLng: $latLng'); // Debug print
 
                           if (latLng.length == 2) {
                             try {
                               final latitude = double.parse(latLng[0]);
                               final longitude = double.parse(latLng[1]);
-                              print(
-                                  'Latitude: $latitude, Longitude: $longitude'); // Debug print
+                              // print(
+                              // 'Latitude: $latitude, Longitude: $longitude'); // Debug print
 
                               Navigator.push(
                                 context,
@@ -360,12 +364,13 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                                     seekerLocation: LatLng(latitude, longitude),
                                     seekerName: lastName,
                                     seekerId: seekerId,
+                                    reservationId: widget.reservationId,
                                   ),
                                 ),
                               );
                             } catch (e) {
-                              print(
-                                  'Error parsing latitude/longitude: $e'); // Debug print
+                              // print(
+                              //     'Error parsing latitude/longitude: $e'); // Debug print
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Invalid location format'),
@@ -388,8 +393,8 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                             if (locations.isNotEmpty) {
                               final latitude = locations[0].latitude;
                               final longitude = locations[0].longitude;
-                              print(
-                                  'Geocoded Latitude: $latitude, Longitude: $longitude'); // Debug print
+                              // print(
+                              //     'Geocoded Latitude: $latitude, Longitude: $longitude'); // Debug print
 
                               Navigator.push(
                                 context,
@@ -398,6 +403,7 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                                     seekerLocation: LatLng(latitude, longitude),
                                     seekerName: lastName,
                                     seekerId: seekerId,
+                                    reservationId: widget.reservationId,
                                   ),
                                 ),
                               );
@@ -410,8 +416,8 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                               );
                             }
                           } catch (e) {
-                            print(
-                                'Error geocoding location: $e'); // Debug print
+                            // print(
+                            //     'Error geocoding location: $e'); // Debug print
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Failed to get location'),

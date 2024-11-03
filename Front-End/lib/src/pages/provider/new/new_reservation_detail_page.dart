@@ -223,8 +223,10 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
     }
 
     final seeker = reservation?['seeker'] ?? {};
-    final profileImage = seeker['profileImage'] ?? '';
-    final name = reservation?['name'] ?? 'Unknown';
+    final name =
+        '${seeker['firstName'] ?? ''} ${seeker['lastName'] ?? 'Unknown'}'; // Use full name
+    final profileImage =
+        seeker['profileImageUrl'] ?? ''; // Use correct field name
     final date = reservation?['date'] ?? 'Unknown';
     final formattedDate =
         DateTime.parse(date).toLocal().toString().split(' ')[0];
@@ -252,9 +254,10 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
                   radius: 40,
                   backgroundImage: profileImage.isNotEmpty
                       ? NetworkImage(profileImage)
-                      : null,
+                      : const AssetImage('assets/images/profile-2.jpg')
+                          as ImageProvider,
                   child: profileImage.isEmpty
-                      ? const Icon(Icons.person, size: 40)
+                      ? const Icon(Icons.person, size: 40, color: Colors.white)
                       : null,
                 ),
                 const SizedBox(height: 16),
@@ -263,7 +266,9 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
                   children: [
                     const Icon(Icons.person, color: kPrimaryColor),
                     const SizedBox(width: 8),
-                    Text(name, style: kSubtitleTextStyle2),
+                    Text(name.trim(),
+                        style: kSubtitleTextStyle2,
+                        overflow: TextOverflow.ellipsis),
                   ],
                 ),
                 const SizedBox(height: 8),

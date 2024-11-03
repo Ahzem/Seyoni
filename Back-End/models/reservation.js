@@ -56,6 +56,10 @@ const reservationSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    profileImageUrl: {
+      type: String,
+      required: true,
+    },
   },
   providerId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -66,6 +70,27 @@ const reservationSchema = new mongoose.Schema({
     type: String,
     enum: ["pending", "accepted", "rejected", "finished"],
     default: "pending",
+  },
+  serviceTime: {
+    type: Number,
+    default: 0,
+  },
+  amount: {
+    type: Number,
+    default: 0,
+  },
+  paymentMethod: {
+    type: String,
+    enum: ["cash", "card", "pending"],
+    default: "pending",
+  },
+  paymentStatus: {
+    type: String,
+    enum: ["pending", "paid"],
+    default: "pending",
+  },
+  completedAt: {
+    type: Date,
   },
 });
 
