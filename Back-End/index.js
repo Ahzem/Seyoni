@@ -74,26 +74,51 @@ const wss = new WebSocket.Server({
   },
 });
 
-const clients = new Set();
+const clients = new Map();
 
 // Message validation schemas
 const messageSchemas = {
-  otp_update: (data) => data.otp && data.reservationId,
-  section_update: (data) => typeof data.section === "number",
-  timer_update: (data) => typeof data.value === "number",
+  identify: (data) => data.userId && data.userType,
+  otp_update: (data) => data.otp && data.reservationId && data.seekerId,
+  section_update: (data) =>
+    typeof data.section === "number" && data.reservationId,
+  timer_update: (data) => typeof data.value === "number" && data.reservationId,
   payment_update: (data) =>
-    data.method && data.status && typeof data.amount === "number",
+    data.method &&
+    data.status &&
+    typeof data.amount === "number" &&
+    data.reservationId,
 };
 
 function heartbeat() {
   this.isAlive = true;
 }
 
+function broadcastToReservation(message, reservationId, excludeClient = null) {
+  const messageStr = JSON.stringify(message);
+  clients.forEach((clientInfo, clientId) => {
+    const { ws, reservations } = clientInfo;
+    if (
+      ws !== excludeClient &&
+      ws.readyState === WebSocket.OPEN &&
+      reservations.includes(reservationId)
+    ) {
+      ws.send(messageStr);
+    }
+  });
+}
+
+function sendToUser(userId, message) {
+  const clientInfo = clients.get(userId);
+  if (clientInfo && clientInfo.ws.readyState === WebSocket.OPEN) {
+    clientInfo.ws.send(JSON.stringify(message));
+  }
+}
+
 wss.on("connection", (ws) => {
   console.log("Client connected");
   ws.isAlive = true;
   ws.on("pong", heartbeat);
-  clients.add(ws);
 
   let messageCount = 0;
   const messageLimit = 100;
@@ -118,46 +143,62 @@ wss.on("connection", (ws) => {
     try {
       const data = JSON.parse(messageStr);
 
-      // Validate message structure
       if (!data.type || !messageSchemas[data.type]) {
         throw new Error("Invalid message type");
       }
 
-      // Validate message data
       if (!messageSchemas[data.type](data)) {
         throw new Error("Invalid message data");
       }
 
       switch (data.type) {
-        case "otp_update":
-          broadcastMessage({
-            type: "otp_update",
-            otp: data.otp,
-            reservationId: data.reservationId,
+        case "identify":
+          clients.set(data.userId, {
+            ws,
+            userType: data.userType,
+            reservations: [],
           });
+          ws.userId = data.userId;
+          break;
+
+        case "otp_update":
+          if (!data.seekerId || !data.otp || !data.reservationId) {
+            throw new Error("Missing required OTP update data");
+          }
+          const targetSeeker = Array.from(clients.values()).find(
+            (client) =>
+              client.userType === "seeker" && client.ws.userId === data.seekerId
+          );
+
+          if (targetClient) {
+            // Send OTP only to the specific seeker
+            targetClient.ws.send(
+              JSON.stringify({
+                type: "otp_update",
+                otp: data.otp,
+                reservationId: data.reservationId,
+              })
+            );
+
+            // Add the reservation ID to both provider and seeker clients
+            if (ws.userId) {
+              const providerClient = clients.get(ws.userId);
+              if (providerClient) {
+                providerClient.reservations.push(data.reservationId);
+              }
+
+              const seekerClientInfo = clients.get(data.seekerId);
+              if (seekerClientInfo) {
+                seekerClientInfo.reservations.push(data.reservationId);
+              }
+            }
+          }
           break;
 
         case "section_update":
-          broadcastMessage({
-            type: "section_update",
-            section: data.section,
-          });
-          break;
-
         case "timer_update":
-          broadcastMessage({
-            type: "timer_update",
-            value: data.value,
-          });
-          break;
-
         case "payment_update":
-          broadcastMessage({
-            type: "payment_update",
-            method: data.method,
-            status: data.status,
-            amount: data.amount,
-          });
+          broadcastToReservation(data, data.reservationId, ws);
           break;
       }
     } catch (err) {
@@ -174,7 +215,9 @@ wss.on("connection", (ws) => {
 
   ws.on("close", () => {
     console.log("Client disconnected");
-    clients.delete(ws);
+    if (ws.userId) {
+      clients.delete(ws.userId);
+    }
     clearInterval(resetInterval);
   });
 });
@@ -182,7 +225,9 @@ wss.on("connection", (ws) => {
 const heartbeatInterval = setInterval(() => {
   wss.clients.forEach((ws) => {
     if (ws.isAlive === false) {
-      clients.delete(ws);
+      if (ws.userId) {
+        clients.delete(ws.userId);
+      }
       return ws.terminate();
     }
     ws.isAlive = false;
@@ -193,19 +238,6 @@ const heartbeatInterval = setInterval(() => {
 wss.on("close", () => {
   clearInterval(heartbeatInterval);
 });
-
-function broadcastMessage(message, sender = null) {
-  try {
-    const messageStr = JSON.stringify(message);
-    clients.forEach((client) => {
-      if (client !== sender && client.readyState === WebSocket.OPEN) {
-        client.send(messageStr);
-      }
-    });
-  } catch (error) {
-    console.error("Broadcast error:", error);
-  }
-}
 
 app.get("/health", (req, res) => {
   res.status(200).json({
