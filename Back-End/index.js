@@ -116,9 +116,10 @@ function sendToUser(userId, message) {
   const clientInfo = clients.get(userId);
   if (clientInfo && clientInfo.ws.readyState === WebSocket.OPEN) {
     clientInfo.ws.send(JSON.stringify(message));
+    return true;
   }
+  return false;
 }
-
 wss.on("connection", (ws) => {
   console.log("Client connected");
   ws.isAlive = true;
@@ -169,33 +170,33 @@ wss.on("connection", (ws) => {
           if (!data.seekerId || !data.otp || !data.reservationId) {
             throw new Error("Missing required OTP update data");
           }
-          const targetSeeker = Array.from(clients.values()).find(
-            (client) =>
-              client.userType === "seeker" && client.ws.userId === data.seekerId
-          );
 
-          if (targetClient) {
-            // Send OTP only to the specific seeker
-            targetClient.ws.send(
-              JSON.stringify({
-                type: "otp_update",
-                otp: data.otp,
-                reservationId: data.reservationId,
-              })
-            );
+          const sent = sendToUser(data.seekerId, {
+            type: "otp_update",
+            otp: data.otp,
+            reservationId: data.reservationId,
+          });
 
-            // Add the reservation ID to both provider and seeker clients
+          if (sent) {
             if (ws.userId) {
               const providerClient = clients.get(ws.userId);
               if (providerClient) {
-                providerClient.reservations.push(data.reservationId);
+                if (!providerClient.reservations.includes(data.reservationId)) {
+                  providerClient.reservations.push(data.reservationId);
+                }
               }
 
               const seekerClientInfo = clients.get(data.seekerId);
               if (seekerClientInfo) {
-                seekerClientInfo.reservations.push(data.reservationId);
+                if (
+                  !seekerClientInfo.reservations.includes(data.reservationId)
+                ) {
+                  seekerClientInfo.reservations.push(data.reservationId);
+                }
               }
             }
+          } else {
+            console.log(`Seeker ${data.seekerId} not connected`);
           }
           break;
 
