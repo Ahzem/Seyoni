@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/pages/entry-pages/components/register_button.dart';
+import 'package:seyoni/src/pages/provider/profile/profile.dart';
 import 'package:seyoni/src/pages/seeker/sign-pages/components/fields/email.dart';
 import '../../../config/route.dart';
 import 'components/buttons/sign_up.dart';
@@ -172,7 +173,13 @@ class SignInPageState extends State<SignInPage> {
                             children: [
                               SignInWithGoogleButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, AppRoutes.home);
+                                  // Navigator.pushNamed(context, AppRoutes.home);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const ProviderProfile(),
+                                    ),
+                                  );
                                 },
                               ),
                               SignInWithFacebookButton(
