@@ -81,8 +81,8 @@ const reservationSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ["cash", "card"],
-    default: "cash",
+    enum: ["cash", "card", "pending"],
+    default: "pending",
   },
   paymentStatus: {
     type: String,

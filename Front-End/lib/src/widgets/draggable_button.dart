@@ -18,6 +18,8 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   double posX = 100;
   double posY = 100;
   Timer? _timer;
+  bool _isDialogOpen = false;
+  Timer? _debounceTimer;
   bool _dialogVisible = false;
 
   @override
@@ -33,6 +35,7 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   @override
   void dispose() {
     _stopTimer();
+    _debounceTimer?.cancel();
     Provider.of<NotificationProvider>(context, listen: false)
         .removeListener(_onProviderUpdate);
     super.dispose();
@@ -62,7 +65,11 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
       final provider =
           Provider.of<NotificationProvider>(context, listen: false);
       if (provider.isTimerActive && provider.currentSection == 1) {
-        provider.updateTimer(provider.timerValue + 1);
+        // Debounce the WebSocket messages
+        _debounceTimer?.cancel();
+        _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          provider.updateTimer(provider.timerValue + 1);
+        });
       } else {
         _stopTimer();
       }
@@ -72,6 +79,7 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   void _stopTimer() {
     _timer?.cancel();
     _timer = null;
+    _debounceTimer?.cancel();
   }
 
   void _updateDialog() {
@@ -81,17 +89,32 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   }
 
   void _showDialog() {
-    _dialogVisible = true;
+    _isDialogOpen = true;
     showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (BuildContext context) => _buildDialog(),
-    ).then((_) => _dialogVisible = false);
+      builder: (BuildContext context) => WillPopScope(
+        onWillPop: () async {
+          _isDialogOpen = false;
+          return true;
+        },
+        child: _buildDialog(),
+      ),
+    ).then((_) {
+      _isDialogOpen = false;
+      // Don't stop timer when dialog closes
+    });
   }
 
   Widget _buildDialog() {
     return Consumer<NotificationProvider>(
       builder: (context, provider, _) {
+        // Start timer if needed when dialog opens
+        if (provider.isTimerActive &&
+            provider.currentSection == 1 &&
+            !_isDialogOpen) {
+          _startTimer();
+        }
         return Dialog(
           backgroundColor: Colors.transparent,
           insetPadding: EdgeInsets.zero,
@@ -99,7 +122,7 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
             borderRadius: BorderRadius.circular(20),
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.5,
               color: kPrimaryColor,
               child: Center(
                 child: _buildDialogContent(provider),
