@@ -54,19 +54,22 @@ app.use("/api/reservations", require("./routes/reservationRoutes"));
 app.use("/api/seeker", require("./routes/seekerRoutes"));
 
 const server = http.createServer(app);
+// index.js
 const wss = new WebSocket.Server({
   server,
   path: "/ws",
+  clientTracking: true,
   verifyClient: async (info, callback) => {
     try {
       const origin = info.origin || info.req.headers.origin;
       const isAllowed = corsOptions.origin.includes(origin);
 
-      // Add token verification if needed
-      // const token = info.req.headers.authorization;
-      // const isValidToken = await verifyToken(token);
-
-      callback(isAllowed, 403, "Forbidden");
+      // Accept upgrade request
+      if (isAllowed) {
+        callback(true);
+      } else {
+        callback(false, 403, "Forbidden");
+      }
     } catch (error) {
       console.error("WebSocket verification error:", error);
       callback(false, 500, "Internal Server Error");
