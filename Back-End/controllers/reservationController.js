@@ -150,8 +150,6 @@ exports.finishedReservation = async (req, res) => {
       status: "finished",
       serviceTime: req.body.serviceTime,
       amount: req.body.amount,
-      paymentMethod: "pending", // Set default value
-      paymentStatus: "pending", // Set default value
       completedAt: new Date(),
     };
 
