@@ -6,10 +6,12 @@ import 'package:seyoni/src/config/url.dart';
 import 'package:http/http.dart' as http;
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
+import 'package:seyoni/src/pages/provider/home/provider_home_page.dart';
 import 'package:seyoni/src/pages/seeker/sign-pages/otp/components/input_field.dart';
 import 'package:seyoni/src/pages/seeker/sign-pages/otp/components/verify_button.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceProcessPage extends StatefulWidget {
   final String seekerName;
@@ -184,27 +186,80 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
       ..updateTimer(_elapsedTime);
   }
 
+  // In service_process_page.dart
   void handlePaymentSubmission() async {
     final amount = double.tryParse(_paymentController.text) ?? 0.0;
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid amount')),
+      );
+      return;
+    }
 
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final providerId = prefs.getString('providerId');
+
+      if (providerId == null) {
+        throw Exception('Provider ID not found');
+      }
+
+      // 1. Update NotificationProvider for real-time sync
+      if (!_disposed) {
+        Provider.of<NotificationProvider>(context, listen: false)
+          ..setSection(2)
+          ..setAmount(amount)
+          ..updatePayment(
+            method: 'pending',
+            status: 'pending',
+            amount: amount,
+          );
+      }
+
+      // 2. Update reservation status
       final response = await http.patch(
         Uri.parse('$url/api/reservations/${widget.reservationId}/finish'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'provider-id': providerId,
+        },
         body: json.encode({
           'serviceTime': _elapsedTime,
           'amount': amount,
         }),
       );
 
-      if (response.statusCode == 200 && !_disposed) {
-        _notificationProvider.setAmount(amount);
-        if (!_disposed && mounted) {
-          Navigator.pop(context);
-        }
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const ProviderHomePage(),
+          ),
+          (route) => false,
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Service completed successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        final errorResponse = json.decode(response.body);
+        throw Exception(
+            errorResponse['error'] ?? 'Failed to finish reservation');
       }
     } catch (e) {
-      print('Error updating reservation: $e');
+      debugPrint('Error completing service: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
