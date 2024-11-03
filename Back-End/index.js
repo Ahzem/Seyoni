@@ -77,21 +77,54 @@ const wss = new WebSocket.Server({
 const clients = new Map();
 
 // Message validation schemas
+// Message validation schemas
 const messageSchemas = {
-  identify: (data) => data.userId && data.userType,
-  otp_update: (data) =>
-    data.type === "otp_update" &&
-    data.seekerId &&
-    data.otp &&
-    data.reservationId,
-  section_update: (data) =>
-    typeof data.section === "number" && data.reservationId,
-  timer_update: (data) => typeof data.value === "number" && data.reservationId,
-  payment_update: (data) =>
-    data.method &&
-    data.status &&
-    typeof data.amount === "number" &&
-    data.reservationId,
+  identify: (data) => {
+    return (
+      typeof data.userId === "string" &&
+      typeof data.userType === "string" &&
+      ["seeker", "provider"].includes(data.userType)
+    );
+  },
+
+  otp_update: (data) => {
+    return (
+      data.type === "otp_update" &&
+      typeof data.seekerId === "string" &&
+      typeof data.otp === "string" &&
+      typeof data.reservationId === "string" &&
+      data.otp.length === 6
+    );
+  },
+
+  section_update: (data) => {
+    return (
+      data.type === "section_update" &&
+      Number.isInteger(data.section) &&
+      data.section >= 0 &&
+      data.section <= 2 &&
+      typeof data.reservationId === "string"
+    );
+  },
+
+  timer_update: (data) => {
+    return (
+      data.type === "timer_update" &&
+      Number.isInteger(data.value) &&
+      data.value >= 0 &&
+      typeof data.reservationId === "string"
+    );
+  },
+
+  payment_update: (data) => {
+    return (
+      data.type === "payment_update" &&
+      typeof data.method === "string" &&
+      typeof data.status === "string" &&
+      typeof data.amount === "number" &&
+      typeof data.reservationId === "string"
+    );
+  },
 };
 
 function heartbeat() {
