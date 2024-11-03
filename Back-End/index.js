@@ -54,19 +54,22 @@ app.use("/api/reservations", require("./routes/reservationRoutes"));
 app.use("/api/seeker", require("./routes/seekerRoutes"));
 
 const server = http.createServer(app);
+// index.js
 const wss = new WebSocket.Server({
   server,
   path: "/ws",
+  clientTracking: true,
   verifyClient: async (info, callback) => {
     try {
       const origin = info.origin || info.req.headers.origin;
       const isAllowed = corsOptions.origin.includes(origin);
 
-      // Add token verification if needed
-      // const token = info.req.headers.authorization;
-      // const isValidToken = await verifyToken(token);
-
-      callback(isAllowed, 403, "Forbidden");
+      // Accept upgrade request
+      if (isAllowed) {
+        callback(true);
+      } else {
+        callback(false, 403, "Forbidden");
+      }
     } catch (error) {
       console.error("WebSocket verification error:", error);
       callback(false, 500, "Internal Server Error");
@@ -78,16 +81,52 @@ const clients = new Map();
 
 // Message validation schemas
 const messageSchemas = {
-  identify: (data) => data.userId && data.userType,
-  otp_update: (data) => data.otp && data.reservationId && data.seekerId,
-  section_update: (data) =>
-    typeof data.section === "number" && data.reservationId,
-  timer_update: (data) => typeof data.value === "number" && data.reservationId,
-  payment_update: (data) =>
-    data.method &&
-    data.status &&
-    typeof data.amount === "number" &&
-    data.reservationId,
+  identify: (data) => {
+    return (
+      typeof data.userId === "string" &&
+      typeof data.userType === "string" &&
+      ["seeker", "provider"].includes(data.userType)
+    );
+  },
+
+  otp_update: (data) => {
+    return (
+      data.type === "otp_update" &&
+      typeof data.seekerId === "string" &&
+      typeof data.otp === "string" &&
+      typeof data.reservationId === "string" &&
+      data.otp.length === 6
+    );
+  },
+
+  section_update: (data) => {
+    return (
+      data.type === "section_update" &&
+      Number.isInteger(data.section) &&
+      data.section >= 0 &&
+      data.section <= 2 &&
+      typeof data.reservationId === "string"
+    );
+  },
+
+  timer_update: (data) => {
+    return (
+      data.type === "timer_update" &&
+      Number.isInteger(data.value) &&
+      data.value >= 0 &&
+      typeof data.reservationId === "string"
+    );
+  },
+
+  payment_update: (data) => {
+    return (
+      data.type === "payment_update" &&
+      typeof data.method === "string" &&
+      typeof data.status === "string" &&
+      typeof data.amount === "number" &&
+      typeof data.reservationId === "string"
+    );
+  },
 };
 
 function heartbeat() {
@@ -112,9 +151,10 @@ function sendToUser(userId, message) {
   const clientInfo = clients.get(userId);
   if (clientInfo && clientInfo.ws.readyState === WebSocket.OPEN) {
     clientInfo.ws.send(JSON.stringify(message));
+    return true;
   }
+  return false;
 }
-
 wss.on("connection", (ws) => {
   console.log("Client connected");
   ws.isAlive = true;
@@ -162,19 +202,36 @@ wss.on("connection", (ws) => {
           break;
 
         case "otp_update":
-          const targetSeeker = Array.from(clients.values()).find(
-            (client) =>
-              client.userType === "seeker" && client.ws.userId === data.seekerId
-          );
+          if (!data.seekerId || !data.otp || !data.reservationId) {
+            throw new Error("Missing required OTP update data");
+          }
 
-          if (targetSeeker) {
-            targetSeeker.ws.send(
-              JSON.stringify({
-                type: "otp_update",
-                otp: data.otp,
-                reservationId: data.reservationId,
-              })
-            );
+          const sent = sendToUser(data.seekerId, {
+            type: "otp_update",
+            otp: data.otp,
+            reservationId: data.reservationId,
+          });
+
+          if (sent) {
+            if (ws.userId) {
+              const providerClient = clients.get(ws.userId);
+              if (providerClient) {
+                if (!providerClient.reservations.includes(data.reservationId)) {
+                  providerClient.reservations.push(data.reservationId);
+                }
+              }
+
+              const seekerClientInfo = clients.get(data.seekerId);
+              if (seekerClientInfo) {
+                if (
+                  !seekerClientInfo.reservations.includes(data.reservationId)
+                ) {
+                  seekerClientInfo.reservations.push(data.reservationId);
+                }
+              }
+            }
+          } else {
+            console.log(`Seeker ${data.seekerId} not connected`);
           }
           break;
 
