@@ -22,6 +22,7 @@ const corsOptions = {
     "https://seyoni.onrender.com",
     "http://localhost:3000",
     "http://localhost:8080",
+    "file://", // For Flutter debug mode
   ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: [
@@ -30,6 +31,10 @@ const corsOptions = {
     "x-requested-with",
     "User-ID",
     "User-Type",
+    "Connection",
+    "Upgrade",
+    "Sec-WebSocket-Key",
+    "Sec-WebSocket-Version",
   ],
   credentials: true,
   maxAge: 86400,
@@ -37,8 +42,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Security headers
-app.use((req, res, next) => {
+// Security headers middleware
+const securityHeaders = (req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("X-XSS-Protection", "1; mode=block");
@@ -47,7 +52,9 @@ app.use((req, res, next) => {
     "max-age=31536000; includeSubDomains"
   );
   next();
-});
+};
+
+app.use(securityHeaders);
 
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
@@ -60,34 +67,37 @@ app.use("/api/seeker", require("./routes/seekerRoutes"));
 
 const server = http.createServer(app);
 
-// WebSocket Server Setup
+// WebSocket Server Setup with custom header handling
 const wss = new WebSocket.Server({
   server,
   path: "/ws",
   clientTracking: true,
-  verifyClient: async (info, callback) => {
-    try {
-      const origin = info.origin || info.req.headers.origin;
-      const userId = info.req.headers["user-id"];
-      const userType = info.req.headers["user-type"];
+  handleProtocols: () => "seyoni-protocol",
+  verifyClient: (info, cb) => {
+    const userId = info.req.headers["user-id"];
+    const userType = info.req.headers["user-type"];
+    const origin = info.origin || info.req.headers.origin;
 
-      const isAllowed = corsOptions.origin.includes(origin);
+    const isAllowedOrigin = corsOptions.origin.some(
+      (allowed) => origin === allowed || origin?.startsWith(allowed)
+    );
 
-      if (isAllowed && userId && userType) {
-        info.req.userId = userId;
-        info.req.userType = userType;
-        callback(true);
-      } else {
-        callback(false, 403, "Forbidden");
-      }
-    } catch (error) {
-      console.error("WebSocket verification error:", error);
-      callback(false, 500, "Internal Server Error");
+    if (isAllowedOrigin && userId && userType) {
+      info.req.userId = userId;
+      info.req.userType = userType;
+      cb(true);
+    } else {
+      console.log("WebSocket connection rejected:", {
+        origin,
+        userId,
+        userType,
+      });
+      cb(false, 403, "Forbidden");
     }
   },
 });
 
-// Client tracking
+// Client tracking with enhanced metadata
 const clients = new Map();
 
 // Message validation schemas
@@ -99,13 +109,11 @@ const messageSchemas = {
       ["seeker", "provider"].includes(data.userType)
     );
   },
-
   otp_update: (data) => {
     return (
       data.seekerId && data.otp && data.otp.length === 6 && data.reservationId
     );
   },
-
   section_update: (data) => {
     return (
       Number.isInteger(data.section) &&
@@ -114,13 +122,11 @@ const messageSchemas = {
       data.reservationId
     );
   },
-
   timer_update: (data) => {
     return (
       Number.isInteger(data.value) && data.value >= 0 && data.reservationId
     );
   },
-
   payment_update: (data) => {
     return (
       data.method &&
@@ -144,7 +150,14 @@ function broadcastToReservation(message, reservationId, excludeClient = null) {
       ws.readyState === WebSocket.OPEN &&
       reservations.includes(reservationId)
     ) {
-      ws.send(messageStr);
+      try {
+        ws.send(messageStr);
+        console.log(
+          `Message sent to client ${clientId} for reservation ${reservationId}`
+        );
+      } catch (e) {
+        console.error(`Failed to send message to client ${clientId}:`, e);
+      }
     }
   });
 }
@@ -152,30 +165,36 @@ function broadcastToReservation(message, reservationId, excludeClient = null) {
 function sendToUser(userId, message) {
   const clientInfo = clients.get(userId);
   if (clientInfo && clientInfo.ws.readyState === WebSocket.OPEN) {
-    clientInfo.ws.send(JSON.stringify(message));
-    return true;
+    try {
+      clientInfo.ws.send(JSON.stringify(message));
+      console.log(`Message sent to user ${userId}:`, message);
+      return true;
+    } catch (e) {
+      console.error(`Failed to send message to user ${userId}:`, e);
+      return false;
+    }
   }
   return false;
 }
 
-// WebSocket connection handling
 wss.on("connection", (ws, req) => {
-  console.log("Client connected:", req.userId, req.userType);
+  console.log("New client connected:", req.userId, req.userType);
 
   ws.isAlive = true;
   ws.userId = req.userId;
   ws.userType = req.userType;
 
-  // Add client to tracking
+  // Store client information
   clients.set(req.userId, {
     ws,
     userType: req.userType,
     reservations: [],
+    lastMessageTime: Date.now(),
   });
 
   ws.on("pong", heartbeat);
 
-  // Rate limiting
+  // Rate limiting setup
   let messageCount = 0;
   const messageLimit = 100;
   const resetInterval = setInterval(() => {
@@ -198,7 +217,7 @@ wss.on("connection", (ws, req) => {
       }
 
       const data = JSON.parse(messageStr);
-      console.log("Received message:", data);
+      console.log("Received message from", ws.userId, ":", data);
 
       if (!data.type || !messageSchemas[data.type]) {
         throw new Error("Invalid message type");
@@ -207,6 +226,15 @@ wss.on("connection", (ws, req) => {
       if (!messageSchemas[data.type](data)) {
         throw new Error("Invalid message data");
       }
+
+      const clientInfo = clients.get(ws.userId);
+      const now = Date.now();
+      const minMessageInterval = 1000; // 1 second
+
+      if (now - clientInfo.lastMessageTime < minMessageInterval) {
+        return; // Rate limiting per client
+      }
+      clientInfo.lastMessageTime = now;
 
       switch (data.type) {
         case "identify":
@@ -258,7 +286,7 @@ wss.on("connection", (ws, req) => {
   });
 
   ws.on("error", (error) => {
-    console.error("WebSocket error:", error);
+    console.error("WebSocket error for client", ws.userId, ":", error);
   });
 
   ws.on("close", () => {
@@ -268,7 +296,7 @@ wss.on("connection", (ws, req) => {
   });
 });
 
-// Heartbeat check
+// Heartbeat interval
 const heartbeatInterval = setInterval(() => {
   wss.clients.forEach((ws) => {
     if (ws.isAlive === false) {
@@ -289,6 +317,7 @@ app.get("/health", (req, res) => {
   res.status(200).json({
     status: "ok",
     connections: clients.size,
+    uptime: process.uptime(),
   });
 });
 
