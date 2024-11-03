@@ -11,13 +11,12 @@ const app = express();
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
 });
 
 app.use(limiter);
 
-// CORS configuration
 const corsOptions = {
   origin: [
     "https://seyoni.onrender.com",
@@ -25,7 +24,13 @@ const corsOptions = {
     "http://localhost:8080",
   ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "x-requested-with"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "x-requested-with",
+    "User-ID",
+    "User-Type",
+  ],
   credentials: true,
   maxAge: 86400,
 };
@@ -54,7 +59,8 @@ app.use("/api/reservations", require("./routes/reservationRoutes"));
 app.use("/api/seeker", require("./routes/seekerRoutes"));
 
 const server = http.createServer(app);
-// index.js
+
+// WebSocket Server Setup
 const wss = new WebSocket.Server({
   server,
   path: "/ws",
@@ -62,10 +68,14 @@ const wss = new WebSocket.Server({
   verifyClient: async (info, callback) => {
     try {
       const origin = info.origin || info.req.headers.origin;
+      const userId = info.req.headers["user-id"];
+      const userType = info.req.headers["user-type"];
+
       const isAllowed = corsOptions.origin.includes(origin);
 
-      // Accept upgrade request
-      if (isAllowed) {
+      if (isAllowed && userId && userType) {
+        info.req.userId = userId;
+        info.req.userType = userType;
         callback(true);
       } else {
         callback(false, 403, "Forbidden");
@@ -77,54 +87,46 @@ const wss = new WebSocket.Server({
   },
 });
 
+// Client tracking
 const clients = new Map();
 
 // Message validation schemas
 const messageSchemas = {
   identify: (data) => {
     return (
-      typeof data.userId === "string" &&
-      typeof data.userType === "string" &&
+      data.userId &&
+      data.userType &&
       ["seeker", "provider"].includes(data.userType)
     );
   },
 
   otp_update: (data) => {
     return (
-      data.type === "otp_update" &&
-      typeof data.seekerId === "string" &&
-      typeof data.otp === "string" &&
-      typeof data.reservationId === "string" &&
-      data.otp.length === 6
+      data.seekerId && data.otp && data.otp.length === 6 && data.reservationId
     );
   },
 
   section_update: (data) => {
     return (
-      data.type === "section_update" &&
       Number.isInteger(data.section) &&
       data.section >= 0 &&
       data.section <= 2 &&
-      typeof data.reservationId === "string"
+      data.reservationId
     );
   },
 
   timer_update: (data) => {
     return (
-      data.type === "timer_update" &&
-      Number.isInteger(data.value) &&
-      data.value >= 0 &&
-      typeof data.reservationId === "string"
+      Number.isInteger(data.value) && data.value >= 0 && data.reservationId
     );
   },
 
   payment_update: (data) => {
     return (
-      data.type === "payment_update" &&
-      typeof data.method === "string" &&
-      typeof data.status === "string" &&
+      data.method &&
+      data.status &&
       typeof data.amount === "number" &&
-      typeof data.reservationId === "string"
+      data.reservationId
     );
   },
 };
@@ -155,33 +157,48 @@ function sendToUser(userId, message) {
   }
   return false;
 }
-wss.on("connection", (ws) => {
-  console.log("Client connected");
+
+// WebSocket connection handling
+wss.on("connection", (ws, req) => {
+  console.log("Client connected:", req.userId, req.userType);
+
   ws.isAlive = true;
+  ws.userId = req.userId;
+  ws.userType = req.userType;
+
+  // Add client to tracking
+  clients.set(req.userId, {
+    ws,
+    userType: req.userType,
+    reservations: [],
+  });
+
   ws.on("pong", heartbeat);
 
+  // Rate limiting
   let messageCount = 0;
   const messageLimit = 100;
   const resetInterval = setInterval(() => {
     messageCount = 0;
   }, 60000);
 
-  ws.on("message", (message) => {
-    // Rate limiting per connection
+  ws.on("message", async (message) => {
     messageCount++;
     if (messageCount > messageLimit) {
       ws.send(JSON.stringify({ error: "Too many messages" }));
       return;
     }
 
-    const messageStr = message.toString();
-    if (messageStr === "ping") {
-      ws.send("pong");
-      return;
-    }
-
     try {
+      const messageStr = message.toString();
+
+      if (messageStr === "ping") {
+        ws.send("pong");
+        return;
+      }
+
       const data = JSON.parse(messageStr);
+      console.log("Received message:", data);
 
       if (!data.type || !messageSchemas[data.type]) {
         throw new Error("Invalid message type");
@@ -193,45 +210,38 @@ wss.on("connection", (ws) => {
 
       switch (data.type) {
         case "identify":
-          clients.set(data.userId, {
-            ws,
-            userType: data.userType,
-            reservations: [],
-          });
-          ws.userId = data.userId;
+          // Client already identified during connection
           break;
 
         case "otp_update":
-          if (!data.seekerId || !data.otp || !data.reservationId) {
-            throw new Error("Missing required OTP update data");
-          }
-
-          const sent = sendToUser(data.seekerId, {
+          const otpSent = sendToUser(data.seekerId, {
             type: "otp_update",
             otp: data.otp,
             reservationId: data.reservationId,
           });
 
-          if (sent) {
-            if (ws.userId) {
-              const providerClient = clients.get(ws.userId);
-              if (providerClient) {
-                if (!providerClient.reservations.includes(data.reservationId)) {
-                  providerClient.reservations.push(data.reservationId);
-                }
-              }
+          if (otpSent) {
+            // Update reservations tracking
+            const providerClient = clients.get(ws.userId);
+            const seekerClient = clients.get(data.seekerId);
 
-              const seekerClientInfo = clients.get(data.seekerId);
-              if (seekerClientInfo) {
-                if (
-                  !seekerClientInfo.reservations.includes(data.reservationId)
-                ) {
-                  seekerClientInfo.reservations.push(data.reservationId);
-                }
-              }
+            if (
+              providerClient &&
+              !providerClient.reservations.includes(data.reservationId)
+            ) {
+              providerClient.reservations.push(data.reservationId);
             }
+            if (
+              seekerClient &&
+              !seekerClient.reservations.includes(data.reservationId)
+            ) {
+              seekerClient.reservations.push(data.reservationId);
+            }
+
+            console.log(`OTP sent to seeker ${data.seekerId}`);
           } else {
             console.log(`Seeker ${data.seekerId} not connected`);
+            ws.send(JSON.stringify({ error: "Seeker not connected" }));
           }
           break;
 
@@ -242,10 +252,8 @@ wss.on("connection", (ws) => {
           break;
       }
     } catch (err) {
-      if (!messageStr.includes("ping")) {
-        console.error("Error processing message:", err);
-        ws.send(JSON.stringify({ error: err.message }));
-      }
+      console.error("Error processing message:", err);
+      ws.send(JSON.stringify({ error: err.message }));
     }
   });
 
@@ -254,20 +262,17 @@ wss.on("connection", (ws) => {
   });
 
   ws.on("close", () => {
-    console.log("Client disconnected");
-    if (ws.userId) {
-      clients.delete(ws.userId);
-    }
+    console.log("Client disconnected:", ws.userId);
+    clients.delete(ws.userId);
     clearInterval(resetInterval);
   });
 });
 
+// Heartbeat check
 const heartbeatInterval = setInterval(() => {
   wss.clients.forEach((ws) => {
     if (ws.isAlive === false) {
-      if (ws.userId) {
-        clients.delete(ws.userId);
-      }
+      clients.delete(ws.userId);
       return ws.terminate();
     }
     ws.isAlive = false;
@@ -279,6 +284,7 @@ wss.on("close", () => {
   clearInterval(heartbeatInterval);
 });
 
+// Health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "ok",
@@ -286,6 +292,7 @@ app.get("/health", (req, res) => {
   });
 });
 
+// Server startup
 const port = process.env.PORT || 3000;
 const host = "0.0.0.0";
 
@@ -313,3 +320,5 @@ process.on("uncaughtException", (error) => {
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection:", reason);
 });
+
+module.exports = { app, wss, server: serverInstance };
