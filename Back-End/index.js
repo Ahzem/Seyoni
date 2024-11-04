@@ -9,6 +9,9 @@ require("./config/db.js");
 
 const app = express();
 
+// Trust the proxy
+app.set("trust proxy", true);
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
