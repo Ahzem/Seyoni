@@ -88,6 +88,7 @@ const clients = new Map();
 const messageSchemas = {
   identify: (data) => {
     return (
+      data.type === "identify" &&
       typeof data.userId === "string" &&
       typeof data.userType === "string" &&
       ["seeker", "provider"].includes(data.userType)
@@ -211,32 +212,28 @@ wss.on("connection", (ws) => {
             throw new Error("Missing required OTP update data");
           }
 
-          const sent = sendToUser(data.seekerId, {
-            type: "otp_update",
-            otp: data.otp,
-            reservationId: data.reservationId,
-          });
+          // Send OTP only to specific seeker
+          const seekerClient = clients.get(data.seekerId);
+          if (seekerClient && seekerClient.ws.readyState === WebSocket.OPEN) {
+            seekerClient.ws.send(
+              JSON.stringify({
+                type: "otp_update",
+                otp: data.otp,
+                reservationId: data.reservationId,
+              })
+            );
 
-          if (sent) {
+            // Add reservation to both provider and seeker
             if (ws.userId) {
               const providerClient = clients.get(ws.userId);
               if (providerClient) {
-                if (!providerClient.reservations.includes(data.reservationId)) {
-                  providerClient.reservations.push(data.reservationId);
-                }
+                providerClient.reservations.push(data.reservationId);
               }
-
-              const seekerClientInfo = clients.get(data.seekerId);
-              if (seekerClientInfo) {
-                if (
-                  !seekerClientInfo.reservations.includes(data.reservationId)
-                ) {
-                  seekerClientInfo.reservations.push(data.reservationId);
-                }
-              }
+              seekerClient.reservations.push(data.reservationId);
             }
           } else {
             console.log(`Seeker ${data.seekerId} not connected`);
+            ws.send(JSON.stringify({ error: "Seeker not connected" }));
           }
           break;
 
