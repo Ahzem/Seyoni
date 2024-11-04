@@ -107,11 +107,7 @@ const messageSchemas = {
     );
   },
   otp_update: (data) => {
-    return (
-      data.otp && 
-      data.otp.length === 6 && 
-      data.reservationId
-    );
+    return data.otp && data.otp.length === 6 && data.reservationId;
   },
 
   section_update: (data) => {
@@ -148,7 +144,7 @@ function broadcastToReservation(message, reservationId, excludeClient = null) {
     if (
       ws !== excludeClient &&
       ws.readyState === WebSocket.OPEN &&
-      (message.type === 'otp_update' || reservations.includes(reservationId))
+      reservations.includes(reservationId)
     ) {
       try {
         ws.send(messageStr);
@@ -208,79 +204,85 @@ wss.on("connection", (ws, req) => {
       ws.send(JSON.stringify({ error: "Too many messages" }));
       return;
     }
-  
+
     try {
       const messageStr = message.toString();
-  
+
       if (messageStr === "ping") {
         ws.send("pong");
         return;
       }
-  
+
       const data = JSON.parse(messageStr);
       console.log("Received message from", ws.userId, ":", data);
-  
+
       if (!data.type || !messageSchemas[data.type]) {
         throw new Error("Invalid message type");
       }
-  
+
       if (!messageSchemas[data.type](data)) {
         throw new Error("Invalid message data");
       }
-  
+
       const clientInfo = clients.get(ws.userId);
       const now = Date.now();
       const minMessageInterval = 1000; // 1 second
-  
+
       if (now - clientInfo.lastMessageTime < minMessageInterval) {
         return; // Rate limiting per client
       }
       clientInfo.lastMessageTime = now;
-  
+
       switch (data.type) {
         case "identify":
           // Client already identified during connection
           break;
-  
+
         case "otp_update":
           // Broadcast to all clients involved in the reservation
           broadcastToReservation(
             {
               type: "otp_update",
               otp: data.otp,
-              reservationId: data.reservationId
+              reservationId: data.reservationId,
             },
             data.reservationId,
             ws
           );
-  
+
           // Track reservation for both provider and seeker
           const providerClient = clients.get(ws.userId);
-          if (providerClient && !providerClient.reservations.includes(data.reservationId)) {
+          if (
+            providerClient &&
+            !providerClient.reservations.includes(data.reservationId)
+          ) {
             providerClient.reservations.push(data.reservationId);
           }
-  
+
           // If seeker is connected, track reservation
           const seekerClient = clients.get(data.seekerId);
-          if (seekerClient && !seekerClient.reservations.includes(data.reservationId)) {
+          if (
+            seekerClient &&
+            !seekerClient.reservations.includes(data.reservationId)
+          ) {
             seekerClient.reservations.push(data.reservationId);
           }
-  
+
           console.log(`OTP broadcast for reservation ${data.reservationId}`);
           break;
-  
+
         case "section_update":
           broadcastToReservation(data, data.reservationId, ws);
           break;
-  
+
         case "timer_update":
           broadcastToReservation(data, data.reservationId, ws);
           break;
-  
+
         case "payment_update":
           broadcastToReservation(data, data.reservationId, ws);
           break;
-  
+
         default:
           throw new Error("Unknown message type");
       }
