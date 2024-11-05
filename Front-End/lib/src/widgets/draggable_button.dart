@@ -18,8 +18,8 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   double posX = 100;
   double posY = 100;
   Timer? _timer;
-  bool _isDialogOpen = false;
   Timer? _debounceTimer;
+  bool _isDialogOpen = false;
   bool _dialogVisible = false;
 
   @override
@@ -58,14 +58,11 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
 
   void _startTimer() {
     if (_timer != null) return;
-
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) return;
-
       final provider =
           Provider.of<NotificationProvider>(context, listen: false);
       if (provider.isTimerActive && provider.currentSection == 1) {
-        // Debounce the WebSocket messages
         _debounceTimer?.cancel();
         _debounceTimer = Timer(const Duration(milliseconds: 500), () {
           provider.updateTimer(provider.timerValue + 1);
@@ -89,6 +86,7 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   }
 
   void _showDialog() {
+    if (_isDialogOpen) return;
     _isDialogOpen = true;
     showDialog(
       context: context,
@@ -280,60 +278,74 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   Widget build(BuildContext context) {
     return Consumer<NotificationProvider>(
       builder: (context, provider, _) {
-        if (!provider.isVisible || provider.otp.isEmpty) {
+        debugPrint(
+            'DraggableOtpButton build called. isVisible: ${provider.isVisible}, otp: ${provider.otp}');
+
+        // Add debug logging
+        if (!provider.isVisible) {
+          debugPrint('Button hidden - visibility false');
           return const SizedBox.shrink();
         }
 
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: [
-              Positioned(
-                left: posX,
-                top: posY,
-                child: GestureDetector(
-                  onPanUpdate: (details) {
-                    setState(() {
-                      posX += details.delta.dx;
-                      posY += details.delta.dy;
-                    });
-                  },
-                  onPanEnd: (details) {
-                    setState(() {
-                      final screenWidth = MediaQuery.of(context).size.width;
-                      final screenHeight = MediaQuery.of(context).size.height;
-                      const buttonWidth = 56.0;
-                      const buttonHeight = 56.0;
+        if (provider.otp.isEmpty) {
+          debugPrint('Button hidden - empty OTP');
+          return const SizedBox.shrink();
+        }
 
-                      posX = posX < screenWidth / 2
-                          ? 0
-                          : screenWidth - buttonWidth;
-                      posY = posY.clamp(0.0, screenHeight - buttonHeight);
-                    });
-                  },
-                  onTap: _showDialog,
-                  child: Opacity(
-                    opacity: 0.8,
-                    child: CircleAvatar(
-                      radius: 28,
-                      backgroundImage:
-                          const AssetImage('assets/images/profile-3.jpg'),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: kPrimaryColor,
-                            width: 3.0,
-                          ),
-                        ),
+        debugPrint('Showing button with OTP: ${provider.otp}');
+
+        return Stack(
+          children: [
+            Positioned(
+              left: posX,
+              top: posY,
+              child: GestureDetector(
+                onPanUpdate: (details) {
+                  setState(() {
+                    posX += details.delta.dx;
+                    posY += details.delta.dy;
+                  });
+                },
+                onPanEnd: (details) {
+                  setState(() {
+                    final screenWidth = MediaQuery.of(context).size.width;
+                    final screenHeight = MediaQuery.of(context).size.height;
+                    const buttonSize = 56.0;
+
+                    posX =
+                        posX < screenWidth / 2 ? 0 : screenWidth - buttonSize;
+                    posY = posY.clamp(0.0, screenHeight - buttonSize);
+                  });
+                },
+                onTap: () {
+                  debugPrint('OTP Button tapped - showing dialog');
+                  _showDialog();
+                },
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: kPrimaryColor,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: kPrimaryColor, width: 3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
                       ),
-                    ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.qr_code,
+                    color: Colors.white,
+                    size: 30,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
