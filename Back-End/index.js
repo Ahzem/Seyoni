@@ -144,6 +144,22 @@ function broadcastToReservation(message, reservationId, excludeClient = null) {
     return;
   }
 
+  // Add seekerId check for OTP messages
+  if (message.type === "otp_update" && message.seekerId) {
+    // Only send to specific seeker
+    clients.forEach((clientInfo, clientId) => {
+      const { ws, userId } = clientInfo;
+      if (
+        ws !== excludeClient &&
+        ws.readyState === WebSocket.OPEN &&
+        userId === message.seekerId
+      ) {
+        ws.send(JSON.stringify(message));
+      }
+    });
+    return;
+  }
+
   const messageStr = JSON.stringify(message);
   clients.forEach((clientInfo, clientId) => {
     const { ws, reservations } = clientInfo;
