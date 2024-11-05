@@ -140,12 +140,17 @@ function heartbeat() {
 
 function broadcastToReservation(message, reservationId, excludeClient = null) {
   if (!reservationId) {
-    console.log("Warning: Missing reservationId in broadcast"); // Add debug log
+    console.log("Warning: Missing reservationId in broadcast");
     return;
   }
 
-  // Add seekerId check for OTP messages
-  if (message.type === "otp_update" && message.seekerId) {
+  // For OTP messages, make sure seekerId is preserved
+  if (message.type === "otp_update") {
+    const messageToSend = {
+      ...message,
+      seekerId: message.seekerId, // Preserve the seekerId
+    };
+
     // Only send to specific seeker
     clients.forEach((clientInfo, clientId) => {
       const { ws, userId } = clientInfo;
@@ -154,12 +159,14 @@ function broadcastToReservation(message, reservationId, excludeClient = null) {
         ws.readyState === WebSocket.OPEN &&
         userId === message.seekerId
       ) {
-        ws.send(JSON.stringify(message));
+        console.log(`Sending OTP to seeker: ${userId}`);
+        ws.send(JSON.stringify(messageToSend));
       }
     });
     return;
   }
 
+  // For other message types
   const messageStr = JSON.stringify(message);
   clients.forEach((clientInfo, clientId) => {
     const { ws, reservations } = clientInfo;
@@ -235,28 +242,29 @@ wss.on("connection", (ws) => {
             throw new Error("Missing required OTP update data");
           }
 
-          // Send OTP only to specific seeker
-          const seekerClient = clients.get(data.seekerId);
-          if (seekerClient && seekerClient.ws.readyState === WebSocket.OPEN) {
-            seekerClient.ws.send(
-              JSON.stringify({
-                type: "otp_update",
-                otp: data.otp,
-                reservationId: data.reservationId,
-              })
-            );
+          // Preserve seekerId when broadcasting
+          broadcastToReservation(
+            {
+              type: "otp_update",
+              otp: data.otp,
+              reservationId: data.reservationId,
+              seekerId: data.seekerId,
+            },
+            data.reservationId,
+            ws
+          );
 
-            // Add reservation to both provider and seeker
-            if (ws.userId) {
-              const providerClient = clients.get(ws.userId);
-              if (providerClient) {
-                providerClient.reservations.push(data.reservationId);
-              }
+          // Add reservation to both provider and seeker
+          if (ws.userId) {
+            const providerClient = clients.get(ws.userId);
+            const seekerClient = clients.get(data.seekerId);
+
+            if (providerClient) {
+              providerClient.reservations.push(data.reservationId);
+            }
+            if (seekerClient) {
               seekerClient.reservations.push(data.reservationId);
             }
-          } else {
-            console.log(`Seeker ${data.seekerId} not connected`);
-            ws.send(JSON.stringify({ error: "Seeker not connected" }));
           }
           break;
 
