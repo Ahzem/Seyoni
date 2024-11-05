@@ -33,12 +33,20 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await _requestPermissions();
   // Initialize WebSocket
-  final webSocketService = WebSocketService();
-  await webSocketService.connect();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
-  String? userType = prefs.getString(
-      'userType'); // Added to differentiate between seeker and provider
+  String? userType = prefs.getString('userType');
+  String? userId = prefs.getString('userId');
+
+  final webSocketService = WebSocketService();
+  await webSocketService.connect();
+
+  // Send identification message after connection
+  if (userId != null && userType != null) {
+    await webSocketService.sendMessage(
+        {'type': 'identify', 'userId': userId, 'userType': userType});
+  }
+
   bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
   bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false; // Check login state
   runApp(

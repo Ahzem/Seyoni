@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
-import 'package:seyoni/src/widgets/alertbox/reservation_accept_reject.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
-import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 
-class NewReservationDetailPage extends StatefulWidget {
-  final Map<String, dynamic> reservation;
+class CompletedReservationDetailPage extends StatefulWidget {
+  final String reservationId;
 
-  const NewReservationDetailPage({required this.reservation, super.key});
+  const CompletedReservationDetailPage(
+      {required this.reservationId, super.key});
 
   @override
-  NewReservationDetailPageState createState() =>
-      NewReservationDetailPageState();
+  ReservationDetailPageState createState() => ReservationDetailPageState();
 }
 
-class NewReservationDetailPageState extends State<NewReservationDetailPage> {
+class ReservationDetailPageState extends State<CompletedReservationDetailPage> {
   Map<String, dynamic>? reservation;
   String readableAddress = '';
   bool isLoading = true;
@@ -37,19 +36,17 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? providerId = prefs.getString('providerId');
       if (providerId == null || providerId.isEmpty) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('User not logged in'),
-              backgroundColor: kErrorColor,
-            ),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('User not logged in'),
+            backgroundColor: kErrorColor,
+          ),
+        );
         return;
       }
 
       final response = await http.get(
-        Uri.parse('$getReservationsUrl/${widget.reservation['_id']}'),
+        Uri.parse('$getReservationsUrl/${widget.reservationId}'),
         headers: {
           'Content-Type': 'application/json',
           'provider-id': providerId,
@@ -58,39 +55,33 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
 
       if (response.statusCode == 200) {
         final reservationData = json.decode(response.body);
-        if (mounted) {
-          setState(() {
-            reservation = reservationData;
-            isAccepted = reservationData['status'] == 'accepted';
-            isLoading = false;
-          });
-        }
+        setState(() {
+          reservation = reservationData;
+          isAccepted = reservationData['status'] == 'finished';
+          isLoading = false;
+        });
         _getReadableAddress();
       } else {
-        if (mounted) {
-          setState(() {
-            isLoading = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to load reservation: ${response.body}'),
-              backgroundColor: kErrorColor,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
         setState(() {
           isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to load reservation: $e'),
+            content: Text('Failed to load reservation: ${response.body}'),
             backgroundColor: kErrorColor,
           ),
         );
       }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load reservation: $e'),
+          backgroundColor: kErrorColor,
+        ),
+      );
     }
   }
 
@@ -109,41 +100,34 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
       List<Placemark> placemarks =
           await placemarkFromCoordinates(latitude, longitude);
       Placemark place = placemarks[0];
-      if (mounted) {
-        setState(() {
-          readableAddress =
-              '${place.street}, ${place.locality}, ${place.country}';
-        });
-      }
+      setState(() {
+        readableAddress =
+            '${place.street}, ${place.locality}, ${place.country}';
+      });
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          readableAddress = 'Unknown location';
-        });
-      }
+      setState(() {
+        readableAddress = 'Unknown location';
+      });
     }
   }
 
   Future<void> _updateReservationStatus(String status) async {
-    final url = status == 'accept'
-        ? '$acceptReservationUrl/${widget.reservation['_id']}/accept'
-        : '$rejectReservationUrl/${widget.reservation['_id']}/reject';
-
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? providerId = prefs.getString('providerId');
-
       if (providerId == null || providerId.isEmpty) {
-        setState(() {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('User not logged in'),
-              backgroundColor: kErrorColor,
-            ),
-          );
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('User not logged in'),
+            backgroundColor: kErrorColor,
+          ),
+        );
         return;
       }
+
+      final url = status == 'accepted'
+          ? '$acceptReservationUrl/${widget.reservationId}/accept'
+          : '$rejectReservationUrl/${widget.reservationId}/reject';
 
       final response = await http.patch(
         Uri.parse(url),
@@ -154,50 +138,57 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
       );
 
       if (response.statusCode == 200) {
-        if (mounted) {
-          setState(() {
-            reservation?['status'] = status;
-            if (status == 'accept') {
-              isAccepted = true;
-              Navigator.pop(context, true); // Pass true to indicate acceptance
-            } else if (status == 'reject') {
-              Navigator.pop(context, true); // Pass true to indicate rejection
-            }
-          });
-        }
+        setState(() {
+          reservation?['status'] = status;
+          if (status == 'accepted') {
+            isAccepted = true;
+          } else if (status == 'rejected') {
+            Navigator.pop(context, true); // Pass true to indicate rejection
+          }
+        });
       } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to update reservation: ${response.body}'),
-              backgroundColor: kErrorColor,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update reservation: $e'),
+            content: Text('Failed to update reservation: ${response.body}'),
             backgroundColor: kErrorColor,
           ),
         );
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update reservation: $e'),
+          backgroundColor: kErrorColor,
+        ),
+      );
     }
   }
 
   void _showConfirmationDialog(String action) {
     showDialog(
       context: context,
-      builder: (ctx) => ReservationAcceptReject(
-        action: action,
-        onCancel: () => Navigator.of(ctx).pop(),
-        onConfirm: () {
-          Navigator.of(ctx).pop();
-          _updateReservationStatus(action);
-        },
-      ),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm $action'),
+          content: Text('Are you sure you want to $action this reservation?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _updateReservationStatus(
+                    action == 'accept' ? 'accepted' : 'rejected');
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -223,13 +214,10 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
     }
 
     final seeker = reservation?['seeker'] ?? {};
-    final name =
-        '${seeker['firstName'] ?? ''} ${seeker['lastName'] ?? 'Unknown'}'; // Use full name
-    final profileImage =
-        seeker['profileImageUrl'] ?? ''; // Use correct field name
+    final profileImage = seeker['profileImageUrl'] ?? '';
+    final name = '${seeker['firstName']} ${seeker['lastName']}';
     final date = reservation?['date'] ?? 'Unknown';
-    final formattedDate =
-        DateTime.parse(date).toLocal().toString().split(' ')[0];
+    final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
     final time = reservation?['time'] ?? 'Unknown';
     final description = reservation?['description'] ?? 'No description';
     final images = reservation?['images'] ?? [];
@@ -245,32 +233,35 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 // Display seeker's profile picture
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: profileImage.isNotEmpty
+                  backgroundImage: profileImage != null &&
+                          profileImage.isNotEmpty &&
+                          profileImage != "N/A"
                       ? NetworkImage(profileImage)
-                      : const AssetImage('assets/images/profile-2.jpg')
+                      : const AssetImage('assets/images/profile-1.jpg')
                           as ImageProvider,
-                  child: profileImage.isEmpty
-                      ? const Icon(Icons.person, size: 40, color: Colors.white)
-                      : null,
+                  backgroundColor: Colors.grey[300],
+                  onBackgroundImageError: (e, s) {
+                    debugPrint('Error loading profile image: $e');
+                  },
                 ),
                 const SizedBox(height: 16),
                 // Display reservation details with icons
-                 Container(
+                Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: kAccentColor,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                    color: kPrimaryColor,  
-                    width: 1.5,           
-    ),
+                      color: kPrimaryColor,
+                      width: 1.5,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black26,
@@ -291,15 +282,22 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
                         children: [
                           const Icon(Icons.location_on, color: kPrimaryColor),
                           const SizedBox(width: 8),
-                          Expanded(child: Text(readableAddress, style: kSubtitleTextStyle.copyWith(fontSize: 15.0, color: kParagraphTextColor))),
+                          Expanded(
+                              child: Text(readableAddress,
+                                  style: kSubtitleTextStyle.copyWith(
+                                      fontSize: 15.0,
+                                      color: kParagraphTextColor))),
                         ],
                       ),
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          const Icon(Icons.calendar_today, color: kPrimaryColor),
+                          const Icon(Icons.calendar_today,
+                              color: kPrimaryColor),
                           const SizedBox(width: 8),
-                          Text(formattedDate, style: kSubtitleTextStyle.copyWith(fontSize: 15.0, color: kParagraphTextColor)),
+                          Text(formattedDate,
+                              style: kSubtitleTextStyle.copyWith(
+                                  fontSize: 15.0, color: kParagraphTextColor)),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -307,7 +305,9 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
                         children: [
                           const Icon(Icons.access_time, color: kPrimaryColor),
                           const SizedBox(width: 8),
-                          Text(time, style: kSubtitleTextStyle.copyWith(fontSize: 15.0, color: kParagraphTextColor)),
+                          Text(time,
+                              style: kSubtitleTextStyle.copyWith(
+                                  fontSize: 15.0, color: kParagraphTextColor)),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -317,7 +317,7 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 // Display images with curves if they exist
                 if (images.isNotEmpty)
                   SizedBox(
@@ -347,25 +347,6 @@ class NewReservationDetailPageState extends State<NewReservationDetailPage> {
                     ),
                   ),
                 if (images.isNotEmpty) const SizedBox(height: 16),
-                // Accept and Reject buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    PrimaryOutlinedButton(
-                      text: 'Cancel',
-                      onPressed: () {
-                        _showConfirmationDialog('reject');
-                      },
-                    ),
-                    const SizedBox(width: 10),
-                    PrimaryFilledButton(
-                      text: 'Accept',
-                      onPressed: () {
-                        _showConfirmationDialog('accept');
-                      },
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
