@@ -66,12 +66,17 @@ const wss = new WebSocket.Server({
   verifyClient: async (info, callback) => {
     try {
       const origin = info.origin || info.req.headers.origin;
-      const isAllowed = corsOptions.origin.includes(origin);
+      console.log("Connection attempt from origin:", origin);
 
-      // Accept upgrade request
+      const isAllowed =
+        process.env.NODE_ENV === "development" ||
+        corsOptions.origin.includes(origin);
+
       if (isAllowed) {
+        console.log("Connection accepted");
         callback(true);
       } else {
+        console.log("Connection rejected - invalid origin");
         callback(false, 403, "Forbidden");
       }
     } catch (error) {
@@ -295,6 +300,14 @@ wss.on("connection", (ws) => {
   });
 });
 
+wss.on("error", (error) => {
+  console.error("WebSocket Server Error:", error);
+});
+
+wss.on("close", () => {
+  clearInterval(heartbeatInterval);
+});
+
 const heartbeatInterval = setInterval(() => {
   wss.clients.forEach((ws) => {
     if (ws.isAlive === false) {
@@ -307,10 +320,6 @@ const heartbeatInterval = setInterval(() => {
     ws.ping();
   });
 }, 30000);
-
-wss.on("close", () => {
-  clearInterval(heartbeatInterval);
-});
 
 app.get("/health", (req, res) => {
   res.status(200).json({
