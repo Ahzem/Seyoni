@@ -51,6 +51,18 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
+// Add method for provider identification
+  Future<void> identifyProvider(String providerId) async {
+    debugPrint('Identifying provider - ID: $providerId');
+    await ensureConnection();
+    await sendMessage({
+      'type': 'identify',
+      'userId': providerId,
+      'userType': 'provider' // Explicitly set userType as provider
+    });
+    debugPrint('Provider identified with ID: $providerId');
+  }
+
   // Add this method to expose WebSocket functionality
   Future<void> sendMessage(Map<String, dynamic> message) async {
     await _webSocket.sendMessage(message);
@@ -332,7 +344,12 @@ class NotificationProvider with ChangeNotifier {
     _isTimerActive = false;
     _paymentMethod = 'cash';
     _paymentStatus = 'pending';
+    _currentSeekerId = '';
     _notifications.clear();
+
+    // Close WebSocket connection
+    _webSocket.dispose();
+
     notifyListeners();
   }
 

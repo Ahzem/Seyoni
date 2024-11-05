@@ -40,10 +40,10 @@ Future<void> loginSeeker(
           'profileImageUrl', jsonResponse['seeker']['profileImageUrl']);
       await prefs.setString('address', jsonResponse['seeker']['address']);
 
-      final seekerId = jsonResponse['seeker']['_id'];
-      Provider.of<NotificationProvider>(context, listen: false)
-        ..ensureConnection()
-        ..identifyUser(seekerId, 'seeker');
+      // final seekerId = jsonResponse['seeker']['_id'];
+      // Provider.of<NotificationProvider>(context, listen: false)
+      //   ..ensureConnection()
+      //   ..identifyUser(seekerId, 'seeker');
 
       // Check if the widget is still mounted before using the context
 

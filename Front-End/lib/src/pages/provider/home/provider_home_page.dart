@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:seyoni/src/pages/provider/accepted/accepted_reservations_page.dart';
 import 'package:seyoni/src/pages/provider/completed/completed_reservations_page.dart';
 import 'package:seyoni/src/pages/provider/new/new_requests_page.dart';
+import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import 'package:seyoni/src/pages/provider/profile/profile.dart';
 import 'package:seyoni/src/pages/provider/rejected/rejected_reservations_page.dart'; // Add this line
+import 'package:seyoni/src/services/logout_service.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/url.dart';
@@ -39,15 +42,33 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   @override
   void initState() {
     super.initState();
+    _checkAuthAndInit();
+  }
+
+  Future<void> _checkAuthAndInit() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? providerId = prefs.getString('providerId');
+
+    if (providerId == null) {
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ProviderSignInPage()),
+      );
+      return;
+    }
+
+    // Initialize WebSocket connection
+    if (mounted) {
+      final provider =
+          Provider.of<NotificationProvider>(context, listen: false);
+      await provider.ensureConnection();
+      await provider.identifyProvider(providerId); // Use the new method
+    }
+
     _fetchReservations();
     _fetchProviderDetails();
     _startPeriodicUpdate();
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
   }
 
   void _startPeriodicUpdate() {
@@ -213,12 +234,13 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   }
 
   Future<void> _logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const ProviderSignInPage()),
-    );
+    await LogoutService.logout(context, true);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override

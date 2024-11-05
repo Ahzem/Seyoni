@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart'; // Import the permi
 import 'package:provider/provider.dart';
 import 'package:seyoni/src/pages/seeker/home/home.dart';
 import 'package:seyoni/src/pages/seeker/order-history/order_history_page.dart';
+import 'package:seyoni/src/pages/seeker/sign-pages/signin_page.dart';
 import 'package:seyoni/src/widgets/draggable_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/custom_appbar.dart';
@@ -35,7 +36,30 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _initializeWebSocketConnection();
+    _checkAuthAndInit();
+  }
+
+  Future<void> _checkAuthAndInit() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? seekerId = prefs.getString('seekerId');
+
+    if (seekerId == null) {
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const SignInPage()),
+      );
+      return;
+    }
+
+    // Initialize WebSocket connection only once here
+    if (mounted) {
+      final provider =
+          Provider.of<NotificationProvider>(context, listen: false);
+      await provider.ensureConnection();
+      await provider.identifyUser(seekerId, 'seeker');
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkPermissions();
     });
