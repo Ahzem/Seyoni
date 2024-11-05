@@ -114,14 +114,10 @@ class ListOfRegistrationRequestsState
                         final email = provider['email'] ?? 'N/A';
                         final location = provider['location'] ?? 'N/A';
                         return Card(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.white.withOpacity(0.2),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: const BorderSide(
-                              color: Colors.white,
-                              width: 2,
-                            ),
-                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                           child: Padding(
                             padding: const EdgeInsets.all(10),
                             child: Row(
