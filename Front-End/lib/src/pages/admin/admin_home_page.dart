@@ -77,9 +77,21 @@ class AdminHomePageState extends State<AdminHomePage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+                Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Hello, Admin!', style: kTitleTextStyle,),
+                ),
+              const SizedBox(height: 20,),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    buildCard(Icons.person, 'Registered Providers', '${providers.length}'),
+                    buildCard(Icons.person, 'Registration Requests', '${providers.length}'),
+                  ],
+                ),
+             const SizedBox(height: 20),
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
+                child: ListView(
                   children: [
                     _buildBlurredContainer(
                       context,
@@ -95,19 +107,50 @@ class AdminHomePageState extends State<AdminHomePage> {
                     ),
                     _buildBlurredContainer(
                       context,
-                      'Provider Registration Request',
+                      'Provider Registration Requests',
                       Icons.app_registration,
                       AppRoutes.listOfRegistrationRequests,
                     ),
                   ],
                 ),
               ),
+              ],
+            ),
+          ),
+        ),
+      );
+  }
+
+  Widget buildCard(IconData icon, String title, String count) {
+    return SizedBox(
+      height: 150,
+      width: 150,
+      child: Card(
+        elevation: 4,
+        color: kContainerColor.withOpacity(0.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(75.0), // Set to half of height/width to make it round
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 40, color: Colors.white), // Add user icon
+              SizedBox(height: 8), // Spacing between icon and text
+              Text(
+                title,
+                style: kBodyTextStyle,
+                textAlign: TextAlign.center,
+              ),
+              Text(count, style: kBodyTextStyle),
             ],
           ),
         ),
       ),
     );
   }
+
 
   Widget _buildBlurredContainer(
       BuildContext context, String title, IconData icon, String route) {
@@ -122,17 +165,23 @@ class AdminHomePageState extends State<AdminHomePage> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 50, color: Colors.white),
-              const SizedBox(height: 10),
-              Text(title,
-                  style: kSubtitleTextStyle, textAlign: TextAlign.center),
-            ],
+          child: SizedBox(
+            height: 80,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start, 
+                children: [
+                  Icon(icon, size: 30, color: Colors.white),
+                  SizedBox(width: 20),
+                  Text(title, style: kSubtitleTextStyle2, textAlign: TextAlign.center),
+                ],
+              ),
+            ),
           ),
         ),
       ),
+
     );
   }
 }
