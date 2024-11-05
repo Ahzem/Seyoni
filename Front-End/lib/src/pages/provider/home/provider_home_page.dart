@@ -292,6 +292,13 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                         const NewRequestsPage(),
                         newRequestsCount,
                       ),
+                        _buildReservationCard(
+                        context,
+                        'Completed Reservations',
+                        Icons.verified,
+                        const NewRequestsPage(),
+                        newRequestsCount,
+                      ),
                     ],
                   ),
                 ),
@@ -409,11 +416,13 @@ class ProviderHomePageState extends State<ProviderHomePage> {
               child: Icon(
                 icon,
                 size: 30,
-                color: title == 'Accepted Reservations'
-                    ? Colors.green
-                    : title == 'Rejected Reservations'
+                 color: title == 'Accepted Reservations'
+                      ? Colors.green
+                      : title == 'Rejected Reservations'
                         ? Colors.red
-                        : Colors.yellow,
+                        : title == 'Completed Reservations'
+                          ? const Color.fromARGB(255, 29, 221, 35)
+                          : Colors.yellow,
               ),
             ),
             const SizedBox(width: 16),
