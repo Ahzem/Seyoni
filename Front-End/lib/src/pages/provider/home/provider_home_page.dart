@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:seyoni/src/pages/provider/accepted/accepted_reservations_page.dart';
+import 'package:seyoni/src/pages/provider/completed/completed_reservations_page.dart';
 import 'package:seyoni/src/pages/provider/new/new_requests_page.dart';
+import 'package:seyoni/src/pages/provider/profile/profile.dart';
 import 'package:seyoni/src/pages/provider/rejected/rejected_reservations_page.dart'; // Add this line
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +15,6 @@ import 'package:seyoni/src/widgets/custom_button.dart';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/constants/constants_font.dart';
-import 'package:seyoni/src/pages/provider/provider_profilepage.dart'; // Ensure this import is correct
 
 class ProviderHomePage extends StatefulWidget {
   const ProviderHomePage({super.key});
@@ -32,6 +33,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   int acceptedCount = 0;
   int rejectedCount = 0;
   int newRequestsCount = 0;
+  int completedCount = 0;
   Timer? _timer;
 
   @override
@@ -93,6 +95,9 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                 .length;
             newRequestsCount = reservations
                 .where((reservation) => reservation['status'] == 'pending')
+                .length;
+            completedCount = reservations
+                .where((reservation) => reservation['status'] == 'finished')
                 .length;
             isLoading = false;
           });
@@ -256,7 +261,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ProviderProfilepage()),
+                            builder: (context) => const ProviderProfile()),
                       );
                     },
                   ),
@@ -292,12 +297,12 @@ class ProviderHomePageState extends State<ProviderHomePage> {
                         const NewRequestsPage(),
                         newRequestsCount,
                       ),
-                        _buildReservationCard(
+                      _buildReservationCard(
                         context,
                         'Completed Reservations',
                         Icons.verified,
-                        const NewRequestsPage(),
-                        newRequestsCount,
+                        const CompletedReservationsPage(),
+                        completedCount,
                       ),
                     ],
                   ),
@@ -372,7 +377,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -416,13 +421,13 @@ class ProviderHomePageState extends State<ProviderHomePage> {
               child: Icon(
                 icon,
                 size: 30,
-                 color: title == 'Accepted Reservations'
-                      ? Colors.green
-                      : title == 'Rejected Reservations'
+                color: title == 'Accepted Reservations'
+                    ? Colors.green
+                    : title == 'Rejected Reservations'
                         ? Colors.red
                         : title == 'Completed Reservations'
-                          ? const Color.fromARGB(255, 29, 221, 35)
-                          : Colors.yellow,
+                            ? const Color.fromARGB(255, 29, 221, 35)
+                            : Colors.yellow,
               ),
             ),
             const SizedBox(width: 16),
