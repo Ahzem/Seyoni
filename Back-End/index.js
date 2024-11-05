@@ -151,23 +151,30 @@ function broadcastToReservation(message, reservationId, excludeClient = null) {
 
   // For OTP messages, make sure seekerId is preserved
   if (message.type === "otp_update") {
+    console.log("Broadcasting OTP update to seeker:", message.seekerId);
+
     const messageToSend = {
-      ...message,
-      seekerId: message.seekerId, // Preserve the seekerId
+      type: "otp_update",
+      otp: message.otp,
+      reservationId: message.reservationId,
+      seekerId: message.seekerId,
     };
+
+    let sent = false;
 
     // Only send to specific seeker
     clients.forEach((clientInfo, clientId) => {
       const { ws, userId } = clientInfo;
-      if (
-        ws !== excludeClient &&
-        ws.readyState === WebSocket.OPEN &&
-        userId === message.seekerId
-      ) {
+      if (ws.readyState === WebSocket.OPEN && userId === message.seekerId) {
         console.log(`Sending OTP to seeker: ${userId}`);
         ws.send(JSON.stringify(messageToSend));
+        sent = true;
       }
     });
+
+    if (!sent) {
+      console.log(`No connected client found for seeker: ${message.seekerId}`);
+    }
     return;
   }
 
