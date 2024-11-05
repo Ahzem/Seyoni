@@ -65,8 +65,8 @@ class ListOfSeekersState extends State<ListOfSeekers> {
                 Navigator.of(context).pop();
               },
             ),
-            title: const Text('List of Seekers',
-                style: TextStyle(fontSize: 20, color: Colors.white)),
+            title: const Text('Service Seekers',
+                style:kSubtitleTextStyle2),
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
@@ -83,61 +83,68 @@ class ListOfSeekersState extends State<ListOfSeekers> {
                         textAlign: TextAlign.center,
                       ),
                     )
-                  : GridView.builder(
-                      padding: const EdgeInsets.all(10),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemCount: seekers.length,
-                      itemBuilder: (context, index) {
-                        final seeker = seekers[index];
-                        final fullName =
-                            '${seeker['firstName'] ?? 'N/A'} ${seeker['lastName'] ?? 'N/A'}';
-                        final email = seeker['email'] ?? 'N/A';
-                        return Card(
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    seeker['profileImageUrl'] ??
-                                        'https://via.placeholder.com/150',
-                                  ),
-                                  radius: 30,
+                  : ListView.builder(
+                    padding: const EdgeInsets.all(10),
+                    itemCount: seekers.length,
+                    itemBuilder: (context, index) {
+                      final seeker = seekers[index];
+                      final fullName = '${seeker['firstName'] ?? 'N/A'} ${seeker['lastName'] ?? 'N/A'}';
+                      final email = seeker['email'] ?? 'N/A';
+                      return Card(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                  seeker['profileImageUrl'] ?? 'https://via.placeholder.com/150',
                                 ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  fullName,
-                                  style: kCardTitleTextStyle,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
+                                radius: 30,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      fullName,
+                                      style: kCardTitleTextStyle,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    Text(
+                                      email,
+                                      style: kBodyTextStyle,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: TextButton(
+                                        onPressed: () {
+                                          // Navigate to manage seeker page
+                                        },
+                                        child: const Text(
+                                          'Manage',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  email,
-                                  style: kBodyTextStyle,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                                const Spacer(),
-                                TextButton(
-                                  onPressed: () {
-                                    // Navigate to manage seeker page
-                                  },
-                                  child: const Text('Manage',
-                                      style: TextStyle(color: Colors.white)),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
+                  ),
         ),
       ],
     );

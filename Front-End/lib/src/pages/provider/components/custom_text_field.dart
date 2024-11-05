@@ -100,6 +100,10 @@ class CustomTextField extends StatelessWidget {
         return Icons.location_on_outlined;
       case 'address':
         return Icons.location_on_outlined;
+      case 'guardian name':
+        return Icons.person;
+      case 'relationship':
+        return Icons.people;
       default:
         return Icons.text_fields;
     }
