@@ -84,7 +84,6 @@ const wss = new WebSocket.Server({
 const clients = new Map();
 
 // Message validation schemas
-// Message validation schemas
 const messageSchemas = {
   identify: (data) => {
     return (
@@ -110,7 +109,8 @@ const messageSchemas = {
       data.type === "section_update" &&
       Number.isInteger(data.section) &&
       data.section >= 0 &&
-      data.section <= 2
+      data.section <= 2 &&
+      typeof data.reservationId === "string"
     );
   },
 
@@ -118,7 +118,8 @@ const messageSchemas = {
     return (
       data.type === "timer_update" &&
       Number.isInteger(data.value) &&
-      data.value >= 0
+      data.value >= 0 &&
+      typeof data.reservationId === "string"
     );
   },
 
@@ -127,7 +128,8 @@ const messageSchemas = {
       data.type === "payment_update" &&
       typeof data.method === "string" &&
       typeof data.status === "string" &&
-      typeof data.amount === "number"
+      typeof data.amount === "number" &&
+      typeof data.reservationId === "string"
     );
   },
 };
