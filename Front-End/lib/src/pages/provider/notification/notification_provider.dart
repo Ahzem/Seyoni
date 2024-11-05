@@ -14,6 +14,7 @@ class NotificationProvider with ChangeNotifier {
   bool _isTimerActive = false;
   String _paymentMethod = 'cash';
   String _paymentStatus = 'pending';
+  String _currentSeekerId = '';
   DateTime? _lastMessageTime;
   static const _minMessageInterval = Duration(seconds: 1);
   final WebSocketService _webSocket = WebSocketService();
@@ -29,46 +30,107 @@ class NotificationProvider with ChangeNotifier {
   bool get isTimerActive => _isTimerActive;
   String get paymentMethod => _paymentMethod;
   String get paymentStatus => _paymentStatus;
+  String get currentSeekerId => _currentSeekerId;
 
   NotificationProvider() {
     _initializeWebSocket();
   }
 
+// Add reidentification after reconnection
   void _initializeWebSocket() {
     _webSocket.connect();
     _webSocket.addMessageListener(_handleWebSocketMessage);
+
+    // Re-identify after reconnection
+    if (_currentSeekerId.isNotEmpty) {
+      _webSocket.sendMessage({
+        'type': 'identify',
+        'userId': _currentSeekerId,
+        'userType': 'seeker'
+      });
+    }
+  }
+
+  // Add this method to expose WebSocket functionality
+  Future<void> sendMessage(Map<String, dynamic> message) async {
+    await _webSocket.sendMessage(message);
+  }
+
+  Future<void> identifyUser(String userId, String userType) async {
+    debugPrint('Identifying user - ID: $userId, Type: $userType');
+    _currentSeekerId = userId;
+    await ensureConnection();
+    await _webSocket.sendMessage(
+        {'type': 'identify', 'userId': userId, 'userType': userType});
+    debugPrint('User identified with seekerId: $_currentSeekerId');
+  }
+
+  Future<void> ensureConnection() async {
+    if (!_webSocket.isConnected) {
+      debugPrint('WebSocket not connected, establishing connection...');
+      await _webSocket.connect();
+      // Add small delay to ensure connection is ready
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
   }
 
   void _handleWebSocketMessage(dynamic message) {
     try {
+      debugPrint('Raw WebSocket message received: $message');
+
+      Map<String, dynamic> data;
       if (message is String) {
-        final data = json.decode(message);
-        switch (data['type']) {
-          case 'otp_update':
-            _handleOtpUpdate(data);
-            break;
-          case 'section_update':
-            _handleSectionUpdate(data);
-            break;
-          case 'timer_update':
-            _handleTimerUpdate(data);
-            break;
-          case 'payment_update':
-            _handlePaymentUpdate(data);
-            break;
-          case 'timer_status_update':
-            _handleTimerStatusUpdate(data);
-            break;
+        data = json.decode(message);
+      } else {
+        data = message as Map<String, dynamic>;
+      }
+
+      if (data['type'] == 'otp_update') {
+        final targetSeekerId = data['seekerId'];
+        debugPrint(
+            'OTP Update received - Target: $targetSeekerId, Current: $_currentSeekerId');
+
+        if (targetSeekerId == _currentSeekerId) {
+          setState(() {
+            _otp = data['otp'];
+            _reservationId = data['reservationId'];
+            _isVisible = true;
+            _currentSection = 0;
+            debugPrint('Updated OTP state - OTP: $_otp, Visible: $_isVisible');
+          });
+          notifyListeners();
         }
+      }
+
+      // Handle other message types
+      switch (data['type']) {
+        case 'section_update':
+          _handleSectionUpdate(data);
+          break;
+        case 'timer_update':
+          _handleTimerUpdate(data);
+          break;
+        case 'payment_update':
+          _handlePaymentUpdate(data);
+          break;
+        case 'timer_status_update':
+          _handleTimerStatusUpdate(data);
+          break;
       }
     } catch (e) {
       debugPrint('Error handling WebSocket message: $e');
     }
   }
 
-  void _handleOtpUpdate(Map<String, dynamic> data) {
-    setOtp(data['otp']);
-    setReservationId(data['reservationId']);
+  // Add helper method to batch state updates
+  void setState(VoidCallback fn) {
+    try {
+      fn();
+      debugPrint('Notifying listeners after state update');
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error in setState: $e');
+    }
   }
 
   void _handleSectionUpdate(Map<String, dynamic> data) {
@@ -91,31 +153,54 @@ class NotificationProvider with ChangeNotifier {
     );
   }
 
-  // Service Initialization
-  void initializeService(String otp, String reservationId) {
-    _webSocket.sendMessage({
-      'type': 'otp_update',
-      'otp': otp,
-      'reservationId': reservationId,
+  Future<void> initializeService({
+    required String otp,
+    required String reservationId,
+    required String seekerId,
+  }) async {
+    debugPrint('Initializing service with OTP: $otp for seeker: $seekerId');
+
+    // Update local state first with setState to ensure notification
+    setState(() {
+      _otp = otp;
+      _reservationId = reservationId;
+      _currentSeekerId = seekerId;
+      _isVisible = true; // Explicitly set to true
+      _currentSection = 0;
     });
-    _otp = otp;
-    _reservationId = reservationId;
-    _isVisible = true;
-    _currentSection = 0;
-    _isTimerActive = false;
-    _timerValue = 0;
-    notifyListeners();
+
+    try {
+      await ensureConnection();
+
+      final message = {
+        'type': 'otp_update',
+        'otp': otp,
+        'reservationId': reservationId,
+        'seekerId': seekerId,
+      };
+
+      await _webSocket.sendMessage(message);
+      debugPrint('OTP message sent successfully');
+
+      // Force another state update to ensure UI updates
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error sending OTP: $e');
+      // Even if send fails, keep local state visible
+      notifyListeners();
+    }
   }
 
   // Section Management
   void setSection(int section) {
     if (section < 0 || section > 2) return;
     if (_currentSection == section) return;
-    
+
     _currentSection = section;
     _webSocket.sendMessage({
       'type': 'section_update',
       'section': section,
+      'reservationId': _reservationId
     });
     // Force immediate notification
     notifyListeners();
@@ -125,7 +210,6 @@ class NotificationProvider with ChangeNotifier {
   void updateTimer(int value) {
     if (value < 0 || _timerValue == value) return;
 
-    // Check message rate limiting
     final now = DateTime.now();
     if (_lastMessageTime != null &&
         now.difference(_lastMessageTime!) < _minMessageInterval) {
@@ -138,7 +222,9 @@ class NotificationProvider with ChangeNotifier {
     _webSocket.sendMessage({
       'type': 'timer_update',
       'value': value,
+      'reservationId': _reservationId
     });
+
     notifyListeners();
   }
 
@@ -185,7 +271,6 @@ class NotificationProvider with ChangeNotifier {
     _paymentMethod = method;
     _paymentStatus = status;
 
-    // Debounce WebSocket message
     final now = DateTime.now();
     if (_lastMessageTime != null &&
         now.difference(_lastMessageTime!) < _minMessageInterval) {
@@ -198,6 +283,7 @@ class NotificationProvider with ChangeNotifier {
       'method': method,
       'status': status,
       'amount': amount,
+      'reservationId': _reservationId, // Include reservationId
     });
     notifyListeners();
   }
