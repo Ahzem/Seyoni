@@ -10,9 +10,13 @@ require("./config/db.js");
 const app = express();
 
 // Rate limiting
+app.set("trust proxy", 1);
+
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 app.use(limiter);
@@ -54,19 +58,27 @@ app.use("/api/reservations", require("./routes/reservationRoutes"));
 app.use("/api/seeker", require("./routes/seekerRoutes"));
 
 const server = http.createServer(app);
+
 const wss = new WebSocket.Server({
   server,
   path: "/ws",
+  clientTracking: true,
   verifyClient: async (info, callback) => {
     try {
       const origin = info.origin || info.req.headers.origin;
-      const isAllowed = corsOptions.origin.includes(origin);
+      console.log("Connection attempt from origin:", origin);
 
-      // Add token verification if needed
-      // const token = info.req.headers.authorization;
-      // const isValidToken = await verifyToken(token);
+      const isAllowed =
+        process.env.NODE_ENV === "development" ||
+        corsOptions.origin.includes(origin);
 
-      callback(isAllowed, 403, "Forbidden");
+      if (isAllowed) {
+        console.log("Connection accepted");
+        callback(true);
+      } else {
+        console.log("Connection rejected - invalid origin");
+        callback(false, 403, "Forbidden");
+      }
     } catch (error) {
       console.error("WebSocket verification error:", error);
       callback(false, 500, "Internal Server Error");
@@ -78,16 +90,53 @@ const clients = new Map();
 
 // Message validation schemas
 const messageSchemas = {
-  identify: (data) => data.userId && data.userType,
-  otp_update: (data) => data.otp && data.reservationId && data.seekerId,
-  section_update: (data) =>
-    typeof data.section === "number" && data.reservationId,
-  timer_update: (data) => typeof data.value === "number" && data.reservationId,
-  payment_update: (data) =>
-    data.method &&
-    data.status &&
-    typeof data.amount === "number" &&
-    data.reservationId,
+  identify: (data) => {
+    return (
+      data.type === "identify" &&
+      typeof data.userId === "string" &&
+      typeof data.userType === "string" &&
+      ["seeker", "provider"].includes(data.userType)
+    );
+  },
+
+  otp_update: (data) => {
+    return (
+      data.type === "otp_update" &&
+      typeof data.seekerId === "string" &&
+      typeof data.otp === "string" &&
+      typeof data.reservationId === "string" &&
+      data.otp.length === 6
+    );
+  },
+
+  section_update: (data) => {
+    return (
+      data.type === "section_update" &&
+      Number.isInteger(data.section) &&
+      data.section >= 0 &&
+      data.section <= 2 &&
+      typeof data.reservationId === "string"
+    );
+  },
+
+  timer_update: (data) => {
+    return (
+      data.type === "timer_update" &&
+      Number.isInteger(data.value) &&
+      data.value >= 0 &&
+      typeof data.reservationId === "string"
+    );
+  },
+
+  payment_update: (data) => {
+    return (
+      data.type === "payment_update" &&
+      typeof data.method === "string" &&
+      typeof data.status === "string" &&
+      typeof data.amount === "number" &&
+      typeof data.reservationId === "string"
+    );
+  },
 };
 
 function heartbeat() {
@@ -95,24 +144,56 @@ function heartbeat() {
 }
 
 function broadcastToReservation(message, reservationId, excludeClient = null) {
-  const messageStr = JSON.stringify(message);
-  clients.forEach((clientInfo, clientId) => {
-    const { ws, reservations } = clientInfo;
+  if (!reservationId) {
+    console.log("Warning: Missing reservationId in broadcast");
+    return false;
+  }
+
+  if (message.type === "otp_update") {
+    console.log("Broadcasting OTP update to seeker:", message.seekerId);
+
+    const messageToSend = {
+      type: "otp_update",
+      otp: message.otp,
+      reservationId: message.reservationId,
+      seekerId: message.seekerId,
+    };
+
+    // Find seeker client and send message
+    const seekerClient = clients.get(message.seekerId);
+    if (seekerClient && seekerClient.ws.readyState === WebSocket.OPEN) {
+      console.log(`Sending OTP to seeker: ${message.seekerId}`);
+      seekerClient.ws.send(JSON.stringify(messageToSend));
+      return true;
+    }
+
+    console.log(`No connected client found for seeker: ${message.seekerId}`);
+    return false;
+  }
+
+  // For other message types
+  let sent = false;
+  clients.forEach((clientInfo) => {
     if (
-      ws !== excludeClient &&
-      ws.readyState === WebSocket.OPEN &&
-      reservations.includes(reservationId)
+      clientInfo.ws !== excludeClient &&
+      clientInfo.ws.readyState === WebSocket.OPEN &&
+      clientInfo.reservations.includes(reservationId)
     ) {
-      ws.send(messageStr);
+      clientInfo.ws.send(JSON.stringify(message));
+      sent = true;
     }
   });
+
+  return sent;
 }
 
 function sendToUser(userId, message) {
   const clientInfo = clients.get(userId);
   if (clientInfo && clientInfo.ws.readyState === WebSocket.OPEN) {
     clientInfo.ws.send(JSON.stringify(message));
+    return true;
   }
+  return false;
 }
 
 wss.on("connection", (ws) => {
@@ -120,62 +201,73 @@ wss.on("connection", (ws) => {
   ws.isAlive = true;
   ws.on("pong", heartbeat);
 
-  let messageCount = 0;
-  const messageLimit = 100;
-  const resetInterval = setInterval(() => {
-    messageCount = 0;
-  }, 60000);
+  // Add userId and reservations arrays immediately
+  ws.userId = null;
+  ws.reservations = [];
 
   ws.on("message", (message) => {
-    // Rate limiting per connection
-    messageCount++;
-    if (messageCount > messageLimit) {
-      ws.send(JSON.stringify({ error: "Too many messages" }));
-      return;
-    }
-
-    const messageStr = message.toString();
-    if (messageStr === "ping") {
-      ws.send("pong");
-      return;
-    }
-
     try {
+      const messageStr = message.toString();
+      if (messageStr === "ping") {
+        ws.send("pong");
+        return;
+      }
+
       const data = JSON.parse(messageStr);
+      console.log("Received message:", data);
 
       if (!data.type || !messageSchemas[data.type]) {
+        console.log("Invalid message type:", data.type);
         throw new Error("Invalid message type");
       }
 
       if (!messageSchemas[data.type](data)) {
+        console.log("Schema validation failed for:", data);
         throw new Error("Invalid message data");
       }
 
       switch (data.type) {
         case "identify":
+          // Update both ws and clients map
+          ws.userId = data.userId;
           clients.set(data.userId, {
             ws,
             userType: data.userType,
+            userId: data.userId,
             reservations: [],
           });
-          ws.userId = data.userId;
+          console.log(`Client identified: ${data.userId} as ${data.userType}`);
           break;
 
         case "otp_update":
-          const targetSeeker = Array.from(clients.values()).find(
-            (client) =>
-              client.userType === "seeker" && client.ws.userId === data.seekerId
+          if (!data.seekerId || !data.otp || !data.reservationId) {
+            throw new Error("Missing required OTP update data");
+          }
+
+          // Store reservation ID for both clients
+          const providerClient = clients.get(ws.userId);
+          const seekerClient = clients.get(data.seekerId);
+
+          if (providerClient) {
+            providerClient.reservations.push(data.reservationId);
+          }
+          if (seekerClient) {
+            seekerClient.reservations.push(data.reservationId);
+          }
+
+          // Broadcast with immediate confirmation
+          const sent = broadcastToReservation(
+            {
+              type: "otp_update",
+              otp: data.otp,
+              reservationId: data.reservationId,
+              seekerId: data.seekerId,
+            },
+            data.reservationId,
+            ws
           );
 
-          if (targetSeeker) {
-            targetSeeker.ws.send(
-              JSON.stringify({
-                type: "otp_update",
-                otp: data.otp,
-                reservationId: data.reservationId,
-              })
-            );
-          }
+          console.log(`OTP broadcast status: ${sent ? "sent" : "failed"}`);
           break;
 
         case "section_update":
@@ -185,10 +277,8 @@ wss.on("connection", (ws) => {
           break;
       }
     } catch (err) {
-      if (!messageStr.includes("ping")) {
-        console.error("Error processing message:", err);
-        ws.send(JSON.stringify({ error: err.message }));
-      }
+      console.error("Error processing message:", err);
+      ws.send(JSON.stringify({ error: err.message }));
     }
   });
 
@@ -201,8 +291,11 @@ wss.on("connection", (ws) => {
     if (ws.userId) {
       clients.delete(ws.userId);
     }
-    clearInterval(resetInterval);
   });
+});
+
+wss.on("error", (error) => {
+  console.error("WebSocket Server Error:", error);
 });
 
 const heartbeatInterval = setInterval(() => {
@@ -241,11 +334,8 @@ const serverInstance = server.listen(port, host, () => {
 process.on("SIGTERM", () => {
   console.log("Received SIGTERM. Starting graceful shutdown...");
   serverInstance.close(() => {
-    wss.close(() => {
-      clearInterval(heartbeatInterval);
-      console.log("Server shutdown complete");
-      process.exit(0);
-    });
+    console.log("Server closed");
+    process.exit(0);
   });
 });
 

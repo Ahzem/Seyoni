@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:seyoni/src/pages/seeker/home/home.dart';
 import 'package:seyoni/src/pages/seeker/order-history/order_history_page.dart';
 import 'package:seyoni/src/widgets/draggable_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/custom_appbar.dart';
 import '../../../widgets/customNavBar/custom_navbar.dart';
 import '../../../widgets/background_widget.dart';
@@ -14,24 +15,14 @@ import '../menu/menupage.dart';
 import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-  });
+  const HomePage({super.key});
 
   @override
   HomePageState createState() => HomePageState();
 }
 
 class HomePageState extends State<HomePage> {
-  int _currentIndex = 2; // Initialize _currentIndex to a valid index
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkPermissions();
-    });
-  }
+  int _currentIndex = 2;
 
   final List<Widget> _pages = [
     const OrderHistoryPage(),
@@ -41,7 +32,26 @@ class HomePageState extends State<HomePage> {
     const MenuPage(),
   ];
 
-  // Function to check and request necessary permissions
+  @override
+  void initState() {
+    super.initState();
+    _initializeWebSocketConnection();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkPermissions();
+    });
+  }
+
+  Future<void> _initializeWebSocketConnection() async {
+    final prefs = await SharedPreferences.getInstance();
+    final seekerId = prefs.getString('seekerId');
+    if (seekerId != null && mounted) {
+      final provider =
+          Provider.of<NotificationProvider>(context, listen: false);
+      await provider.ensureConnection();
+      await provider.identifyUser(seekerId, 'seeker');
+    }
+  }
+
   Future<void> _checkPermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.storage,
@@ -49,21 +59,17 @@ class HomePageState extends State<HomePage> {
       Permission.location,
     ].request();
 
-    // Handle denied permissions (example: showing an alert for denied permissions)
     if (statuses[Permission.storage]?.isDenied ?? false) {
       _showPermissionAlert("Storage");
     }
-
     if (statuses[Permission.camera]?.isDenied ?? false) {
       _showPermissionAlert("Camera");
     }
-
     if (statuses[Permission.location]?.isDenied ?? false) {
       _showPermissionAlert("Location");
     }
   }
 
-  // Function to show an alert when permission is denied
   void _showPermissionAlert(String permissionName) {
     showDialog(
       context: context,
@@ -75,7 +81,7 @@ class HomePageState extends State<HomePage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              openAppSettings(); // Open app settings if the user wants to enable permission manually
+              openAppSettings();
             },
             child: const Text("Open Settings"),
           ),
@@ -90,47 +96,59 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+  // mainpage.dart
   @override
   Widget build(BuildContext context) {
     return PopScope<Object?>(
       canPop: true,
       onPopInvokedWithResult: (bool didPop, Object? result) async {
-        if (didPop) {
-          return;
-        }
+        if (didPop) return;
         await SystemNavigator.pop();
       },
-      child: Stack(
-        children: [
-          const Positioned.fill(
-            child: BackgroundWidget(child: SizedBox.expand()),
-          ),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: const CustomAppBar(),
-            body: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _pages[
-                        _currentIndex], // Display the page based on _currentIndex
-                  ],
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            // Background Layer
+            const Positioned.fill(
+              child: BackgroundWidget(child: SizedBox.expand()),
+            ),
+
+            // Main Content Layer
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: const CustomAppBar(),
+              body: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _pages[_currentIndex],
+                    ],
+                  ),
                 ),
               ),
+              bottomNavigationBar: CustomBottomNavBar(
+                currentIndex: _currentIndex,
+                onTap: onNavBarTapped,
+              ),
             ),
-            bottomNavigationBar: CustomBottomNavBar(
-              currentIndex: _currentIndex,
-              onTap: onNavBarTapped,
+
+            // Draggable Button Layer - On top
+            Positioned.fill(
+              child: Consumer<NotificationProvider>(
+                builder: (context, provider, _) {
+                  debugPrint(
+                      'Building draggable button. isVisible: ${provider.isVisible}, otp: ${provider.otp}');
+                  if (provider.isVisible && provider.otp.isNotEmpty) {
+                    return DraggableOtpButton();
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
             ),
-          ),
-          // const DraggableOtpButton(),
-          Consumer<NotificationProvider>(
-            builder: (context, notificationProvider, child) {
-              return DraggableOtpButton();
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
