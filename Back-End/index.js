@@ -110,8 +110,7 @@ const messageSchemas = {
       data.type === "section_update" &&
       Number.isInteger(data.section) &&
       data.section >= 0 &&
-      data.section <= 2 &&
-      typeof data.reservationId === "string"
+      data.section <= 2
     );
   },
 
@@ -119,8 +118,7 @@ const messageSchemas = {
     return (
       data.type === "timer_update" &&
       Number.isInteger(data.value) &&
-      data.value >= 0 &&
-      typeof data.reservationId === "string"
+      data.value >= 0
     );
   },
 
@@ -129,8 +127,7 @@ const messageSchemas = {
       data.type === "payment_update" &&
       typeof data.method === "string" &&
       typeof data.status === "string" &&
-      typeof data.amount === "number" &&
-      typeof data.reservationId === "string"
+      typeof data.amount === "number"
     );
   },
 };
@@ -140,6 +137,11 @@ function heartbeat() {
 }
 
 function broadcastToReservation(message, reservationId, excludeClient = null) {
+  if (!reservationId) {
+    console.log("Warning: Missing reservationId in broadcast"); // Add debug log
+    return;
+  }
+
   const messageStr = JSON.stringify(message);
   clients.forEach((clientInfo, clientId) => {
     const { ws, reservations } = clientInfo;
@@ -188,12 +190,15 @@ wss.on("connection", (ws) => {
 
     try {
       const data = JSON.parse(messageStr);
+      console.log("Received message:", data);
 
       if (!data.type || !messageSchemas[data.type]) {
+        console.log("Invalid message type:", data.type);
         throw new Error("Invalid message type");
       }
 
       if (!messageSchemas[data.type](data)) {
+        console.log("Schema validation failed for:", data);
         throw new Error("Invalid message data");
       }
 
