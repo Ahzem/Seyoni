@@ -1,7 +1,7 @@
-const url = 'https://seyoni.onrender.com';
+// const url = 'https://seyoni.onrender.com';
 const wsUrl = 'wss://seyoni.onrender.com/ws';
 // const wsUrl = 'ws://localhost:3000/ws';
-// const url = 'http://localhost:3000';
+const url = 'http://localhost:3000';
 const registerSeekersUrl = '$url/api/seeker/signup';
 const loginSeekersUrl = '$url/api/seeker/signin';
 const verifyOtpUrl = '$url/api/seeker/verifySignUpOtp';
@@ -29,3 +29,6 @@ const updateProviderStatusUrl = '$url/api/provider';
 
 const acceptReservationUrl = '$url/api/reservations';
 const rejectReservationUrl = '$url/api/reservations';
+
+const generateOtpUrl = '$url/api/otp/generateOtp';
+const saveTempUserUrl = '$url/api/otp/saveTempUser';

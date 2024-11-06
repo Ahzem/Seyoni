@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
 import 'package:seyoni/src/pages/provider/accepted/accepted_reservations_page.dart';
 import 'package:seyoni/src/pages/provider/completed/completed_reservations_page.dart';
@@ -43,13 +45,21 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   void initState() {
     super.initState();
     _checkAuthAndInit();
+    // Override the back button behavior
+    SystemChannels.platform.setMethodCallHandler((call) async {
+      if (call.method == 'SystemNavigator.pop') {
+        // Prevent the app from closing
+        return Future.value();
+      }
+    });
   }
 
   Future<void> _checkAuthAndInit() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? providerId = prefs.getString('providerId');
+    String? token = prefs.getString('token');
 
-    if (providerId == null) {
+    if (providerId == null || token == null || JwtDecoder.isExpired(token)) {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -58,12 +68,12 @@ class ProviderHomePageState extends State<ProviderHomePage> {
       return;
     }
 
-    // Initialize WebSocket connection
+    // Initialize provider services
     if (mounted) {
       final provider =
           Provider.of<NotificationProvider>(context, listen: false);
       await provider.ensureConnection();
-      await provider.identifyProvider(providerId); // Use the new method
+      await provider.identifyProvider(providerId);
     }
 
     _fetchReservations();
@@ -233,6 +243,11 @@ class ProviderHomePageState extends State<ProviderHomePage> {
     }
   }
 
+  Future<bool> _onWillPop() async {
+    // Prevent the app from navigating back
+    return false;
+  }
+
   Future<void> _logout() async {
     await LogoutService.logout(context, true);
   }
@@ -240,6 +255,7 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   @override
   void dispose() {
     _timer?.cancel();
+    SystemChannels.platform.setMethodCallHandler(null);
     super.dispose();
   }
 
@@ -247,90 +263,93 @@ class ProviderHomePageState extends State<ProviderHomePage> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
 
-    return BackgroundWidget(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: BackgroundWidget(
+        child: Scaffold(
           backgroundColor: Colors.transparent,
-          title: Image.asset(
-            'assets/images/logo.png',
-            height: height * 0.05,
-            fit: BoxFit.contain,
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout, color: kPrimaryColor),
-              onPressed: _logout,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            title: Image.asset(
+              'assets/images/logo.png',
+              height: height * 0.05,
+              fit: BoxFit.contain,
             ),
-          ],
-          automaticallyImplyLeading: false, // Remove back arrow
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              _buildProfileCard(),
-              const SizedBox(height: 20),
-              _buildSummaryCard(),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  PrimaryOutlinedButton(
-                    text: 'Profile',
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ProviderProfile()),
-                      );
-                    },
-                  ),
-                  PrimaryOutlinedButton(
-                    text: 'Settings',
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildReservationCard(
-                        context,
-                        'Accepted Reservations',
-                        Icons.check_circle,
-                        const AcceptedReservationsPage(),
-                        acceptedCount,
-                      ),
-                      _buildReservationCard(
-                        context,
-                        'Rejected Reservations',
-                        Icons.cancel,
-                        const RejectedReservationsPage(),
-                        rejectedCount,
-                      ),
-                      _buildReservationCard(
-                        context,
-                        'New Requests',
-                        Icons.new_releases,
-                        const NewRequestsPage(),
-                        newRequestsCount,
-                      ),
-                      _buildReservationCard(
-                        context,
-                        'Completed Reservations',
-                        Icons.verified,
-                        const CompletedReservationsPage(),
-                        completedCount,
-                      ),
-                    ],
-                  ),
-                ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout, color: kPrimaryColor),
+                onPressed: _logout,
               ),
             ],
+            automaticallyImplyLeading: false, // Remove back arrow
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                _buildProfileCard(),
+                const SizedBox(height: 20),
+                _buildSummaryCard(),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    PrimaryOutlinedButton(
+                      text: 'Profile',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ProviderProfile()),
+                        );
+                      },
+                    ),
+                    PrimaryOutlinedButton(
+                      text: 'Settings',
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildReservationCard(
+                          context,
+                          'Accepted Reservations',
+                          Icons.check_circle,
+                          const AcceptedReservationsPage(),
+                          acceptedCount,
+                        ),
+                        _buildReservationCard(
+                          context,
+                          'Rejected Reservations',
+                          Icons.cancel,
+                          const RejectedReservationsPage(),
+                          rejectedCount,
+                        ),
+                        _buildReservationCard(
+                          context,
+                          'New Requests',
+                          Icons.new_releases,
+                          const NewRequestsPage(),
+                          newRequestsCount,
+                        ),
+                        _buildReservationCard(
+                          context,
+                          'Completed Reservations',
+                          Icons.verified,
+                          const CompletedReservationsPage(),
+                          completedCount,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

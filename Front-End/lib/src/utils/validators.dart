@@ -46,7 +46,7 @@ class Validators {
     if (value == null || value.isEmpty) {
       return 'Please enter your phone number';
     }
-    final phoneRegex = RegExp(r'^[0-9]{10}$');
+    final phoneRegex = RegExp(r'^[0-9]{9}$');
     if (!phoneRegex.hasMatch(value)) {
       return 'Please enter a valid phone number';
     }
