@@ -98,20 +98,16 @@ class NotificationProvider with ChangeNotifier {
       }
 
       if (data['type'] == 'otp_update') {
-        final targetSeekerId = data['seekerId'];
-        debugPrint(
-            'OTP Update received - Target: $targetSeekerId, Current: $_currentSeekerId');
+        debugPrint('Processing OTP update message: $data');
 
-        if (targetSeekerId == _currentSeekerId) {
-          setState(() {
-            _otp = data['otp'];
-            _reservationId = data['reservationId'];
-            _isVisible = true;
-            _currentSection = 0;
-            debugPrint('Updated OTP state - OTP: $_otp, Visible: $_isVisible');
-          });
-          notifyListeners();
-        }
+        // Update state directly without checking seekerId
+        setState(() {
+          _otp = data['otp'];
+          _reservationId = data['reservationId'];
+          _isVisible = true;
+          _currentSection = 0;
+          debugPrint('State updated - OTP: $_otp, isVisible: $_isVisible');
+        });
       }
 
       // Handle other message types

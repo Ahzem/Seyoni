@@ -282,13 +282,9 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
             'DraggableOtpButton build called. isVisible: ${provider.isVisible}, otp: ${provider.otp}');
 
         // Add debug logging
-        if (!provider.isVisible) {
-          debugPrint('Button hidden - visibility false');
-          return const SizedBox.shrink();
-        }
-
-        if (provider.otp.isEmpty) {
-          debugPrint('Button hidden - empty OTP');
+        if (!provider.isVisible || provider.otp.isEmpty) {
+          debugPrint(
+              'Button hidden - visibility: ${provider.isVisible}, otp: ${provider.otp}');
           return const SizedBox.shrink();
         }
 
@@ -318,7 +314,6 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
                   });
                 },
                 onTap: () {
-                  debugPrint('OTP Button tapped - showing dialog');
                   _showDialog();
                 },
                 child: Container(

@@ -62,6 +62,7 @@ class HomePageState extends State<HomePage> {
     }
 
     if (mounted) {
+      debugPrint('Initializing NotificationProvider for seeker: $seekerId');
       final provider =
           Provider.of<NotificationProvider>(context, listen: false);
       await provider.ensureConnection();
@@ -181,17 +182,15 @@ class HomePageState extends State<HomePage> {
               ),
 
               // Draggable Button Layer - On top
-              Positioned.fill(
-                child: Consumer<NotificationProvider>(
-                  builder: (context, provider, _) {
-                    debugPrint(
-                        'Building draggable button. isVisible: ${provider.isVisible}, otp: ${provider.otp}');
-                    if (provider.isVisible && provider.otp.isNotEmpty) {
-                      return DraggableOtpButton();
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
+              Consumer<NotificationProvider>(
+                builder: (context, provider, _) {
+                  debugPrint(
+                      'Building draggable button. isVisible: ${provider.isVisible}, otp: ${provider.otp}');
+                  if (provider.isVisible && provider.otp.isNotEmpty) {
+                    return DraggableOtpButton();
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
             ],
           ),
