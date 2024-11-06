@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/services/websocket_service.dart';
 
 class NotificationProvider with ChangeNotifier {
@@ -83,6 +85,30 @@ class NotificationProvider with ChangeNotifier {
       await _webSocket.connect();
       // Add small delay to ensure connection is ready
       await Future.delayed(const Duration(milliseconds: 500));
+    }
+  }
+
+  Future<void> checkActiveOtp(String seekerId) async {
+    try {
+      debugPrint('Checking active OTP for seeker: $seekerId');
+      final response = await http.get(
+        Uri.parse('$url/api/reservations/active-otp/$seekerId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['hasActiveOtp']) {
+          _otp = data['otp'];
+          _reservationId = data['reservationId'];
+          _isVisible = true;
+          _currentSection = data['section'] ?? 0;
+          debugPrint('Active OTP found - OTP: $_otp, isVisible: $_isVisible');
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error checking active OTP: $e');
     }
   }
 
