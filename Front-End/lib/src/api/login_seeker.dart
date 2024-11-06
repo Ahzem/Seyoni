@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../config/route.dart';
@@ -40,10 +38,10 @@ Future<void> loginSeeker(
           'profileImageUrl', jsonResponse['seeker']['profileImageUrl']);
       await prefs.setString('address', jsonResponse['seeker']['address']);
 
-      final seekerId = jsonResponse['seeker']['_id'];
-      Provider.of<NotificationProvider>(context, listen: false)
-        ..ensureConnection()
-        ..identifyUser(seekerId, 'seeker');
+      // final seekerId = jsonResponse['seeker']['_id'];
+      // Provider.of<NotificationProvider>(context, listen: false)
+      //   ..ensureConnection()
+      //   ..identifyUser(seekerId, 'seeker');
 
       // Check if the widget is still mounted before using the context
 

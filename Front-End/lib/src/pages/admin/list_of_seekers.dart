@@ -26,26 +26,29 @@ class ListOfSeekersState extends State<ListOfSeekers> {
 
   Future<void> _fetchSeekers() async {
     try {
+      if (getSeekersUrl.isEmpty || getSeekersUrl == 'N/A') {
+        throw Exception('Invalid API URL');
+      }
+
       final response = await http.get(Uri.parse(getSeekersUrl));
+
       if (response.statusCode == 200) {
         setState(() {
           seekers = List<Map<String, dynamic>>.from(jsonDecode(response.body));
           isLoading = false;
+          errorMessage = '';
         });
       } else {
-        throw Exception('Failed to load seekers ${response.statusCode}');
+        setState(() {
+          errorMessage = 'Failed to load seekers: ${response.statusCode}';
+          isLoading = false;
+        });
       }
     } catch (e) {
       setState(() {
-        errorMessage = 'Failed to load seekers: $e';
+        errorMessage = 'Error: ${e.toString()}';
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
   }
 
@@ -65,16 +68,16 @@ class ListOfSeekersState extends State<ListOfSeekers> {
                 Navigator.of(context).pop();
               },
             ),
-            title: const Text('Service Seekers',
-                style:kSubtitleTextStyle2),
+            title: const Text('Service Seekers', style: kSubtitleTextStyle2),
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
           ),
           body: isLoading
-              ? const Center(child: CircularProgressIndicator(
-                color: kPrimaryColor,
-              ))
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  color: kPrimaryColor,
+                ))
               : errorMessage.isNotEmpty
                   ? Center(
                       child: Text(
@@ -84,67 +87,71 @@ class ListOfSeekersState extends State<ListOfSeekers> {
                       ),
                     )
                   : ListView.builder(
-                    padding: const EdgeInsets.all(10),
-                    itemCount: seekers.length,
-                    itemBuilder: (context, index) {
-                      final seeker = seekers[index];
-                      final fullName = '${seeker['firstName'] ?? 'N/A'} ${seeker['lastName'] ?? 'N/A'}';
-                      final email = seeker['email'] ?? 'N/A';
-                      return Card(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  seeker['profileImageUrl'] ?? 'https://via.placeholder.com/150',
+                      padding: const EdgeInsets.all(10),
+                      itemCount: seekers.length,
+                      itemBuilder: (context, index) {
+                        final seeker = seekers[index];
+                        final fullName =
+                            '${seeker['firstName'] ?? 'N/A'} ${seeker['lastName'] ?? 'N/A'}';
+                        final email = seeker['email'] ?? 'N/A';
+                        return Card(
+                          color: Colors.white.withOpacity(0.2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    seeker['profileImageUrl'] ??
+                                        'https://via.placeholder.com/150',
+                                  ),
+                                  radius: 30,
                                 ),
-                                radius: 30,
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      fullName,
-                                      style: kCardTitleTextStyle,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                    Text(
-                                      email,
-                                      style: kBodyTextStyle,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: TextButton(
-                                        onPressed: () {
-                                          // Navigate to manage seeker page
-                                        },
-                                        child: const Text(
-                                          'Manage',
-                                          style: TextStyle(color: Colors.white),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        fullName,
+                                        style: kCardTitleTextStyle,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                      Text(
+                                        email,
+                                        style: kBodyTextStyle,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: TextButton(
+                                          onPressed: () {
+                                            // Navigate to manage seeker page
+                                          },
+                                          child: const Text(
+                                            'Manage',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
         ),
       ],
     );

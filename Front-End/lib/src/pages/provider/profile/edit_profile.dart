@@ -24,7 +24,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _hourlyRateController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
 
   Map<String, PlatformFile?> documents = {
     'National ID': null,

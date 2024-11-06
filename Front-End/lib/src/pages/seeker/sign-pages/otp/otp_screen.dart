@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../api/register_seeker.dart';
@@ -86,35 +87,44 @@ class OtpScreenState extends State<OtpScreen> {
   }
 
   Future<void> _verifyCode() async {
-    final otp = _controller1.text +
-        _controller2.text +
-        _controller3.text +
-        _controller4.text +
-        _controller5.text +
-        _controller6.text;
+    try {
+      final otp = _controller1.text +
+          _controller2.text +
+          _controller3.text +
+          _controller4.text +
+          _controller5.text +
+          _controller6.text;
 
-    final userData =
-        ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
-    if (userData == null) {
-      setState(() {
-        _errorMessage = 'User data is missing. Please try again.';
-        _isErrorVisible = true;
-      });
-      return;
-    }
+      final userData =
+          ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+      if (userData == null) {
+        setState(() {
+          _errorMessage = 'User data is missing. Please try again.';
+          _isErrorVisible = true;
+        });
+        return;
+      }
 
-    final success = await verifyOtpAndRegisterSeeker(userData, otp, context);
-    if (!mounted) return;
+      // Debug logs
+      if (kDebugMode) {
+        print('Verifying OTP: $otp');
+        print('Phone: ${userData['phone']}');
+      }
 
-    if (success) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('firstName', userData['firstName'].toString());
-      await prefs.setString('lastName', userData['lastName'].toString());
-      await prefs.setString('email', userData['email'].toString());
-      showDialog(
-        context: context,
-        builder: (context) {
-          return VerificationSuccess(
+      final success = await verifyOtpAndRegisterSeeker(userData, otp, context);
+
+      if (!mounted) return;
+
+      if (success) {
+        // Success handling
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('firstName', userData['firstName'].toString());
+        await prefs.setString('lastName', userData['lastName'].toString());
+        await prefs.setString('email', userData['email'].toString());
+
+        showDialog(
+          context: context,
+          builder: (context) => VerificationSuccess(
             onPressed: () {
               Navigator.pushNamedAndRemoveUntil(
                 context,
@@ -122,12 +132,21 @@ class OtpScreenState extends State<OtpScreen> {
                 (route) => false,
               );
             },
-          );
-        },
-      );
-    } else {
+          ),
+        );
+      } else {
+        setState(() {
+          _errorMessage =
+              'The code you entered is incorrect. Please try again.';
+          _isErrorVisible = true;
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error verifying OTP: $e');
+      }
       setState(() {
-        _errorMessage = 'The code you entered is incorrect. Please try again.';
+        _errorMessage = 'An error occurred. Please try again.';
         _isErrorVisible = true;
       });
     }

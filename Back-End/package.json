@@ -18,6 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.670.0",
+    "@aws-sdk/client-sns": "^3.682.0",
     "@aws-sdk/lib-storage": "^3.667.0",
     "aws-sdk": "^2.1691.0",
     "axios": "^1.7.7",
@@ -43,6 +44,7 @@
     "path-to-regexp": "^8.2.0",
     "send": "^0.19.0",
     "serve-static": "^1.16.2",
+    "twilio": "^5.3.5",
     "ws": "^8.18.0"
   },
   "devDependencies": {
