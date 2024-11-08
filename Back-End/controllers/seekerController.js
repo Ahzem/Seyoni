@@ -16,25 +16,23 @@ exports.signUpSeeker = async (req, res) => {
   try {
     const { firstName, lastName, email, phone, password } = req.body;
     if (!firstName || !lastName || !phone) {
-      return res
-        .status(400)
-        .json({ error: "firstName, lastName, and phone are required" });
+      return res.status(400).json({
+        error: "firstName, lastName, and phone are required",
+      });
     }
 
     const existingSeeker = await Seeker.findOne({
       $or: [{ email }, { phone }],
     });
     if (existingSeeker) {
-      return res
-        .status(409)
-        .json({ error: "Email or phone number already exists" });
+      return res.status(409).json({
+        error: "Email or phone number already exists",
+      });
     }
 
-    const seeker = new Seeker({ firstName, lastName, email, phone, password });
-    await seeker.save();
-
-    const token = generateToken(seeker._id);
-    res.status(201).json({ token, seeker });
+    await generateOtp(phone); // This will now send SMS
+    await saveTempUser(phone, { firstName, lastName, email, phone, password });
+    res.status(200).json({ message: "OTP sent successfully" });
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ error: "Server error" });
@@ -45,25 +43,51 @@ exports.signUpSeeker = async (req, res) => {
 exports.verifySignUpOtp = async (req, res) => {
   try {
     const { phone, otp } = req.body;
+    console.log("Verifying signup OTP:", { phone, otp });
+
     if (!verifyOtp(phone, otp)) {
       return res.status(400).json({ error: "Invalid OTP" });
     }
 
+    // Get temp user data
     const tempUserData = getTempUser(phone);
+    console.log("Retrieved temp user data:", tempUserData);
+
     if (!tempUserData) {
-      return res
-        .status(400)
-        .json({ error: "No user data found for this phone number" });
+      return res.status(400).json({
+        error: "No user data found for this phone number",
+      });
     }
 
-    const seeker = new Seeker(tempUserData);
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(tempUserData.password, 10);
+
+    // Create new seeker with hashed password
+    const seeker = new Seeker({
+      ...tempUserData,
+      password: hashedPassword,
+    });
+
     await seeker.save();
+    console.log("Seeker saved successfully");
+
+    // Clean up
     deleteTempUser(phone);
-    res
-      .status(201)
-      .json({ message: "User registered successfully", seekerId: seeker._id });
+
+    const token = generateToken(seeker._id);
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      seeker: {
+        _id: seeker._id,
+        firstName: seeker.firstName,
+        lastName: seeker.lastName,
+        email: seeker.email,
+        phone: seeker.phone,
+      },
+    });
   } catch (error) {
-    console.error("Error verifying OTP:", error);
+    console.error("Error in verifySignUpOtp:", error);
     res.status(500).json({ error: "Server error" });
   }
 };

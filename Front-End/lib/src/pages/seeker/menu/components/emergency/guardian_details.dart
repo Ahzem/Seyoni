@@ -7,10 +7,10 @@ class GuardianDetailsPage extends StatefulWidget {
   const GuardianDetailsPage({super.key});
 
   @override
-  _GuardianDetailsPageState createState() => _GuardianDetailsPageState();
+  GuardianDetailsPageState createState() => GuardianDetailsPageState();
 }
 
-class _GuardianDetailsPageState extends State<GuardianDetailsPage> {
+class GuardianDetailsPageState extends State<GuardianDetailsPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController relationshipController = TextEditingController();

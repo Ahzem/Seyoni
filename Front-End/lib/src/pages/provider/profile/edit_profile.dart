@@ -24,7 +24,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _hourlyRateController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
 
   Map<String, PlatformFile?> documents = {
     'National ID': null,
@@ -287,7 +286,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     IconButton(
                       icon: const Icon(Icons.remove_red_eye, color: kPrimaryColor),
                       onPressed: () {
-                        // TODO: Implement PDF preview
                       },
                       tooltip: 'Preview',
                     ),
@@ -358,7 +356,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         return;
       }
 
-      // TODO: Implement save logic with documents
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
       );

@@ -51,6 +51,18 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
+// Add method for provider identification
+  Future<void> identifyProvider(String providerId) async {
+    debugPrint('Identifying provider - ID: $providerId');
+    await ensureConnection();
+    await sendMessage({
+      'type': 'identify',
+      'userId': providerId,
+      'userType': 'provider' // Explicitly set userType as provider
+    });
+    debugPrint('Provider identified with ID: $providerId');
+  }
+
   // Add this method to expose WebSocket functionality
   Future<void> sendMessage(Map<String, dynamic> message) async {
     await _webSocket.sendMessage(message);
@@ -86,20 +98,16 @@ class NotificationProvider with ChangeNotifier {
       }
 
       if (data['type'] == 'otp_update') {
-        final targetSeekerId = data['seekerId'];
-        debugPrint(
-            'OTP Update received - Target: $targetSeekerId, Current: $_currentSeekerId');
+        debugPrint('Processing OTP update message: $data');
 
-        if (targetSeekerId == _currentSeekerId) {
-          setState(() {
-            _otp = data['otp'];
-            _reservationId = data['reservationId'];
-            _isVisible = true;
-            _currentSection = 0;
-            debugPrint('Updated OTP state - OTP: $_otp, Visible: $_isVisible');
-          });
-          notifyListeners();
-        }
+        // Update state directly without checking seekerId
+        setState(() {
+          _otp = data['otp'];
+          _reservationId = data['reservationId'];
+          _isVisible = true;
+          _currentSection = 0;
+          debugPrint('State updated - OTP: $_otp, isVisible: $_isVisible');
+        });
       }
 
       // Handle other message types
@@ -332,7 +340,12 @@ class NotificationProvider with ChangeNotifier {
     _isTimerActive = false;
     _paymentMethod = 'cash';
     _paymentStatus = 'pending';
+    _currentSeekerId = '';
     _notifications.clear();
+
+    // Close WebSocket connection
+    _webSocket.dispose();
+
     notifyListeners();
   }
 

@@ -182,8 +182,6 @@ class HiringFormState extends State<HiringForm> {
       }
     } catch (e) {
       // Handle the error, e.g., show a message to the user
-      print(
-          'Error occurred while getting address from latitude and longitude: $e');
     }
     // Return latitude and longitude as a fallback
     return '${position.latitude},${position.longitude}';
@@ -339,7 +337,6 @@ class HiringFormState extends State<HiringForm> {
                             });
                           } else {
                             // Handle the case where the address is empty
-                            print('Address is empty');
                           }
                         }
                       },

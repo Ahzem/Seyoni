@@ -9,10 +9,10 @@ class RateUsPage extends StatefulWidget {
   const RateUsPage({super.key});
 
   @override
-  _RateUsPageState createState() => _RateUsPageState();
+  RateUsPageState createState() => RateUsPageState();
 }
 
-class _RateUsPageState extends State<RateUsPage> {
+class RateUsPageState extends State<RateUsPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _feedbackController = TextEditingController();
   double _rating = 0;

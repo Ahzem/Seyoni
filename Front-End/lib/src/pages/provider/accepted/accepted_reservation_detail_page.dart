@@ -356,8 +356,7 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                       text: 'Track',
                       onPressed: () async {
                         final locationString = reservation?['location'] ?? '';
-                        print(
-                            'Location String: $locationString'); // Debug print
+                        // Debug print
 
                         final startIndex = locationString.indexOf('(');
                         final endIndex = locationString.indexOf(')');
