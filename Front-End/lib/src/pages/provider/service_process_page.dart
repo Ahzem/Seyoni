@@ -113,7 +113,7 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
     });
   }
 
-  void _stopTimer() {
+  void stopTimer() {
     _timer?.cancel();
     if (!_disposed) {
       _safeSetState(() {

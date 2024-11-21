@@ -110,47 +110,74 @@ class SignUpPage extends StatelessWidget {
                       SignUpButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            final userData = await validateSeekerData(
-                              context,
-                              firstNameController,
-                              lastNameController,
-                              emailController,
-                              phoneNumberController,
-                              passwordController,
-                            );
-                            if (userData != null) {
-                              bool exists = await checkSeekerExists(
-                                emailController.text,
-                                phoneNumberController.text,
+                            try {
+                              final userData = await validateSeekerData(
                                 context,
+                                firstNameController,
+                                lastNameController,
+                                emailController,
+                                phoneNumberController,
+                                passwordController,
                               );
-                              if (exists) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlredyExist(
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, AppRoutes.signIn);
-                                      },
-                                    );
-                                  },
-                                );
-                              } else {
-                                // Save temporary user data
-                                await saveTempUser(
+
+                              if (userData != null) {
+                                bool exists = await checkSeekerExists(
+                                  emailController.text,
                                   phoneNumberController.text,
-                                  userData,
+                                  context,
                                 );
 
-                                // Generate OTP and navigate to OTP screen
-                                await generateOtp(phoneNumberController.text);
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.otppage,
-                                  arguments: userData,
-                                );
+                                if (exists) {
+                                  if (!context.mounted) return;
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlredyExist(
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                              context, AppRoutes.signIn);
+                                        },
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  // Save temporary user data first
+                                  await saveTempUser(
+                                    phoneNumberController.text,
+                                    userData,
+                                  );
+                                  // Inside SignUpButton onPressed:
+                                  String formattedPhone = phoneNumberController
+                                      .text
+                                      .replaceAll(' ', '');
+                                  if (!formattedPhone.startsWith('+')) {
+                                    if (formattedPhone.startsWith('94')) {
+                                      formattedPhone = '+$formattedPhone';
+                                    } else {
+                                      formattedPhone = '+94$formattedPhone';
+                                    }
+                                  }
+
+                                  userData['phone'] =
+                                      formattedPhone; // Update phone number in userData
+                                  await generateOtp(formattedPhone);
+
+                                  if (!context.mounted) return;
+                                  Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.otppage,
+                                    arguments: userData,
+                                  );
+                                }
                               }
+                            } catch (e) {
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(e.toString()),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
                             }
                           }
                         },

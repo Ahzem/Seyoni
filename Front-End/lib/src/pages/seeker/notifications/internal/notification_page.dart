@@ -17,9 +17,6 @@ class NotificationPageState extends State<NotificationPage> {
     final notifications =
         Provider.of<NotificationProvider>(context).notifications;
 
-    print(
-        'Building NotificationPage with ${notifications.length} notifications');
-
     return Stack(
       children: [
         // Background image

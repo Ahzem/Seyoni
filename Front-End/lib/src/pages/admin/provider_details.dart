@@ -51,15 +51,18 @@ class _ProviderDetailsState extends State<ProviderDetails> {
 
   Future<void> _approveProvider() async {
     try {
-      final response = await http.post(
+      final response = await http.patch(
         Uri.parse('$updateProviderStatusUrl/${widget.providerId}'),
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'isApproved': true}),
       );
+
       if (response.statusCode == 200) {
         Navigator.pop(context, true);
       } else {
-        throw Exception('Failed to approve provider ${response.statusCode}');
+        final errorBody = jsonDecode(response.body);
+        throw Exception(errorBody['message'] ??
+            'Failed to approve provider ${response.statusCode}');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

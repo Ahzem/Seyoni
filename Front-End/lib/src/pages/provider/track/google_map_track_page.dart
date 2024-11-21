@@ -11,7 +11,6 @@ import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import 'package:seyoni/src/pages/provider/service_process_page.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:provider/provider.dart';
 
 class GoogleMapsTrackPage extends StatefulWidget {
   final LatLng seekerLocation;
@@ -182,7 +181,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     return (100000 + (Random().nextInt(900000))).toString();
   }
 
-  Future<void> _sendOtp(String seekerId, String reservationId) async {
+  Future<void> sendOtp(String seekerId, String reservationId) async {
     final provider = Provider.of<NotificationProvider>(context, listen: false);
 
     // Ensure connection before sending OTP

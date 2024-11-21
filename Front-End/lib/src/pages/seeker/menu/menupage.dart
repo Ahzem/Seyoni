@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/config/route.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import 'package:seyoni/src/pages/seeker/menu/components/payment/add_payement_method.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seyoni/src/pages/seeker/menu/components/about_uspage.dart';
 import '../../../constants/constants_font.dart';
@@ -388,9 +389,8 @@ class MenuPageState extends State<MenuPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AboutUsPage()
-                      ),
-                      );// Add your onPressed logic here
+                      MaterialPageRoute(builder: (context) => AboutUsPage()),
+                    ); // Add your onPressed logic here
                   },
                 ),
                 const SizedBox(height: 10),

@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:seyoni/src/pages/seeker/sign-pages/signin_page.dart';
+import 'package:seyoni/src/services/logout_service.dart';
 import 'dart:ui';
-import '../../services/auth.dart';
 import '../../pages/seeker/menu/components/menu_item.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuSignOut extends StatelessWidget {
   const MenuSignOut({
     super.key,
   });
 
+  // In menu.dart
   Future<void> _signOut(BuildContext context) async {
-    await AuthService().signOut();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const SignInPage()),
-    );
+    await LogoutService.logout(context, false);
   }
 
   @override
