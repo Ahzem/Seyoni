@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:seyoni/src/widgets/background_widget.dart';
 import 'package:file_picker/file_picker.dart';
 
+// EditProfilePage is a stateful widget that allows users to edit their profile information.
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
 
@@ -13,11 +14,18 @@ class EditProfilePage extends StatefulWidget {
   State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
+// State class for EditProfilePage
 class _EditProfilePageState extends State<EditProfilePage> {
+  // Variable to hold the selected image file
   File? _imageFile;
+  
+  // Key to identify the form
   final _formKey = GlobalKey<FormState>();
+  
+  // Image picker instance to pick images from gallery or camera
   final _picker = ImagePicker();
   
+  // Text editing controllers for various input fields
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _professionController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
@@ -25,6 +33,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
+  // Map to hold documents with their respective file picker results
   Map<String, PlatformFile?> documents = {
     'National ID': null,
     'Police Report': null,
@@ -35,6 +44,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        // Background widget that fills the entire screen
         const Positioned.fill(
           child: BackgroundWidget(child: SizedBox.expand()),
         ),
@@ -91,6 +101,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  // Widget to build the profile picture section
   Widget _buildProfilePicture() {
     return Stack(
       alignment: Alignment.center,
@@ -128,6 +139,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  // Widget to build the personal information section
   Widget _buildPersonalInfo() {
     return Column(
       children: [
@@ -174,6 +186,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  // Widget to build a text field with specified properties
   Widget _buildTextField({
     required TextEditingController controller,
     required IconData icon,
@@ -202,6 +215,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  // Function to pick an image from the specified source
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
@@ -211,6 +225,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  // Function to pick a document of the specified type
   Future<void> _pickDocument(String documentType) async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -230,6 +245,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  // Widget to build the documents section
   Widget _buildDocumentsSection() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -252,6 +268,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  // Widget to build a document item with upload and delete options
   Widget _buildDocumentItem({
     required String title,
     required PlatformFile? file,
@@ -286,6 +303,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     IconButton(
                       icon: const Icon(Icons.remove_red_eye, color: kPrimaryColor),
                       onPressed: () {
+                        // Preview document functionality can be added here
                       },
                       tooltip: 'Preview',
                     ),
@@ -338,6 +356,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  // Function to save the profile information
   void _saveProfile() {
     if (_formKey.currentState!.validate()) {
       // Validate required documents
