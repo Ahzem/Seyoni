@@ -20,7 +20,7 @@ class DraggableOtpButtonState extends State<DraggableOtpButton> {
   Timer? _timer;
   Timer? _debounceTimer;
   bool _isDialogOpen = false;
-  bool _dialogVisible = false;
+  final bool _dialogVisible = false;
 
   @override
   void initState() {
