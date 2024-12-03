@@ -41,7 +41,7 @@ Future<bool> checkSeekerExists(
       return jsonResponse['exists'];
     } else {
       if (kDebugMode) {
-        print('Failed to check seeker existence');
+        debugPrint('Failed to check seeker existence');
       }
       return false;
     }

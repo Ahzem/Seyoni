@@ -109,15 +109,28 @@ class WebSocketService {
         if (message == 'pong') return;
         try {
           debugPrint('WebSocket received: $message');
+
+          // Parse message if it's a string
+          dynamic parsedMessage = message;
+          if (message is String) {
+            try {
+              parsedMessage = json.decode(message);
+            } catch (e) {
+              debugPrint('Error parsing message: $e');
+              return;
+            }
+          }
+
+          // Notify listeners with parsed message
           for (var listener in _messageListeners) {
-            listener(message);
+            listener(parsedMessage);
           }
         } catch (e) {
           debugPrint('Error processing message: $e');
         }
       },
       onError: (error) {
-        debugPrint('WebSocket Error: $error');
+        debugPrint('WebSocket error: $error');
         _handleDisconnect('Stream error: $error');
       },
       onDone: () {

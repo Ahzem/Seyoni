@@ -107,8 +107,8 @@ class OtpScreenState extends State<OtpScreen> {
 
       // Debug logs
       if (kDebugMode) {
-        print('Verifying OTP: $otp');
-        print('Phone: ${userData['phone']}');
+        debugPrint('Verifying OTP: $otp');
+        debugPrint('Phone: ${userData['phone']}');
       }
 
       final success = await verifyOtpAndRegisterSeeker(userData, otp, context);
@@ -143,7 +143,7 @@ class OtpScreenState extends State<OtpScreen> {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Error verifying OTP: $e');
+        debugPrint('Error verifying OTP: $e');
       }
       setState(() {
         _errorMessage = 'An error occurred. Please try again.';
