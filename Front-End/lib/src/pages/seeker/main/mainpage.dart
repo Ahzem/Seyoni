@@ -67,6 +67,9 @@ class HomePageState extends State<HomePage> {
           Provider.of<NotificationProvider>(context, listen: false);
       await provider.ensureConnection();
       await provider.identifyUser(seekerId, 'seeker');
+
+      // Check for active OTP
+      await provider.checkActiveOtp(seekerId);
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {

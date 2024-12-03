@@ -51,4 +51,29 @@ router.patch(
   reservationController.updatePayment
 );
 
+// Add this in reservationRoutes.js
+router.get("/active-otp/:seekerId", async (req, res) => {
+  try {
+    const seekerId = req.params.seekerId;
+    const activeReservation = await Reservation.findOne({
+      "seeker.id": seekerId,
+      status: "active",
+      otp: { $exists: true },
+    });
+
+    if (activeReservation && activeReservation.otp) {
+      res.json({
+        hasActiveOtp: true,
+        otp: activeReservation.otp,
+        reservationId: activeReservation._id,
+        section: activeReservation.section || 0,
+      });
+    } else {
+      res.json({ hasActiveOtp: false });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

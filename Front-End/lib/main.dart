@@ -1,6 +1,7 @@
 // main.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seyoni/src/pages/seeker/profile_edit/profile_edit.dart';
 import 'package:seyoni/src/services/websocket_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -92,6 +93,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: _getInitialPage(),
+      onGenerateRoute: generateRoute,
       routes: {
         AppRoutes.instruction: (context) => const InstructionPage(),
         AppRoutes.signIn: (context) => const SignInPage(),
@@ -113,6 +115,7 @@ class MyApp extends StatelessWidget {
             const ListOfRegistrationRequests(),
         AppRoutes.listOfSeekers: (context) => const ListOfSeekers(),
         AppRoutes.listOfProviders: (context) => const ListOfProviders(),
+        AppRoutes.editProfile: (context) => const ProfileEditPage(),
       },
     );
   }

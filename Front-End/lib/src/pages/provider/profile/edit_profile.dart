@@ -355,7 +355,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         );
         return;
       }
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
       );
