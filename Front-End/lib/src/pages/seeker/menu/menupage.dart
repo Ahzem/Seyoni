@@ -4,10 +4,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/config/route.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
+import 'package:seyoni/src/pages/seeker/menu/components/payment/add_payement_method.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seyoni/src/pages/seeker/menu/components/about_uspage.dart';
 import '../../../constants/constants_font.dart';
+import 'components/delete_account_page.dart';
+import 'components/emergency/guardian_details.dart';
 import 'components/menu_item.dart';
+import 'components/payment/add_payement_method.dart';
 import 'components/rate_uspage.dart';
 
 class MenuPage extends StatefulWidget {
@@ -224,24 +228,7 @@ class MenuPageState extends State<MenuPage> {
                   onPressed: () {
                     // Add your onPressed logic here
                   },
-                ),
-                const SizedBox(height: 10),
-                MenuItem(
-                  iconPath: 'assets/icons/menu/FastCart.png',
-                  text: 'My Cart',
-                  onPressed: () {
-                    // Add your onPressed logic here
-                  },
-                ),
-                const SizedBox(height: 10),
-                MenuItem(
-                  iconPath: 'assets/icons/menu/history.png',
-                  text: 'Order History',
-                  onPressed: () {
-                    // Add your onPressed logic here
-                  },
-                ),
-
+                ),                
                 const SizedBox(height: 10),
                 MenuItem(
                   iconPath: 'assets/icons/menu/reward.png',
@@ -301,21 +288,47 @@ class MenuPageState extends State<MenuPage> {
                   iconPath: 'assets/icons/menu/Delete.png',
                   text: 'Delete Account',
                   onPressed: () {
-                    // Add your onPressed logic here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DeleteAccountPage()),
+                    );
                   },
                 ),
                 const SizedBox(height: 20),
-                // Account Settings
+                // Emergency Contact
+                Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(left: 10, bottom: 10),
+                    child: const Text('Emergency', style: kAppBarTitleTextStyle)),
+                const SizedBox(height: 10),
+                MenuItem(
+                  iconPath: 'assets/icons/menu/add_payment.png',
+                  text: 'Add Emergency Contacts',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => GuardianDetailsPage()),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                // Payment
                 Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
                     child: const Text('Payment', style: kAppBarTitleTextStyle)),
                 const SizedBox(height: 10),
                 MenuItem(
-                  iconPath: 'assets/icons/menu/add_payment.png',
-                  text: 'Add Payment Method',
+                  iconPath: 'assets/icons/menu/manage_payment.png',
+                  text: 'Manage Payment Methods',
                   onPressed: () {
-                    // Add your onPressed logic here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AddPaymentMethodPage()),
+                    );
                   },
                 ),
                 const SizedBox(height: 10),
@@ -327,15 +340,6 @@ class MenuPageState extends State<MenuPage> {
                   },
                 ),
                 const SizedBox(height: 10),
-                MenuItem(
-                  iconPath: 'assets/icons/menu/manage_payment.png',
-                  text: 'Manage Payment Methods',
-                  onPressed: () {
-                    // Add your onPressed logic here
-                  },
-                ),
-                const SizedBox(height: 20),
-                // Account Settings
                 Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
@@ -374,7 +378,6 @@ class MenuPageState extends State<MenuPage> {
                   },
                 ),
                 const SizedBox(height: 20),
-                // Account Settings
                 Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
@@ -386,9 +389,8 @@ class MenuPageState extends State<MenuPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AboutUsPage()
-                      ),
-                      );// Add your onPressed logic here
+                      MaterialPageRoute(builder: (context) => AboutUsPage()),
+                    ); // Add your onPressed logic here
                   },
                 ),
                 const SizedBox(height: 10),
@@ -424,7 +426,7 @@ class MenuPageState extends State<MenuPage> {
                       context,
                       MaterialPageRoute(builder: (context) => RateUsPage()
                       ),
-                      );//// Add your onPressed logic here
+                      );
                   },
                 ),
                 const SizedBox(height: 10),

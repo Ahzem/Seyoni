@@ -69,8 +69,8 @@ class ListOfProvidersState extends State<ListOfProviders> {
                 Navigator.of(context).pop();
               },
             ),
-            title: const Text('List of Providers',
-                style: TextStyle(fontSize: 20, color: Colors.white)),
+            title: const Text('Service Providers',
+                style: kSubtitleTextStyle),
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
@@ -87,68 +87,74 @@ class ListOfProvidersState extends State<ListOfProviders> {
                         textAlign: TextAlign.center,
                       ),
                     )
-                  : GridView.builder(
-                      padding: const EdgeInsets.all(10),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemCount: providers.length,
-                      itemBuilder: (context, index) {
-                        final provider = providers[index];
-                        final fullName =
-                            '${provider['firstName'] ?? 'N/A'} ${provider['lastName'] ?? 'N/A'}';
-                        final email = provider['email'] ?? 'N/A';
-                        return Card(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: const BorderSide(
-                              color: Colors.white,
-                              width: 2,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    provider['profileImageUrl'] ??
-                                        'https://via.placeholder.com/150',
+                  : ListView.builder(
+                    padding: const EdgeInsets.all(10),
+                    itemCount: providers.length,
+                    itemBuilder: (context, index) {
+                      final provider = providers[index];
+                      final fullName = '${provider['firstName'] ?? 'N/A'} ${provider['lastName'] ?? 'N/A'}';
+                      final email = provider['email'] ?? 'N/A';
+                      return Card(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      provider['profileImageUrl'] ?? 'https://via.placeholder.com/150',
+                                    ),
+                                    radius: 30,
                                   ),
-                                  radius: 30,
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  fullName,
-                                  style: kCardTitleTextStyle,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                                Text(
-                                  email,
-                                  style: kBodyTextStyle,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                                const Spacer(),
-                                TextButton(
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          fullName,
+                                          style: kCardTitleTextStyle,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                        Text(
+                                          email,
+                                          style: kBodyTextStyle,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
                                   onPressed: () {
                                     // Navigate to manage provider page
                                   },
-                                  child: const Text('Manage',
-                                      style: TextStyle(color: Colors.white)),
+                                  child: const Text(
+                                    'Manage',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
+                  )
+
+
         ),
       ],
     );

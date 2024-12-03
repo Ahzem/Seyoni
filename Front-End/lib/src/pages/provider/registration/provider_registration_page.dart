@@ -38,7 +38,6 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final TextEditingController _locationController = TextEditingController();
-  String? _selectedCity;
   final TextEditingController _typeAheadController = TextEditingController();
 
   int _currentStep = 0;
@@ -227,7 +226,9 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
         }
       });
     } catch (e) {
-      print('Error picking image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick image: $e')),
+      );
     }
   }
 
@@ -318,9 +319,8 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
                               },
                               onSelected: (suggestion) {
                                 _typeAheadController.text = suggestion;
-                                setState(() {
-                                  _selectedCity = suggestion;
-                                });
+                                _locationController.text = suggestion;
+                                setState(() {});
                               },
                               builder: (context, controller, focusNode) {
                                 return TextField(

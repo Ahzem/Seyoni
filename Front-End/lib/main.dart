@@ -1,5 +1,7 @@
+// main.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seyoni/src/pages/seeker/profile_edit/profile_edit.dart';
 import 'package:seyoni/src/services/websocket_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -32,29 +34,30 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await _requestPermissions();
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
+  String? token = prefs.getString('token');
+  String? providerId = prefs.getString('providerId');
+  String? seekerId = prefs.getString('seekerId');
+
   // Initialize WebSocket
   final webSocketService = WebSocketService();
   await webSocketService.connect();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('token');
-  String? userType = prefs.getString(
-      'userType'); // Added to differentiate between seeker and provider
-  bool hasSeenLaunchScreen = prefs.getBool('hasSeenLaunchScreen') ?? false;
-  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false; // Check login state
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => NotificationProvider()),
-        // Add other providers here if needed
       ],
       child: MyApp(
+        isFirstLaunch: isFirstLaunch,
         token: token,
-        userType: userType,
-        hasSeenLaunchScreen: hasSeenLaunchScreen,
-        isLoggedIn: isLoggedIn,
+        providerId: providerId,
+        seekerId: seekerId,
       ),
     ),
-  ); // Pass login state to MyApp
+  );
 }
 
 Future<void> _requestPermissions() async {
@@ -72,27 +75,26 @@ Future<void> _requestPermissions() async {
 }
 
 class MyApp extends StatelessWidget {
+  final bool isFirstLaunch;
   final String? token;
-  final String? userType;
-  final bool hasSeenLaunchScreen;
-  final bool isLoggedIn; // Add login state
+  final String? providerId;
+  final String? seekerId;
 
   const MyApp({
     super.key,
+    required this.isFirstLaunch,
     this.token,
-    this.userType,
-    required this.hasSeenLaunchScreen,
-    required this.isLoggedIn,
-  }); // Add login state
+    this.providerId,
+    this.seekerId,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateRoute: generateRoute,
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      home: _getInitialPage(),
+      onGenerateRoute: generateRoute,
       routes: {
-        '/': (context) => _getInitialPage(),
         AppRoutes.instruction: (context) => const InstructionPage(),
         AppRoutes.signIn: (context) => const SignInPage(),
         AppRoutes.signUp: (context) => SignUpPage(),
@@ -113,27 +115,33 @@ class MyApp extends StatelessWidget {
             const ListOfRegistrationRequests(),
         AppRoutes.listOfSeekers: (context) => const ListOfSeekers(),
         AppRoutes.listOfProviders: (context) => const ListOfProviders(),
+        AppRoutes.editProfile: (context) => const ProfileEditPage(),
       },
     );
   }
 
   Widget _getInitialPage() {
-    if (!hasSeenLaunchScreen) {
+    if (isFirstLaunch) {
       return LaunchScreen(onLaunchScreenComplete: _onLaunchScreenComplete);
-    } else if (isLoggedIn && token != null && !JwtDecoder.isExpired(token!)) {
-      if (userType == 'provider') {
+    }
+
+    // Check if token exists and is valid
+    if (token != null && !JwtDecoder.isExpired(token!)) {
+      // Check user type and return appropriate home page
+      if (providerId != null) {
         return const ProviderHomePage();
-      } else {
+      } else if (seekerId != null) {
         return const HomePage();
       }
-    } else {
-      return const SignInPage();
     }
+
+    // Default to sign in page if no valid credentials
+    return const SignInPage();
   }
 
-  void _onLaunchScreenComplete(BuildContext context) async {
+  Future<void> _onLaunchScreenComplete(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasSeenLaunchScreen', true);
+    await prefs.setBool('isFirstLaunch', false);
     if (!context.mounted) return;
     Navigator.pushReplacementNamed(context, AppRoutes.signIn);
   }

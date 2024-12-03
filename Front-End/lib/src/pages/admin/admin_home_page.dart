@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:seyoni/src/config/route.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
@@ -16,11 +18,26 @@ class AdminHomePage extends StatefulWidget {
 
 class AdminHomePageState extends State<AdminHomePage> {
   List<Map<String, dynamic>> providers = [];
+  List<dynamic> seekers = [];
 
   @override
   void initState() {
     super.initState();
     _fetchProviders();
+    _fetchSeekers();
+  }
+
+  Future<void> _fetchSeekers() async {
+    try {
+      final response = await http.get(Uri.parse(getSeekersUrl));
+      if (response.statusCode == 200) {
+        setState(() {
+          seekers = List<Map<String, dynamic>>.from(jsonDecode(response.body));
+        });
+      }
+    } catch (error) {
+      // Handle error
+    }
   }
 
   Future<void> _fetchProviders() async {
@@ -57,11 +74,11 @@ class AdminHomePageState extends State<AdminHomePage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Remove the back button
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         title: Center(
           child: Image.asset(
-            'assets/images/logo.png', // Replace with your logo path
+            'assets/images/logo.png', 
             height: 40,
           ),
         ),
@@ -76,30 +93,47 @@ class AdminHomePageState extends State<AdminHomePage> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Hello, Admin!',
+                style: kTitleTextStyle.copyWith(fontSize: 24),
+              ),
+              const SizedBox(height: 20),
+              _buildSummaryCard(),
+              const SizedBox(height: 20),
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  children: [
-                    _buildBlurredContainer(
-                      context,
-                      'Manage Seekers',
-                      Icons.people,
-                      AppRoutes.listOfSeekers,
-                    ),
-                    _buildBlurredContainer(
-                      context,
-                      'Manage Providers',
-                      Icons.business,
-                      AppRoutes.listOfProviders,
-                    ),
-                    _buildBlurredContainer(
-                      context,
-                      'Provider Registration Request',
-                      Icons.app_registration,
-                      AppRoutes.listOfRegistrationRequests,
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildAdminCard(
+                        context,
+                        'Manage Seekers',
+                        Icons.people,
+                        AppRoutes.listOfSeekers,
+                        '${seekers.length}',
+                        'Total registered seekers',
+                      ),
+                      const SizedBox(height: 16),
+                      _buildAdminCard(
+                        context,
+                        'Manage Providers',
+                        Icons.business,
+                        AppRoutes.listOfProviders,
+                        '${providers.where((p) => p['isApproved'] == true).length}',
+                        'Approved service providers',
+                      ),
+                      const SizedBox(height: 16),
+                      _buildAdminCard(
+                        context,
+                        'Provider Registration Requests',
+                        Icons.app_registration,
+                        AppRoutes.listOfRegistrationRequests,
+                        '${providers.where((p) => p['isApproved'] == false).length}',
+                        'Pending approval requests',
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -109,28 +143,98 @@ class AdminHomePageState extends State<AdminHomePage> {
     );
   }
 
-  Widget _buildBlurredContainer(
-      BuildContext context, String title, IconData icon, String route) {
+  Widget _buildSummaryCard() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: kContainerColor.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: Colors.white.withOpacity(0.2)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'System Overview',
+                style: kTitleTextStyle.copyWith(fontSize: 20),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Total Users: ${providers.length + seekers.length}',
+                style: kBodyTextStyle,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdminCard(BuildContext context, String title, IconData icon,
+      String route, String count, String subtitle) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, route);
       },
       child: Container(
-        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: kPrimaryColor.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: kAccentColor, width: 0.8),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 50, color: Colors.white),
-              const SizedBox(height: 10),
-              Text(title,
-                  style: kSubtitleTextStyle, textAlign: TextAlign.center),
-            ],
-          ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 25,
+              backgroundColor: kAccentColor,
+              child: Icon(icon, size: 30, color: Colors.white),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: kSubtitleTextStyle.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    subtitle,
+                    style: kBodyTextStyle.copyWith(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: kAccentColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white, width: 0.2),
+              ),
+              child: Text(
+                count,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

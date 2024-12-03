@@ -20,6 +20,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   List<dynamic> reservations = [];
   bool isLoading = true;
   String errorMessage = '';
+  bool _mounted = true;
 
   @override
   void initState() {
@@ -27,7 +28,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     _fetchReservations();
   }
 
+  @override
+  void dispose() {
+    _mounted = false;
+    super.dispose();
+  }
+
   Future<void> _fetchReservations() async {
+    if (!mounted) return;
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? seekerId = prefs.getString('seekerId');
@@ -48,6 +56,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         },
       );
 
+      if (!_mounted) return;
+
       if (response.statusCode == 200) {
         setState(() {
           reservations = json.decode(response.body);
@@ -60,6 +70,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         });
       }
     } catch (e) {
+      if (!_mounted) return;
       setState(() {
         errorMessage = 'Failed to load reservations: $e';
         isLoading = false;

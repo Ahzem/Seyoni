@@ -113,7 +113,7 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
     });
   }
 
-  void _stopTimer() {
+  void stopTimer() {
     _timer?.cancel();
     if (!_disposed) {
       _safeSetState(() {
@@ -155,15 +155,21 @@ class ServiceProcessPageState extends State<ServiceProcessPage> {
         _currentSection = 1;
       });
 
-      // Update provider first
       final provider =
           Provider.of<NotificationProvider>(context, listen: false);
-      provider
-        ..setSection(1)
-        ..setIsTimerActive(true)
-        ..updateTimer(0); // Reset timer to 0
 
-      // Then start the timer
+      // Update local state first
+      provider.setSection(1);
+      provider.setIsTimerActive(true);
+      provider.updateTimer(0);
+
+      // Then send WebSocket message with reservationId
+      provider.sendMessage({
+        'type': 'section_update',
+        'section': 1,
+        'reservationId': widget.reservationId
+      });
+
       _startTimer();
     } else {
       _safeSetState(() {

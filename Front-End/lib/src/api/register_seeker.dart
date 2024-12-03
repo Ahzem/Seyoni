@@ -41,7 +41,7 @@ Future<bool> checkSeekerExists(
       return jsonResponse['exists'];
     } else {
       if (kDebugMode) {
-        print('Failed to check seeker existence');
+        debugPrint('Failed to check seeker existence');
       }
       return false;
     }
@@ -110,29 +110,43 @@ Future<bool> registerSeekerToBackend(
 Future<bool> verifyOtpAndRegisterSeeker(
     Map<String, String> userData, String otp, BuildContext context) async {
   try {
+    String phone = userData['phone']!;
+
+    if (kDebugMode) {
+      print('Verifying OTP - Phone: $phone, OTP: $otp');
+    }
+
     final response = await http.post(
       Uri.parse(verifyOtpUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({'phone': userData['phone'], 'otp': otp}),
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({
+        'phone': phone,
+        'otp': otp,
+      }),
     );
 
-    if (response.statusCode == 201) {
-      var jsonResponse = jsonDecode(response.body);
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('seekerId', jsonResponse['seekerId']);
-      return true;
-    } else {
-      if (kDebugMode) {
-        print('Failed');
-      }
-      return false;
+    if (kDebugMode) {
+      print('Verification response: ${response.body}');
     }
+
+    if (response.statusCode == 201) {
+      final jsonResponse = jsonDecode(response.body);
+
+      // Save user data to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', jsonResponse['token']);
+      await prefs.setString('seekerId', jsonResponse['seeker']['_id']);
+      await prefs.setString('firstName', jsonResponse['seeker']['firstName']);
+      await prefs.setString('lastName', jsonResponse['seeker']['lastName']);
+      await prefs.setString('email', jsonResponse['seeker']['email']);
+      await prefs.setString('phone', jsonResponse['seeker']['phone']);
+
+      return true;
+    }
+    return false;
   } catch (e) {
     if (kDebugMode) {
-      print('Failed');
-      print(e);
+      print('Verification error: $e');
     }
     return false;
   }
@@ -168,41 +182,40 @@ Future<bool> resendOtp(String? phone, BuildContext context) async {
 Future<void> saveTempUser(String phone, Map<String, String> userData) async {
   try {
     final response = await http.post(
-      Uri.parse('$url/api/saveTempUser'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({'phone': phone, 'userData': userData}),
+      Uri.parse(saveTempUserUrl),
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({
+        'phone': phone,
+        'userData': userData,
+      }),
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to save temporary user data');
+      throw Exception('Failed to save temporary user data: ${response.body}');
     }
   } catch (e) {
     if (kDebugMode) {
-      print('Failed to save temporary user data');
-      print(e);
+      print('Failed to save temporary user data: $e');
     }
+    throw Exception('Failed to save temporary user data');
   }
 }
 
 Future<void> generateOtp(String phone) async {
   try {
     final response = await http.post(
-      Uri.parse('$url/api/generateOtp'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      Uri.parse(generateOtpUrl),
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({'phone': phone}),
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to generate OTP');
+      throw Exception('Failed to generate OTP: ${response.body}');
     }
   } catch (e) {
     if (kDebugMode) {
-      print('Failed to generate OTP');
-      print(e);
+      print('Failed to generate OTP: $e');
     }
+    throw Exception('Failed to generate OTP');
   }
 }

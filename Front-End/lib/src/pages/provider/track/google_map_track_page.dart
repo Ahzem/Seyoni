@@ -5,11 +5,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 import 'package:seyoni/src/config/url.dart';
 import 'package:seyoni/src/constants/constants_color.dart';
 import 'package:seyoni/src/pages/provider/notification/notification_provider.dart';
 import 'package:seyoni/src/pages/provider/service_process_page.dart';
-import 'package:provider/provider.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class GoogleMapsTrackPage extends StatefulWidget {
   final LatLng seekerLocation;
@@ -42,6 +43,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     super.initState();
     _initializeMarkers();
     _fetchLocationUpdates();
+    _sendOtpToSeeker();
   }
 
   @override
@@ -49,6 +51,16 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     locationController.onLocationChanged.drain();
     mapController?.dispose();
     super.dispose();
+  }
+
+  void _sendOtpToSeeker() {
+    final channel = WebSocketChannel.connect(
+      Uri.parse('ws://$url/ws/notification/'), // Ensure this URL is correct
+    );
+    channel.sink.add(jsonEncode({
+      'type': 'send_otp',
+      'seeker_id': widget.seekerId,
+    }));
   }
 
   void _initializeMarkers() {
@@ -102,10 +114,10 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     });
   }
 
+  // google_map_track_page.dart
+
   void _checkProximity() async {
-    if (currentPosition == null || _otpGenerated) {
-      return; // Check if OTP is already generated
-    }
+    if (currentPosition == null || _otpGenerated) return;
 
     final distance = _calculateDistance(
       currentPosition!.latitude,
@@ -115,32 +127,27 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     );
 
     if (distance <= 0.5) {
-      final otp = _generateOtp();
-      print('======================OTP: $otp=================');
-      _otpGenerated = true;
+      try {
+        final otp = _generateOtp();
+        _otpGenerated = true;
 
-      // Initialize NotificationProvider before navigation
-      if (!mounted) return;
-      Provider.of<NotificationProvider>(context, listen: false)
-          .initializeService(otp, widget.reservationId);
+        debugPrint('=======Proximity reached - Generating OTP: $otp==========');
 
-      // Send OTP to seeker
-      final response = await http.post(
-        Uri.parse('$url/api/otp/sendOtpToSeeker'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'seekerId': widget.seekerId,
-          'otp': otp,
-        }),
-      );
-
-      if (response.statusCode == 200) {
         if (!mounted) return;
 
-        // First navigate to new page
-        await Navigator.pushReplacement(
+        final provider =
+            Provider.of<NotificationProvider>(context, listen: false);
+
+        // Initialize service with OTP
+        await provider.initializeService(
+          otp: otp,
+          reservationId: widget.reservationId,
+          seekerId: widget.seekerId,
+        );
+
+        // Navigate to service process page
+        if (!mounted) return;
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => ServiceProcessPage(
@@ -150,6 +157,13 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
             ),
           ),
         );
+      } catch (e) {
+        debugPrint('Error in proximity handling: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
       }
     }
   }
@@ -165,6 +179,41 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
 
   String _generateOtp() {
     return (100000 + (Random().nextInt(900000))).toString();
+  }
+
+  Future<void> sendOtp(String seekerId, String reservationId) async {
+    final provider = Provider.of<NotificationProvider>(context, listen: false);
+
+    // Ensure connection before sending OTP
+    await provider.ensureConnection();
+
+    // Generate OTP
+    final otp = _generateOtp();
+    debugPrint(
+        '======================Generated OTP: $otp for seeker: $seekerId================');
+
+    // Initialize the service with OTP and make sure it's visible
+    provider.initializeService(
+      otp: otp,
+      reservationId: reservationId,
+      seekerId: seekerId,
+    );
+
+    // Force visibility
+    provider.setOtp(otp); // This will also set isVisible to true
+
+    // Navigate after sending OTP
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ServiceProcessPage(
+          seekerName: widget.seekerName,
+          otp: otp,
+          reservationId: reservationId,
+        ),
+      ),
+    );
   }
 
   Future<void> _updateRoute() async {

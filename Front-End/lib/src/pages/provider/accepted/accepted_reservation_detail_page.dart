@@ -257,42 +257,62 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                 ),
                 const SizedBox(height: 16),
                 // Display reservation details with icons
-                Row(
-                  children: [
-                    const Icon(Icons.person, color: kPrimaryColor),
-                    const SizedBox(width: 8),
-                    Text(name, style: kSubtitleTextStyle2),
-                  ],
+             Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: kAccentColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                    color: kPrimaryColor,  
+                    width: 1.5,           
+    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: kTitleTextStyle,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          const Icon(Icons.location_on, color: kPrimaryColor),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(readableAddress, style: kSubtitleTextStyle.copyWith(fontSize: 15.0, color: kParagraphTextColor))),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today, color: kPrimaryColor),
+                          const SizedBox(width: 8),
+                          Text(formattedDate, style: kSubtitleTextStyle.copyWith(fontSize: 15.0, color: kParagraphTextColor)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.access_time, color: kPrimaryColor),
+                          const SizedBox(width: 8),
+                          Text(time, style: kSubtitleTextStyle.copyWith(fontSize: 15.0, color: kParagraphTextColor)),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Text('Description', style: kSubtitleTextStyle),
+                      const SizedBox(height: 8),
+                      Text(description, style: kBodyTextStyle),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, color: kPrimaryColor),
-                    const SizedBox(width: 8),
-                    Text(readableAddress, style: kSubtitleTextStyle2),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.calendar_today, color: kPrimaryColor),
-                    const SizedBox(width: 8),
-                    Text(formattedDate, style: kSubtitleTextStyle2),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.access_time, color: kPrimaryColor),
-                    const SizedBox(width: 8),
-                    Text(time, style: kSubtitleTextStyle2),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text('Description', style: kSubtitleTextStyle2),
-                const SizedBox(height: 8),
-                Text(description, style: kBodyTextStyle),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 // Display images with curves if they exist
                 if (images.isNotEmpty)
                   SizedBox(
@@ -336,8 +356,7 @@ class ReservationDetailPageState extends State<AcceptedReservationDetailPage> {
                       text: 'Track',
                       onPressed: () async {
                         final locationString = reservation?['location'] ?? '';
-                        print(
-                            'Location String: $locationString'); // Debug print
+                        // Debug print
 
                         final startIndex = locationString.indexOf('(');
                         final endIndex = locationString.indexOf(')');

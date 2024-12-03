@@ -29,3 +29,6 @@ const updateProviderStatusUrl = '$url/api/provider';
 
 const acceptReservationUrl = '$url/api/reservations';
 const rejectReservationUrl = '$url/api/reservations';
+
+const generateOtpUrl = '$url/api/otp/generateOtp';
+const saveTempUserUrl = '$url/api/otp/saveTempUser';

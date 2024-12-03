@@ -17,6 +17,7 @@ class WebSocketService {
   Timer? _pingTimer;
   int _reconnectAttempts = 0;
   static const int maxReconnectAttempts = 5;
+  final List<Map<String, dynamic>> _messageQueue = [];
 
   factory WebSocketService() {
     return _instance;
@@ -24,6 +25,7 @@ class WebSocketService {
 
   WebSocketService._internal();
 
+  // websocket_service.dart
   Future<void> connect() async {
     if (_isConnected || _isConnecting) return;
     _isConnecting = true;
@@ -34,30 +36,56 @@ class WebSocketService {
       final socket = await WebSocket.connect(
         wsUrl,
         headers: {
-          'Origin': 'https://seyoni.onrender.com',
+          'Origin': url,
           'Connection': 'Upgrade',
           'Upgrade': 'websocket',
         },
       ).timeout(
         const Duration(seconds: 10),
-        onTimeout: () {
-          throw TimeoutException('Connection timeout');
-        },
+        onTimeout: () => throw TimeoutException('Connection timeout'),
       );
 
       _channel = IOWebSocketChannel(socket);
-      _setupPingPong();
-      _setupMessageListener();
-
       _isConnected = true;
       _isConnecting = false;
       _reconnectAttempts = 0;
 
       debugPrint('WebSocket connected successfully');
-    } catch (e, stackTrace) {
-      debugPrint('WebSocket Connection Error: $e');
-      debugPrint('Stack trace: $stackTrace');
-      _handleDisconnect('Connection error: $e');
+
+      // Process queued messages immediately after connection
+      _setupMessageListener();
+      _setupPingPong();
+      _processMessageQueue();
+    } catch (e) {
+      debugPrint('WebSocket connection error: $e');
+      _handleDisconnect('Connection failed: $e');
+      rethrow; // Propagate error for proper handling
+    }
+  }
+
+  Future<void> sendMessage(Map<String, dynamic> message) async {
+    if (!_isConnected) {
+      debugPrint('WebSocket not connected, queuing message: $message');
+      _messageQueue.add(message);
+      await connect();
+      return;
+    }
+
+    try {
+      final jsonMessage = jsonEncode(message);
+      debugPrint('Sending WebSocket message: $jsonMessage');
+      _channel?.sink.add(jsonMessage);
+    } catch (e) {
+      debugPrint('Error sending message: $e');
+      _messageQueue.add(message);
+      _handleDisconnect('Send message failed: $e');
+    }
+  }
+
+  void _processMessageQueue() {
+    while (_messageQueue.isNotEmpty && _isConnected) {
+      final message = _messageQueue.removeAt(0);
+      sendMessage(message);
     }
   }
 
@@ -81,15 +109,28 @@ class WebSocketService {
         if (message == 'pong') return;
         try {
           debugPrint('WebSocket received: $message');
+
+          // Parse message if it's a string
+          dynamic parsedMessage = message;
+          if (message is String) {
+            try {
+              parsedMessage = json.decode(message);
+            } catch (e) {
+              debugPrint('Error parsing message: $e');
+              return;
+            }
+          }
+
+          // Notify listeners with parsed message
           for (var listener in _messageListeners) {
-            listener(message);
+            listener(parsedMessage);
           }
         } catch (e) {
           debugPrint('Error processing message: $e');
         }
       },
       onError: (error) {
-        debugPrint('WebSocket Error: $error');
+        debugPrint('WebSocket error: $error');
         _handleDisconnect('Stream error: $error');
       },
       onDone: () {
@@ -108,18 +149,23 @@ class WebSocketService {
 
     if (_reconnectAttempts < maxReconnectAttempts) {
       _reconnectAttempts++;
-      int delaySeconds = _reconnectAttempts * 5;
+      final delaySeconds = _reconnectAttempts * 2; // Exponential backoff
+
+      debugPrint(
+          'Attempting reconnection $_reconnectAttempts of $maxReconnectAttempts in ${delaySeconds}s');
 
       _reconnectTimer?.cancel();
       _reconnectTimer = Timer(Duration(seconds: delaySeconds), () {
-        debugPrint('Attempting to reconnect (attempt $_reconnectAttempts)...');
-        connect();
+        connect().catchError((e) {
+          debugPrint('Reconnection attempt failed: $e');
+        });
       });
     } else {
-      debugPrint('Max reconnection attempts reached');
+      debugPrint(
+          'Max reconnection attempts reached. Manual reconnection required.');
+      // Reset attempts after 1 minute
       Timer(const Duration(minutes: 1), () {
         _reconnectAttempts = 0;
-        connect();
       });
     }
   }
@@ -132,26 +178,6 @@ class WebSocketService {
 
   void removeMessageListener(Function(dynamic) listener) {
     _messageListeners.remove(listener);
-  }
-
-  Future<void> sendMessage(Map<String, dynamic> message) async {
-    if (!_isConnected) {
-      await connect();
-      await Future.delayed(const Duration(seconds: 2));
-    }
-
-    if (_isConnected && _channel != null) {
-      try {
-        final jsonMessage = jsonEncode(message);
-        debugPrint('Sending WebSocket message: $jsonMessage');
-        _channel!.sink.add(jsonMessage);
-      } catch (e) {
-        debugPrint('Error sending message: $e');
-        _handleDisconnect('Send message failed: $e');
-      }
-    } else {
-      debugPrint('WebSocket not connected. Message not sent.');
-    }
   }
 
   bool get isConnected => _isConnected;
