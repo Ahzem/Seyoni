@@ -106,7 +106,7 @@ Future<void> loginSeeker(
     }
   } catch (e) {
     if (kDebugMode) {
-      print('Failed');
+      debugPrint('Failed');
     }
   }
 }

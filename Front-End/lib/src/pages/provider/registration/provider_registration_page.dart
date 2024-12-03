@@ -226,7 +226,7 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
         }
       });
     } catch (e) {
-      print('Error picking image: $e');
+      debugPrint('Error picking image: $e');
     }
   }
 
