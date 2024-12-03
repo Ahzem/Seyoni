@@ -182,8 +182,15 @@ class HiringFormState extends State<HiringForm> {
       }
     } catch (e) {
       // Handle the error, e.g., show a message to the user
-      print(
+      debugPrint(
           'Error occurred while getting address from latitude and longitude: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to get address from location.',
+              style: TextStyle(color: Colors.black)),
+          backgroundColor: kPrimaryColor,
+        ),
+      );
     }
     // Return latitude and longitude as a fallback
     return '${position.latitude},${position.longitude}';
@@ -230,13 +237,54 @@ class HiringFormState extends State<HiringForm> {
     }
   }
 
-  void _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImages.add(File(pickedFile.path));
-      });
+  Future<void> _pickImage() async {
+    // Check if image limit reached
+    if (_selectedImages.length >= 3) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Limit Reached'),
+            content: const Text('You can only upload up to 3 images'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
+  
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+      );
+      
+      if (image != null) {
+        setState(() {
+          _selectedImages.add(File(image.path));
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text('Failed to pick image: $e'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
