@@ -226,7 +226,9 @@ class ProviderRegistrationPageState extends State<ProviderRegistrationPage> {
         }
       });
     } catch (e) {
-      debugPrint('Error picking image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick image: $e')),
+      );
     }
   }
 

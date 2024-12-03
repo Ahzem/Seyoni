@@ -387,7 +387,6 @@ class HiringFormState extends State<HiringForm> {
                             });
                           } else {
                             // Handle the case where the address is empty
-                            print('Address is empty');
                           }
                         }
                       },

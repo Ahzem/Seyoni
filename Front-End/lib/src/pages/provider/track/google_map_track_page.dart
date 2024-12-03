@@ -181,7 +181,7 @@ class _GoogleMapsTrackPageState extends State<GoogleMapsTrackPage> {
     return (100000 + (Random().nextInt(900000))).toString();
   }
 
-  Future<void> _sendOtp(String seekerId, String reservationId) async {
+  Future<void> sendOtp(String seekerId, String reservationId) async {
     final provider = Provider.of<NotificationProvider>(context, listen: false);
 
     // Ensure connection before sending OTP

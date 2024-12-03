@@ -78,7 +78,7 @@ class AdminHomePageState extends State<AdminHomePage> {
         backgroundColor: Colors.transparent,
         title: Center(
           child: Image.asset(
-            'assets/images/logo.png',
+            'assets/images/logo.png', 
             height: 40,
           ),
         ),
